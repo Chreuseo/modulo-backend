@@ -1,0 +1,24 @@
+package de.modulo.backend.entities;
+import lombok.Data;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "module_type_entity")
+@Data
+public class ModuleTypeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @ManyToOne // Define many-to-one relationship with SpoEntity
+    @JoinColumn(name = "spo_id")
+    private SpoEntity spo;
+
+    private String name;
+
+    private int orderNumber;
+
+    // Additional methods or annotations can be added if needed
+}
