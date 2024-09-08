@@ -14,11 +14,11 @@ public class CourseTypeModuleFrameEntity {
     private CourseTypeModuleFrameId id; // Use the embedded ID
 
     @ManyToOne
-    @JoinColumn(name = "course_type_id", insertable = false, updatable = false) // Relates to your CourseTypeEntity
+    @JoinColumn(name = "course_type_id") // Relates to your CourseTypeEntity
     private CourseTypeEntity courseType;
 
     @ManyToOne
-    @JoinColumn(name = "module_frame_id", insertable = false, updatable = false) // Relates to your ModuleFrameEntity
+    @JoinColumn(name = "module_frame_id") // Relates to your ModuleFrameEntity
     private ModuleFrameEntity moduleFrame;
 
     @Embeddable

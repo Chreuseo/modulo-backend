@@ -14,7 +14,6 @@ public class ModuleFrameDTO {
     private int quantity;
     private String name;
     private int sws;                  // Semester Weekly Hours
-    private String courseType;
     private int weight;
     private int credits;
     private boolean allExamsMandatory;

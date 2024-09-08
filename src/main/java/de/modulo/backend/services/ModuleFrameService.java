@@ -95,23 +95,16 @@ public class ModuleFrameService {
         ModuleFrameEntity moduleFrameEntity = moduleFrameConverter.toEntity(moduleFrameDTO);
         // Save the Entity
         ModuleFrameEntity savedEntity = moduleFrameRepository.save(moduleFrameEntity);
+        ModuleFrameDTO savedModuleFrameDTO = moduleFrameConverter.toDto(savedEntity);
+        savedModuleFrameDTO.setCourseTypes(moduleFrameDTO.getCourseTypes());
+
+        processCourseTypes(savedModuleFrameDTO);
+
         // Convert the saved Entity back to DTO
-        return moduleFrameConverter.toDto(savedEntity);
+        return moduleFrameDTO;
     }
 
-    public void deleteModuleFrame(Long id) {
-        if (!moduleFrameRepository.existsById(id)) {
-            throw new IllegalArgumentException("ModuleFrame not found with id: " + id);
-        }
-        moduleFrameRepository.deleteById(id);
-    }
-
-    public ModuleFrameDTO updateModuleFrame(ModuleFrameDTO moduleFrameDTO) {
-        // Check if the ModuleFrame already exists
-        if (!moduleFrameRepository.existsById(moduleFrameDTO.getId())) {
-            throw new IllegalArgumentException("ModuleFrame not found with id: " + moduleFrameDTO.getId());
-        }
-
+    public void processCourseTypes(ModuleFrameDTO moduleFrameDTO){
         if(moduleFrameDTO.getCourseTypes() != null){
             moduleFrameDTO.getCourseTypes().forEach(courseTypeDTO -> {
                 if(courseTypeDTO.isEnabled()){
@@ -131,6 +124,22 @@ public class ModuleFrameService {
                 }
             });
         }
+    }
+
+    public void deleteModuleFrame(Long id) {
+        if (!moduleFrameRepository.existsById(id)) {
+            throw new IllegalArgumentException("ModuleFrame not found with id: " + id);
+        }
+        moduleFrameRepository.deleteById(id);
+    }
+
+    public ModuleFrameDTO updateModuleFrame(ModuleFrameDTO moduleFrameDTO) {
+        // Check if the ModuleFrame already exists
+        if (!moduleFrameRepository.existsById(moduleFrameDTO.getId())) {
+            throw new IllegalArgumentException("ModuleFrame not found with id: " + moduleFrameDTO.getId());
+        }
+
+        processCourseTypes(moduleFrameDTO);
 
         // Convert the DTO to Entity
         ModuleFrameEntity savedEntity = moduleFrameRepository.save(moduleFrameConverter.toEntity(moduleFrameDTO));

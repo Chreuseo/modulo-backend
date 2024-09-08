@@ -52,7 +52,6 @@ public class ModuleFrameConverter {
         dto.setQuantity(entity.getQuantity());
         dto.setName(entity.getName());
         dto.setSws(entity.getSws());
-        dto.setCourseType(entity.getCourseType());
         dto.setWeight(entity.getWeight());
         dto.setCredits(entity.getCredits());
         dto.setAllExamsMandatory(entity.isAllExamsMandatory());
@@ -102,7 +101,6 @@ public class ModuleFrameConverter {
         entity.setQuantity(dto.getQuantity());
         entity.setName(dto.getName());
         entity.setSws(dto.getSws());
-        entity.setCourseType(dto.getCourseType());
         entity.setWeight(dto.getWeight());
         entity.setCredits(dto.getCredits());
         entity.setAllExamsMandatory(dto.isAllExamsMandatory());
