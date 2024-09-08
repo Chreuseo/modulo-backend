@@ -3,22 +3,18 @@ package de.modulo.backend.services;
 import de.modulo.backend.converters.ModuleTypeConverter;
 import de.modulo.backend.converters.SectionConverter;
 import de.modulo.backend.converters.SpoConverter;
-import de.modulo.backend.dtos.ParagraphDTO;
 import de.modulo.backend.dtos.SpoDTO;
 import de.modulo.backend.dtos.SpoDTOFlat;
 import de.modulo.backend.entities.ModuleTypeEntity;
 import de.modulo.backend.entities.SectionEntity;
 import de.modulo.backend.entities.SpoEntity;
 import de.modulo.backend.repositories.ModuleTypeRepository;
-import de.modulo.backend.repositories.ParagraphRepository;
 import de.modulo.backend.repositories.SectionRepository;
 import de.modulo.backend.repositories.SpoRepository;
-import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,9 +28,10 @@ public class SpoService {
     private final ModuleTypeRepository moduleTypeRepository;
     private final SectionConverter sectionConverter;
     private final ModuleTypeConverter moduleTypeConverter;
+    private final ExamTypeService examTypeService;
 
     @Autowired
-    public SpoService(SpoRepository spoRepository, SpoConverter spoConverter, SectionRepository sectionRepository, ModuleTypeRepository moduleTypeRepository, SectionConverter sectionConverter, ModuleTypeConverter moduleTypeConverter) {
+    public SpoService(SpoRepository spoRepository, SpoConverter spoConverter, SectionRepository sectionRepository, ModuleTypeRepository moduleTypeRepository, SectionConverter sectionConverter, ModuleTypeConverter moduleTypeConverter, ExamTypeService examTypeService) {
         this.spoRepository = spoRepository;
         this.spoConverter = spoConverter;
         this.sectionRepository = sectionRepository;
@@ -42,6 +39,7 @@ public class SpoService {
         this.moduleTypeRepository = moduleTypeRepository;
         this.sectionConverter = sectionConverter;
         this.moduleTypeConverter = moduleTypeConverter;
+        this.examTypeService = examTypeService;
     }
 
     public List<SpoDTOFlat> getAllSpos() {
@@ -102,6 +100,8 @@ public class SpoService {
         spoDTO.setModuleTypeDTOs(moduleTypes.stream()
                 .map(moduleTypeConverter::toDto)
                 .collect(Collectors.toList()));
+
+        spoDTO.setExamTypeDTOs(examTypeService.getBySpo(id));
 
         return spoDTO;
     }

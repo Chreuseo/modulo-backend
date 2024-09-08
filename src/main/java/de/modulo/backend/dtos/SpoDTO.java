@@ -15,5 +15,6 @@ public class SpoDTO {
     private Date validUntil;
     private List<SectionDTO> sectionDTOs;     // List of SectionDTOs
     private List<ModuleTypeDTO> moduleTypeDTOs; // List of ModuleTypeDTOs
+    private List<ExamTypeDTO> examTypeDTOs;     // List of ExamTypeDTOs
     private DegreeDTO degree;                // Full DegreeDTO instead of an ID
 }

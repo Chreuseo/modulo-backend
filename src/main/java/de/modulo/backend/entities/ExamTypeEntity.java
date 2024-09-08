@@ -20,7 +20,8 @@ public class ExamTypeEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "length", nullable = false)
+    private String abbreviation;
+
     private String length;
 
     private boolean mandatory;

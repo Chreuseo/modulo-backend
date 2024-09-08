@@ -37,7 +37,7 @@ public class ModuleFrameController {
     }
 
     // Endpoint to delete a ModuleFrame by ID
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteModuleFrame(@PathVariable Long id) {
         moduleFrameService.deleteModuleFrame(id);
         return ResponseEntity.noContent().build(); // 204 No Content
