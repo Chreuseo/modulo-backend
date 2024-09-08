@@ -6,13 +6,11 @@ import de.modulo.backend.entities.CourseTypeEntity;
 import de.modulo.backend.entities.CourseTypeModuleFrameEntity;
 import de.modulo.backend.entities.ModuleFrameEntity;
 import de.modulo.backend.repositories.*;
-import de.modulo.backend.services.CourseTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class ModuleFrameConverter {
@@ -26,10 +24,9 @@ public class ModuleFrameConverter {
     private final ModuleTypeRepository moduleTypeRepository;
     private final CourseTypeRepository courseTypeRepository;
     private final CourseTypeModuleFrameRepository courseTypeModuleFrameRepository;
-    private final CourseTypeService courseTypeService;
 
     @Autowired
-    public ModuleFrameConverter(SpoConverter spoConverter, SectionConverter sectionConverter, ModuleTypeConverter moduleTypeConverter, SpoRepository spoRepository, SectionRepository sectionRepository, ModuleTypeRepository moduleTypeRepository, CourseTypeRepository courseTypeRepository, CourseTypeConverter courseTypeConverter, CourseTypeModuleFrameRepository courseTypeModuleFrameRepository, CourseTypeService courseTypeService) {
+    public ModuleFrameConverter(SectionConverter sectionConverter, ModuleTypeConverter moduleTypeConverter, SpoRepository spoRepository, SectionRepository sectionRepository, ModuleTypeRepository moduleTypeRepository, CourseTypeRepository courseTypeRepository, CourseTypeConverter courseTypeConverter, CourseTypeModuleFrameRepository courseTypeModuleFrameRepository) {
         this.sectionConverter = sectionConverter;
         this.moduleTypeConverter = moduleTypeConverter;
         this.courseTypeConverter = courseTypeConverter;
@@ -39,7 +36,6 @@ public class ModuleFrameConverter {
         this.moduleTypeRepository = moduleTypeRepository;
         this.courseTypeRepository = courseTypeRepository;
         this.courseTypeModuleFrameRepository = courseTypeModuleFrameRepository;
-        this.courseTypeService = courseTypeService;
     }
 
     public ModuleFrameDTO toDto(ModuleFrameEntity entity) {
@@ -66,7 +62,6 @@ public class ModuleFrameConverter {
             dto.setModuleType(moduleTypeConverter.toDto(entity.getModuleType()));
         }
 
-        List<CourseTypeEntity> courseTypes = courseTypeRepository.findAll();
         List<CourseTypeDTO> courseTypeDTOs = new ArrayList<>();
         List<CourseTypeEntity> usedCourseTypes = courseTypeModuleFrameRepository
                 .getCourseTypeModuleFrameEntitiesByModuleFrame(entity).stream()
@@ -75,11 +70,7 @@ public class ModuleFrameConverter {
 
         courseTypeRepository.findAll().forEach(courseTypeEntity -> {
             CourseTypeDTO courseTypeDTO = courseTypeConverter.toDto(courseTypeEntity);
-            if(usedCourseTypes.contains(courseTypeEntity)) {
-                courseTypeDTO.setEnabled(true);
-            }else{
-                courseTypeDTO.setEnabled(false);
-            }
+            courseTypeDTO.setEnabled(usedCourseTypes.contains(courseTypeEntity));
             courseTypeDTOs.add(courseTypeDTO);
         });
 

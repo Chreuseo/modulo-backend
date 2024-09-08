@@ -1,8 +1,7 @@
 package de.modulo.backend.services;
 import de.modulo.backend.converters.CourseTypeConverter;
 import de.modulo.backend.converters.ModuleFrameConverter;
-import de.modulo.backend.converters.ModuleTypeConverter;
-import de.modulo.backend.converters.SectionConverter;
+
 import de.modulo.backend.dtos.ModuleFrameDTO;
 import de.modulo.backend.dtos.ModuleFrameSetDTO;
 import de.modulo.backend.entities.*;

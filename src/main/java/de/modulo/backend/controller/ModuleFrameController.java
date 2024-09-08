@@ -32,8 +32,8 @@ public class ModuleFrameController {
     // Endpoint to update an existing ModuleFrame
     @PutMapping("/update")
     public ResponseEntity<ModuleFrameDTO> updateModuleFrame(@RequestBody ModuleFrameDTO moduleFrameDTO) {
-        moduleFrameService.updateModuleFrame(moduleFrameDTO);
-        return ResponseEntity.ok(moduleFrameDTO);
+        ModuleFrameDTO result = moduleFrameService.updateModuleFrame(moduleFrameDTO);
+        return ResponseEntity.ok(result);
     }
 
     // Endpoint to delete a ModuleFrame by ID
