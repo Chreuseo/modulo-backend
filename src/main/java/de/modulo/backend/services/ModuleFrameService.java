@@ -1,14 +1,12 @@
 package de.modulo.backend.services;
 import de.modulo.backend.converters.CourseTypeConverter;
+import de.modulo.backend.converters.ExamTypeConverter;
 import de.modulo.backend.converters.ModuleFrameConverter;
 
 import de.modulo.backend.dtos.ModuleFrameDTO;
 import de.modulo.backend.dtos.ModuleFrameSetDTO;
 import de.modulo.backend.entities.*;
-import de.modulo.backend.repositories.CourseTypeModuleFrameRepository;
-import de.modulo.backend.repositories.ModuleFrameRepository;
-import de.modulo.backend.repositories.ModuleTypeRepository;
-import de.modulo.backend.repositories.SectionRepository;
+import de.modulo.backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,13 +28,19 @@ public class ModuleFrameService {
     private ModuleFrameRepository moduleFrameRepository; // Assuming you have a repository for ModuleFrame
 
     @Autowired
-    CourseTypeConverter courseTypeConverter;
+    private CourseTypeConverter courseTypeConverter;
+
+    @Autowired
+    private ExamTypeConverter examTypeConverter;
 
     @Autowired
     private ModuleFrameConverter moduleFrameConverter;
 
     @Autowired
     private CourseTypeModuleFrameRepository courseTypeModuleFrameRepository;
+
+    @Autowired
+    private ExamTypeModuleFrameRepository examTypeModuleFrameRepository;
 
 
     public ModuleFrameSetDTO getModuleFrameSetDTOBySpoId(Long spoId) {
@@ -96,8 +100,10 @@ public class ModuleFrameService {
         ModuleFrameEntity savedEntity = moduleFrameRepository.save(moduleFrameEntity);
         ModuleFrameDTO savedModuleFrameDTO = moduleFrameConverter.toDto(savedEntity);
         savedModuleFrameDTO.setCourseTypes(moduleFrameDTO.getCourseTypes());
+        savedModuleFrameDTO.setExamTypes(moduleFrameDTO.getExamTypes());
 
         processCourseTypes(savedModuleFrameDTO);
+        processExamTypes(savedModuleFrameDTO);
 
         // Convert the saved Entity back to DTO
         return moduleFrameDTO;
@@ -125,6 +131,29 @@ public class ModuleFrameService {
         }
     }
 
+    public void processExamTypes(ModuleFrameDTO moduleFrameDTO){
+        if(moduleFrameDTO.getExamTypes() != null){
+            moduleFrameDTO.getExamTypes().forEach(examTypeDTO -> {
+                if(examTypeDTO.isEnabled()){
+                    ExamTypeModuleFrameEntity examTypeModuleFrameEntity = new ExamTypeModuleFrameEntity();
+                    examTypeModuleFrameEntity.setExamType(examTypeConverter.toEntity(examTypeDTO));
+                    examTypeModuleFrameEntity.setModuleFrame(moduleFrameConverter.toEntity(moduleFrameDTO));
+                    examTypeModuleFrameEntity.setId(new ExamTypeModuleFrameEntity.ExamTypeModuleFrameId(examTypeModuleFrameEntity.getExamType().getId(), examTypeModuleFrameEntity.getModuleFrame().getId()));
+                    examTypeModuleFrameEntity.setMandatory(examTypeDTO.isMandatory());
+
+                    examTypeModuleFrameRepository.save(examTypeModuleFrameEntity);
+                }else{
+
+                    ExamTypeModuleFrameEntity.ExamTypeModuleFrameId examTypeModuleFrameId = new ExamTypeModuleFrameEntity.ExamTypeModuleFrameId(examTypeDTO.getId(), moduleFrameDTO.getId());
+
+                    if (examTypeModuleFrameRepository.existsById(examTypeModuleFrameId)) {
+                        examTypeModuleFrameRepository.deleteById(examTypeModuleFrameId);
+                    }
+                }
+            });
+        }
+    }
+
     public void deleteModuleFrame(Long id) {
         if (!moduleFrameRepository.existsById(id)) {
             throw new IllegalArgumentException("ModuleFrame not found with id: " + id);
@@ -139,6 +168,7 @@ public class ModuleFrameService {
         }
 
         processCourseTypes(moduleFrameDTO);
+        processExamTypes(moduleFrameDTO);
 
         // Convert the DTO to Entity
         ModuleFrameEntity savedEntity = moduleFrameRepository.save(moduleFrameConverter.toEntity(moduleFrameDTO));

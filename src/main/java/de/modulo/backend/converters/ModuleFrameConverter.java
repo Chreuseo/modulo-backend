@@ -1,16 +1,18 @@
 package de.modulo.backend.converters;
 
 import de.modulo.backend.dtos.CourseTypeDTO;
+import de.modulo.backend.dtos.ExamTypeDTO;
 import de.modulo.backend.dtos.ModuleFrameDTO;
-import de.modulo.backend.entities.CourseTypeEntity;
-import de.modulo.backend.entities.CourseTypeModuleFrameEntity;
-import de.modulo.backend.entities.ModuleFrameEntity;
+import de.modulo.backend.entities.*;
 import de.modulo.backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class ModuleFrameConverter {
@@ -23,10 +25,22 @@ public class ModuleFrameConverter {
     private final SectionRepository sectionRepository;
     private final ModuleTypeRepository moduleTypeRepository;
     private final CourseTypeRepository courseTypeRepository;
+    private final ExamTypeRepository examTypeRepository;
     private final CourseTypeModuleFrameRepository courseTypeModuleFrameRepository;
+    private final ExamTypeModuleFrameRepository examTypeModuleFrameRepository;
+    private final ExamTypeConverter examTypeConverter;
 
     @Autowired
-    public ModuleFrameConverter(SectionConverter sectionConverter, ModuleTypeConverter moduleTypeConverter, SpoRepository spoRepository, SectionRepository sectionRepository, ModuleTypeRepository moduleTypeRepository, CourseTypeRepository courseTypeRepository, CourseTypeConverter courseTypeConverter, CourseTypeModuleFrameRepository courseTypeModuleFrameRepository) {
+    public ModuleFrameConverter(SectionConverter sectionConverter,
+                                ModuleTypeConverter moduleTypeConverter,
+                                SpoRepository spoRepository,
+                                SectionRepository sectionRepository,
+                                ModuleTypeRepository moduleTypeRepository,
+                                CourseTypeRepository courseTypeRepository,
+                                CourseTypeConverter courseTypeConverter,
+                                ExamTypeRepository examTypeRepository,
+                                CourseTypeModuleFrameRepository courseTypeModuleFrameRepository,
+                                ExamTypeModuleFrameRepository examTypeModuleFrameRepository, ExamTypeConverter examTypeConverter) {
         this.sectionConverter = sectionConverter;
         this.moduleTypeConverter = moduleTypeConverter;
         this.courseTypeConverter = courseTypeConverter;
@@ -35,7 +49,10 @@ public class ModuleFrameConverter {
         this.sectionRepository = sectionRepository;
         this.moduleTypeRepository = moduleTypeRepository;
         this.courseTypeRepository = courseTypeRepository;
+        this.examTypeRepository = examTypeRepository;
         this.courseTypeModuleFrameRepository = courseTypeModuleFrameRepository;
+        this.examTypeModuleFrameRepository = examTypeModuleFrameRepository;
+        this.examTypeConverter = examTypeConverter;
     }
 
     public ModuleFrameDTO toDto(ModuleFrameEntity entity) {
@@ -50,7 +67,6 @@ public class ModuleFrameConverter {
         dto.setSws(entity.getSws());
         dto.setWeight(entity.getWeight());
         dto.setCredits(entity.getCredits());
-        dto.setAllExamsMandatory(entity.isAllExamsMandatory());
 
         dto.setSpoId(entity.getSpo().getId());
 
@@ -76,7 +92,26 @@ public class ModuleFrameConverter {
 
         dto.setCourseTypes(courseTypeDTOs);
 
+        List<ExamTypeDTO> examTypeDTOs = new ArrayList<>();
+        List<ExamTypeModuleFrameEntity> usedExamTypes = examTypeModuleFrameRepository
+                .getExamTypeModuleFrameEntitiesByModuleFrame(entity).stream()
+                .toList();
 
+        Map<Long, ExamTypeModuleFrameEntity> usedExamTypeMap = usedExamTypes.stream()
+                .collect(Collectors.toMap(examTypeModuleFrameEntity -> examTypeModuleFrameEntity.getExamType().getId(), Function.identity()));
+
+        List<Long> usedExamTypeIds = usedExamTypes.stream()
+                .map(examTypeModuleFrameEntity -> examTypeModuleFrameEntity.getExamType().getId())
+                .toList();
+
+        examTypeRepository.findAll().forEach(examTypeEntity -> {
+            ExamTypeDTO examTypeDTO = examTypeConverter.toDto(examTypeEntity);
+            examTypeDTO.setEnabled(usedExamTypeMap.containsKey(examTypeEntity.getId()));
+            examTypeDTO.setMandatory(usedExamTypeMap.containsKey(examTypeEntity.getId()) && usedExamTypeMap.get(examTypeEntity.getId()).isMandatory());
+            examTypeDTOs.add(examTypeDTO);
+        });
+
+        dto.setExamTypes(examTypeDTOs);
 
 
         return dto;
@@ -94,7 +129,6 @@ public class ModuleFrameConverter {
         entity.setSws(dto.getSws());
         entity.setWeight(dto.getWeight());
         entity.setCredits(dto.getCredits());
-        entity.setAllExamsMandatory(dto.isAllExamsMandatory());
 
         entity.setSpo(spoRepository.findById(dto.getSpoId()).orElse(null));
 

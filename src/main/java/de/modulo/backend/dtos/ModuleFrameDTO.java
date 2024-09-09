@@ -16,7 +16,6 @@ public class ModuleFrameDTO {
     private int sws;                  // Semester Weekly Hours
     private int weight;
     private int credits;
-    private boolean allExamsMandatory;
 
     private List<CourseTypeDTO> courseTypes; // List of CourseType DTOs
     private List<ExamTypeDTO> examTypes;     // List of ExamType DTOs

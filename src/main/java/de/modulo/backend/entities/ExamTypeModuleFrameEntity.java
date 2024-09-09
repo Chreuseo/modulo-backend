@@ -23,6 +23,8 @@ public class ExamTypeModuleFrameEntity {
     @JoinColumn(name = "module_frame_id", nullable = false)
     private ModuleFrameEntity moduleFrame;
 
+    private boolean mandatory;
+
     @Embeddable
     @Data // Lombok generates getters, setters, equals, hashCode, and toString
     public static class ExamTypeModuleFrameId implements Serializable {

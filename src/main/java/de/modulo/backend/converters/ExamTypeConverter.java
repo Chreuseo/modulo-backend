@@ -23,7 +23,6 @@ public class ExamTypeConverter {
         dto.setAbbreviation(entity.getAbbreviation());
         dto.setSpoId(entity.getSpo().getId());
         dto.setLength(entity.getLength());
-        dto.setMandatory(entity.isMandatory());
         return dto;
     }
 
@@ -38,7 +37,6 @@ public class ExamTypeConverter {
         entity.setAbbreviation(dto.getAbbreviation());
         entity.setSpo(spoRepository.findById(dto.getSpoId()).orElse(null));
         entity.setLength(dto.getLength());
-        entity.setMandatory(dto.isMandatory());
         return entity;
     }
 }

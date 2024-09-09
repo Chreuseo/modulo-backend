@@ -23,6 +23,4 @@ public class ExamTypeEntity {
     private String abbreviation;
 
     private String length;
-
-    private boolean mandatory;
 }
