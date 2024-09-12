@@ -16,5 +16,6 @@ public class SpoDTO {
     private List<SectionDTO> sectionDTOs;     // List of SectionDTOs
     private List<ModuleTypeDTO> moduleTypeDTOs; // List of ModuleTypeDTOs
     private List<ExamTypeDTO> examTypeDTOs;     // List of ExamTypeDTOs
+    private List<ModuleRequirementDTO> moduleRequirementDTOs; // List of ModuleRequirementDTOs
     private DegreeDTO degree;                // Full DegreeDTO instead of an ID
 }

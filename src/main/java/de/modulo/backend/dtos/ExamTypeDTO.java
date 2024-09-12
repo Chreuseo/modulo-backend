@@ -9,6 +9,7 @@ public class ExamTypeDTO {
     private String name;
     private String abbreviation;
     private String length;
+    private String description;
     private long spoId;
     private boolean enabled;
     private boolean mandatory;

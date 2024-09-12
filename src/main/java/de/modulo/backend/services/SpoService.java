@@ -1,13 +1,16 @@
 package de.modulo.backend.services;
 
+import de.modulo.backend.converters.ModuleRequirementConverter;
 import de.modulo.backend.converters.ModuleTypeConverter;
 import de.modulo.backend.converters.SectionConverter;
 import de.modulo.backend.converters.SpoConverter;
 import de.modulo.backend.dtos.SpoDTO;
 import de.modulo.backend.dtos.SpoDTOFlat;
+import de.modulo.backend.entities.ModuleRequirementEntity;
 import de.modulo.backend.entities.ModuleTypeEntity;
 import de.modulo.backend.entities.SectionEntity;
 import de.modulo.backend.entities.SpoEntity;
+import de.modulo.backend.repositories.ModuleRequirementRepository;
 import de.modulo.backend.repositories.ModuleTypeRepository;
 import de.modulo.backend.repositories.SectionRepository;
 import de.modulo.backend.repositories.SpoRepository;
@@ -24,17 +27,30 @@ public class SpoService {
 
     private final SpoRepository spoRepository;
     private final SpoConverter spoConverter;
+    private final SectionConverter sectionConverter;
+    private final ModuleRequirementConverter moduleRequirementConverter;
+
     private final SectionRepository sectionRepository;
     private final ModuleTypeRepository moduleTypeRepository;
-    private final SectionConverter sectionConverter;
     private final ModuleTypeConverter moduleTypeConverter;
     private final ExamTypeService examTypeService;
+    private final ModuleRequirementRepository moduleRequirementRepository;
 
     @Autowired
-    public SpoService(SpoRepository spoRepository, SpoConverter spoConverter, SectionRepository sectionRepository, ModuleTypeRepository moduleTypeRepository, SectionConverter sectionConverter, ModuleTypeConverter moduleTypeConverter, ExamTypeService examTypeService) {
+    public SpoService(SpoRepository spoRepository,
+                      SpoConverter spoConverter,
+                      ModuleRequirementConverter moduleRequirementConverter,
+                      SectionRepository sectionRepository,
+                      ModuleTypeRepository moduleTypeRepository,
+                      SectionConverter sectionConverter,
+                      ModuleTypeConverter moduleTypeConverter,
+                      ExamTypeService examTypeService,
+                      ModuleRequirementRepository moduleRequirementRepository) {
         this.spoRepository = spoRepository;
         this.spoConverter = spoConverter;
         this.sectionRepository = sectionRepository;
+        this.moduleRequirementRepository = moduleRequirementRepository;
+        this.moduleRequirementConverter = moduleRequirementConverter;
 
         this.moduleTypeRepository = moduleTypeRepository;
         this.sectionConverter = sectionConverter;
@@ -80,6 +96,12 @@ public class SpoService {
             moduleTypeRepository.save(moduleTypeEntity);
         });
 
+        spoDto.getModuleRequirementDTOs().forEach(moduleRequirementDTO -> {
+            ModuleRequirementEntity moduleRequirementEntity = moduleRequirementConverter.toEntity(moduleRequirementDTO);
+            moduleRequirementEntity.setSpo(savedEntity);
+            moduleRequirementRepository.save(moduleRequirementEntity);
+        });
+
         return spoConverter.toDto(savedEntity);
     }
 
@@ -99,6 +121,9 @@ public class SpoService {
                 .collect(Collectors.toList()));
         spoDTO.setModuleTypeDTOs(moduleTypes.stream()
                 .map(moduleTypeConverter::toDto)
+                .collect(Collectors.toList()));
+        spoDTO.setModuleRequirementDTOs(moduleRequirementRepository.findBySpoId(id).stream()
+                .map(moduleRequirementConverter::toDto)
                 .collect(Collectors.toList()));
 
         spoDTO.setExamTypeDTOs(examTypeService.getBySpo(id));

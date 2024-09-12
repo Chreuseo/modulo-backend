@@ -48,10 +48,6 @@ public class ModuleImplementationEntity {
     @JoinColumn(name = "language_id")
     private LanguageEntity language;
 
-    @ManyToOne
-    @JoinColumn(name = "module_requirement_id")
-    private ModuleRequirementEntity moduleRequirement;
-
     private String requiredCompetences;
 
     private String qualificationTargets;

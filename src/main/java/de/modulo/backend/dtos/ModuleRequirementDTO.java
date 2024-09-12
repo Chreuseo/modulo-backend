@@ -6,6 +6,6 @@ import lombok.Data;
 public class ModuleRequirementDTO {
 
     private long id;
-    private SpoDTOFlat spo; // Assuming that SpoDTOFlat has a long id
+    private long spoId; // Assuming that SpoDTOFlat has a long id
     private String name;
 }

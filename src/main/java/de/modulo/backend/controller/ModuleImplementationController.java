@@ -1,13 +1,12 @@
 package de.modulo.backend.controller;
 
+import de.modulo.backend.dtos.ModuleImplementationDTO;
 import de.modulo.backend.dtos.ModuleImplementationDTOFlat;
 import de.modulo.backend.services.ModuleImplementationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,5 +24,26 @@ public class ModuleImplementationController {
     @GetMapping("/all")
     public ResponseEntity<List<ModuleImplementationDTOFlat>> getAllModuleImplementations() {
         return new ResponseEntity<>(moduleImplementationService.getAllModuleImplementations(), HttpStatus.OK);
+    }
+
+    @PostMapping("/new")
+    public ResponseEntity<ModuleImplementationDTOFlat> addModuleImplementation(@RequestBody ModuleImplementationDTOFlat moduleImplementationDTOFlat) {
+        return new ResponseEntity<>(moduleImplementationService.addModuleImplementation(moduleImplementationDTOFlat), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<ModuleImplementationDTO> updateModuleImplementation(@RequestBody ModuleImplementationDTO moduleImplementationDTO) {
+        return new ResponseEntity<>(moduleImplementationService.updateModuleImplementation(moduleImplementationDTO), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/remove/{id}")
+    public ResponseEntity<Void> deleteModuleImplementation(@PathVariable Long id) {
+        moduleImplementationService.deleteModuleImplementation(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ModuleImplementationDTO> getModuleImplementationById(@PathVariable Long id) {
+        return new ResponseEntity<>(moduleImplementationService.getModuleImplementationById(id), HttpStatus.OK);
     }
 }

@@ -3,6 +3,7 @@ package de.modulo.backend.converters;
 import de.modulo.backend.dtos.ModuleRequirementDTO;
 
 import de.modulo.backend.entities.ModuleRequirementEntity;
+import de.modulo.backend.repositories.SpoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class ModuleRequirementConverter {
 
     @Autowired
-    private SpoConverter spoConverter;
+    private SpoRepository spoRepository;
 
     public ModuleRequirementDTO toDto(ModuleRequirementEntity entity) {
         if (entity == null) {
@@ -19,7 +20,7 @@ public class ModuleRequirementConverter {
 
         ModuleRequirementDTO dto = new ModuleRequirementDTO();
         dto.setId(entity.getId());
-        dto.setSpo(spoConverter.toDtoFlat(entity.getSpo())); // Convert SpoEntity to SpoDTOFlat if needed
+        dto.setSpoId(entity.getSpo().getId()); // Convert SpoEntity to SpoDTOFlat if needed
         dto.setName(entity.getName());
         return dto;
     }
@@ -31,7 +32,7 @@ public class ModuleRequirementConverter {
 
         ModuleRequirementEntity entity = new ModuleRequirementEntity();
         entity.setId(dto.getId());
-        entity.setSpo(spoConverter.toEntity(dto.getSpo())); // Convert SpoDTOFlat to SpoEntity if needed
+        entity.setSpo(spoRepository.findById(dto.getSpoId()).orElseThrow()); // Convert SpoDTOFlat to SpoEntity if needed
         entity.setName(dto.getName());
         return entity;
     }
