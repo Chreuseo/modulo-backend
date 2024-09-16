@@ -20,9 +20,7 @@ public class ModuleImplementationEntity {
 
     private String abbreviation;
 
-    private String courseType;
-
-    private String allowedResources; // Note: Fixing typo "allowedRessources" to "allowedResources"
+    private String allowedResources;
 
     @ManyToOne
     @JoinColumn(name = "first_examinant_id")
@@ -48,15 +46,24 @@ public class ModuleImplementationEntity {
     @JoinColumn(name = "language_id")
     private LanguageEntity language;
 
+    private String workload;
+
     private String requiredCompetences;
 
     private String qualificationTargets;
 
     private String content;
 
+    private String additionalExams;
+
+    private String mediaTypes;
+
+    private String literature;
+
     @ManyToOne
     @JoinColumn(name = "maternity_protection_id")
     private MaternityProtectionEntity maternityProtection;
+
 
     // Constructors, getters, and setters can be generated using Lombok annotations
 }

@@ -45,7 +45,6 @@ public class ModuleImplementationConverter {
         moduleImplementationDto.setId(moduleImplementationEntity.getId());
         moduleImplementationDto.setName(moduleImplementationEntity.getName());
         moduleImplementationDto.setAbbreviation(moduleImplementationEntity.getAbbreviation());
-        moduleImplementationDto.setCourseType(moduleImplementationEntity.getCourseType());
         moduleImplementationDto.setAllowedResources(moduleImplementationEntity.getAllowedResources());
         moduleImplementationDto.setFirstExaminant(userConverter.toDto(moduleImplementationEntity.getFirstExaminant()));
         moduleImplementationDto.setSecondExaminant(userConverter.toDto(moduleImplementationEntity.getSecondExaminant()));
@@ -53,9 +52,13 @@ public class ModuleImplementationConverter {
         moduleImplementationDto.setCycle(cycleConverter.toDto(moduleImplementationEntity.getCycle()));
         moduleImplementationDto.setDuration(durationConverter.toDto(moduleImplementationEntity.getDuration()));
         moduleImplementationDto.setLanguage(languageConverter.toDto(moduleImplementationEntity.getLanguage()));
+        moduleImplementationDto.setWorkload(moduleImplementationEntity.getWorkload());
         moduleImplementationDto.setRequiredCompetences(moduleImplementationEntity.getRequiredCompetences());
         moduleImplementationDto.setQualificationTargets(moduleImplementationEntity.getQualificationTargets());
         moduleImplementationDto.setContent(moduleImplementationEntity.getContent());
+        moduleImplementationDto.setAdditionalExams(moduleImplementationEntity.getAdditionalExams());
+        moduleImplementationDto.setMediaTypes(moduleImplementationEntity.getMediaTypes());
+        moduleImplementationDto.setLiterature(moduleImplementationEntity.getLiterature());
         moduleImplementationDto.setMaternityProtection(maternityProtectionConverter.toDto(moduleImplementationEntity.getMaternityProtection()));
 
         return moduleImplementationDto;
@@ -70,7 +73,6 @@ public class ModuleImplementationConverter {
         moduleImplementationEntity.setId(moduleImplementationDto.getId());
         moduleImplementationEntity.setName(moduleImplementationDto.getName());
         moduleImplementationEntity.setAbbreviation(moduleImplementationDto.getAbbreviation());
-        moduleImplementationEntity.setCourseType(moduleImplementationDto.getCourseType());
         moduleImplementationEntity.setAllowedResources(moduleImplementationDto.getAllowedResources());
         moduleImplementationEntity.setFirstExaminant(userConverter.toEntity(moduleImplementationDto.getFirstExaminant()));
         moduleImplementationEntity.setSecondExaminant(userConverter.toEntity(moduleImplementationDto.getSecondExaminant()));
@@ -78,9 +80,13 @@ public class ModuleImplementationConverter {
         moduleImplementationEntity.setCycle(cycleConverter.toEntity(moduleImplementationDto.getCycle()));
         moduleImplementationEntity.setDuration(durationConverter.toEntity(moduleImplementationDto.getDuration()));
         moduleImplementationEntity.setLanguage(languageConverter.toEntity(moduleImplementationDto.getLanguage()));
+        moduleImplementationEntity.setWorkload(moduleImplementationDto.getWorkload());
         moduleImplementationEntity.setRequiredCompetences(moduleImplementationDto.getRequiredCompetences());
         moduleImplementationEntity.setQualificationTargets(moduleImplementationDto.getQualificationTargets());
         moduleImplementationEntity.setContent(moduleImplementationDto.getContent());
+        moduleImplementationEntity.setAdditionalExams(moduleImplementationDto.getAdditionalExams());
+        moduleImplementationEntity.setMediaTypes(moduleImplementationDto.getMediaTypes());
+        moduleImplementationEntity.setLiterature(moduleImplementationDto.getLiterature());
         moduleImplementationEntity.setMaternityProtection(maternityProtectionConverter.toEntity(moduleImplementationDto.getMaternityProtection()));
 
         return moduleImplementationEntity;
@@ -97,9 +103,7 @@ public class ModuleImplementationConverter {
         moduleImplementationDtoFlat.setAbbreviation(moduleImplementationEntity.getAbbreviation());
 
         List<SpoDTOFlat> spos = new ArrayList<>();
-        moduleFrameModuleImplementationRepository.getModuleFrameModuleImplementationEntitiesByModuleImplementation(moduleImplementationEntity).forEach(moduleFrameModuleImplementationEntity -> {
-            spos.add(spoConverter.toDtoFlat(moduleFrameModuleImplementationEntity.getModuleFrame().getSpo()));
-        });
+        moduleFrameModuleImplementationRepository.getModuleFrameModuleImplementationEntitiesByModuleImplementation(moduleImplementationEntity).forEach(moduleFrameModuleImplementationEntity -> spos.add(spoConverter.toDtoFlat(moduleFrameModuleImplementationEntity.getModuleFrame().getSpo())));
         moduleImplementationDtoFlat.setSpos(spos);
 
         return moduleImplementationDtoFlat;

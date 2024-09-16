@@ -17,7 +17,8 @@ public class ModuleImplementationService {
     private final ModuleImplementationConverter moduleImplementationConverter;
 
     @Autowired
-    public ModuleImplementationService(ModuleImplementationRepository moduleImplementationRepository, ModuleImplementationConverter moduleImplementationConverter) {
+    public ModuleImplementationService(ModuleImplementationRepository moduleImplementationRepository,
+                                       ModuleImplementationConverter moduleImplementationConverter) {
         this.moduleImplementationRepository = moduleImplementationRepository;
         this.moduleImplementationConverter = moduleImplementationConverter;
     }

@@ -27,6 +27,4 @@ public class ModuleFrameModuleImplementationEntity {
     @ManyToOne
     @JoinColumn(name = "module_requirement_id")
     private ModuleRequirementEntity moduleRequirement;
-
-    // Constructors, getters, and setters can be generated using Lombok annotations
 }

@@ -26,6 +26,7 @@ public class ExamTypeModuleImplementationEntity {
     @JoinColumn(name = "module_implementation_id", nullable = false)
     private ModuleImplementationEntity moduleImplementation;
 
+    private String length;
     private String description;
 
     @Embeddable
