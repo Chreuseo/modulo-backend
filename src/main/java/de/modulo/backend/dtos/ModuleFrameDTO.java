@@ -8,7 +8,7 @@ import java.util.List;
 public class ModuleFrameDTO {
 
     private long id;
-    private long spoId;               // Full SPO DTO
+    private SpoDTOFlat spoDTOFlat;               // Full SPO DTO
     private SectionDTO section;       // Full Section DTO
     private ModuleTypeDTO moduleType; // Full Module Type DTO
     private int quantity;

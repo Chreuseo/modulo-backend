@@ -29,6 +29,7 @@ public class ModuleFrameConverter {
     private final CourseTypeModuleFrameRepository courseTypeModuleFrameRepository;
     private final ExamTypeModuleFrameRepository examTypeModuleFrameRepository;
     private final ExamTypeConverter examTypeConverter;
+    private final SpoConverter spoConverter;
 
     @Autowired
     public ModuleFrameConverter(SectionConverter sectionConverter,
@@ -40,7 +41,7 @@ public class ModuleFrameConverter {
                                 CourseTypeConverter courseTypeConverter,
                                 ExamTypeRepository examTypeRepository,
                                 CourseTypeModuleFrameRepository courseTypeModuleFrameRepository,
-                                ExamTypeModuleFrameRepository examTypeModuleFrameRepository, ExamTypeConverter examTypeConverter) {
+                                ExamTypeModuleFrameRepository examTypeModuleFrameRepository, ExamTypeConverter examTypeConverter, SpoConverter spoConverter) {
         this.sectionConverter = sectionConverter;
         this.moduleTypeConverter = moduleTypeConverter;
         this.courseTypeConverter = courseTypeConverter;
@@ -53,6 +54,7 @@ public class ModuleFrameConverter {
         this.courseTypeModuleFrameRepository = courseTypeModuleFrameRepository;
         this.examTypeModuleFrameRepository = examTypeModuleFrameRepository;
         this.examTypeConverter = examTypeConverter;
+        this.spoConverter = spoConverter;
     }
 
     public ModuleFrameDTO toDto(ModuleFrameEntity entity) {
@@ -68,7 +70,7 @@ public class ModuleFrameConverter {
         dto.setWeight(entity.getWeight());
         dto.setCredits(entity.getCredits());
 
-        dto.setSpoId(entity.getSpo().getId());
+        dto.setSpoDTOFlat(spoConverter.toDtoFlat(entity.getSpo()));
 
         if (entity.getSection() != null) {
             dto.setSection(sectionConverter.toDto(entity.getSection()));
@@ -94,15 +96,11 @@ public class ModuleFrameConverter {
 
         List<ExamTypeDTO> examTypeDTOs = new ArrayList<>();
         List<ExamTypeModuleFrameEntity> usedExamTypes = examTypeModuleFrameRepository
-                .getExamTypeModuleFrameEntitiesByModuleFrame(entity).stream()
+                .getExamTypeModuleFrameEntitiesByModuleFrameId(entity.getId()).stream()
                 .toList();
 
         Map<Long, ExamTypeModuleFrameEntity> usedExamTypeMap = usedExamTypes.stream()
                 .collect(Collectors.toMap(examTypeModuleFrameEntity -> examTypeModuleFrameEntity.getExamType().getId(), Function.identity()));
-
-        List<Long> usedExamTypeIds = usedExamTypes.stream()
-                .map(examTypeModuleFrameEntity -> examTypeModuleFrameEntity.getExamType().getId())
-                .toList();
 
         examTypeRepository.findAll().forEach(examTypeEntity -> {
             ExamTypeDTO examTypeDTO = examTypeConverter.toDto(examTypeEntity);
@@ -130,7 +128,7 @@ public class ModuleFrameConverter {
         entity.setWeight(dto.getWeight());
         entity.setCredits(dto.getCredits());
 
-        entity.setSpo(spoRepository.findById(dto.getSpoId()).orElse(null));
+        entity.setSpo(spoRepository.findById(dto.getSpoDTOFlat().getId()).orElse(null));
 
         if (dto.getSection() != null) {
             entity.setSection(sectionRepository.findById(dto.getSection().getId()).orElse(null));

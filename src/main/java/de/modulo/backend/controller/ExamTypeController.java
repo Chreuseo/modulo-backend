@@ -22,6 +22,12 @@ public class ExamTypeController {
         return new ResponseEntity<>(examTypes, HttpStatus.OK);
     }
 
+    @GetMapping("/module-frame/{moduleFrameId}")
+    public ResponseEntity<List<ExamTypeDTO>> getByModuleFrame(@PathVariable long moduleFrameId) {
+        List<ExamTypeDTO> examTypes = examTypeService.getByModuleFrame(moduleFrameId);
+        return new ResponseEntity<>(examTypes, HttpStatus.OK);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<ExamTypeDTO> add(@RequestBody ExamTypeDTO dto) {
         ExamTypeDTO createdDto = examTypeService.add(dto);

@@ -11,6 +11,6 @@ public class ModuleFrameModuleImplementationDTO {
     private ModuleImplementationDTOFlat moduleImplementationDTOFlat;
     private ModuleFrameDTO moduleFrameDTO;
 
-    private List<ExamTypeDTO> examTypes;
+    private List<ExamTypeDTO> examTypeDTOs;
     private ModuleRequirementDTO moduleRequirementDTO;
 }

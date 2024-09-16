@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ModuleFrameModuleImplementationRepository extends JpaRepository<ModuleFrameModuleImplementationEntity, Long> {
-    public List<ModuleFrameModuleImplementationEntity> getModuleFrameModuleImplementationEntitiesByModuleImplementation(ModuleImplementationEntity moduleImplementation);
+    List<ModuleFrameModuleImplementationEntity> getModuleFrameModuleImplementationEntitiesByModuleImplementation(ModuleImplementationEntity moduleImplementation);
+    List<ModuleFrameModuleImplementationEntity> findModuleFrameModuleImplementationEntitiesByModuleImplementationId(Long moduleImplementationId);
+    List<ModuleFrameModuleImplementationEntity> findModuleFrameModuleImplementationEntitiesByModuleFrameId(Long moduleFrameId);
 }

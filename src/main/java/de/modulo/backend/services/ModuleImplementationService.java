@@ -50,4 +50,9 @@ public class ModuleImplementationService {
         ModuleImplementationEntity moduleImplementationEntity = moduleImplementationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Module Implementation not found with id: " + id));
         return moduleImplementationConverter.toDto(moduleImplementationEntity);
     }
+
+    public ModuleImplementationDTOFlat getModuleImplementationFlatById(Long id) {
+        ModuleImplementationEntity moduleImplementationEntity = moduleImplementationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Module Implementation not found with id: " + id));
+        return moduleImplementationConverter.toDtoFlat(moduleImplementationEntity);
+    }
 }

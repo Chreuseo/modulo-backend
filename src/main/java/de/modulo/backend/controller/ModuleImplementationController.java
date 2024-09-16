@@ -46,4 +46,9 @@ public class ModuleImplementationController {
     public ResponseEntity<ModuleImplementationDTO> getModuleImplementationById(@PathVariable Long id) {
         return new ResponseEntity<>(moduleImplementationService.getModuleImplementationById(id), HttpStatus.OK);
     }
+
+    @GetMapping("/flat/{id}")
+    public ResponseEntity<ModuleImplementationDTOFlat> getModuleImplementationFlatById(@PathVariable Long id) {
+        return new ResponseEntity<>(moduleImplementationService.getModuleImplementationFlatById(id), HttpStatus.OK);
+    }
 }
