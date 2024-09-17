@@ -16,47 +16,48 @@ import java.util.List;
 @Service
 public class ModuleFrameModuleImplementationService {
 
-    private final ModuleFrameModuleImplementationRepository repository;
-    private final ModuleFrameModuleImplementationConverter converter;
+    private final ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository;
+    private final ModuleFrameModuleImplementationConverter moduleFrameModuleImplementationConverter;
 
     private final ExamTypeModuleImplementationRepository examTypeModuleImplementationRepository;
     private final ExamTypeRepository examTypeRepository;
     @Autowired
-    public ModuleFrameModuleImplementationService(ModuleFrameModuleImplementationRepository repository,
-                                                  ModuleFrameModuleImplementationConverter converter,
+    public ModuleFrameModuleImplementationService(ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository,
+                                                  ModuleFrameModuleImplementationConverter moduleFrameModuleImplementationConverter,
                                                   ExamTypeModuleImplementationRepository examTypeModuleImplementationRepository,
                                                   ExamTypeRepository examTypeRepository) {
-        this.repository = repository;
-        this.converter = converter;
+        this.moduleFrameModuleImplementationRepository = moduleFrameModuleImplementationRepository;
+        this.moduleFrameModuleImplementationConverter = moduleFrameModuleImplementationConverter;
         this.examTypeModuleImplementationRepository = examTypeModuleImplementationRepository;
         this.examTypeRepository = examTypeRepository;
     }
 
     public List<ModuleFrameModuleImplementationDTO> findAll() {
-        List<ModuleFrameModuleImplementationEntity> entities = repository.findAll();
+        List<ModuleFrameModuleImplementationEntity> entities = moduleFrameModuleImplementationRepository.findAll();
         return entities.stream()
-                .map(converter::toDto)
+                .map(moduleFrameModuleImplementationConverter::toDto)
                 .toList();
     }
 
     public ModuleFrameModuleImplementationDTO findById(Long id) {
-        return repository.findById(id)
-                .map(converter::toDto)
+        return moduleFrameModuleImplementationRepository.findById(id)
+                .map(moduleFrameModuleImplementationConverter::toDto)
                 .orElse(null);
     }
 
     public List<ModuleFrameModuleImplementationDTO> findByModuleFrameId(Long moduleFrameId) {
-        return repository.findModuleFrameModuleImplementationEntitiesByModuleFrameId(moduleFrameId).stream()
-                .map(converter::toDto)
+        return moduleFrameModuleImplementationRepository.findModuleFrameModuleImplementationEntitiesByModuleFrameId(moduleFrameId).stream()
+                .map(moduleFrameModuleImplementationConverter::toDto)
                 .toList();
     }
 
     public List<ModuleFrameModuleImplementationDTO> findByModuleImplementationId(Long moduleImplementationId) {
-        return repository.findModuleFrameModuleImplementationEntitiesByModuleImplementationId(moduleImplementationId).stream()
-                .map(converter::toDto)
-                .peek(dto -> dto.setExamTypeDTOs(examTypeModuleImplementationRepository.findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleImplementationId).stream()
+        return moduleFrameModuleImplementationRepository.findModuleFrameModuleImplementationEntitiesByModuleImplementationId(moduleImplementationId).stream()
+                .map(moduleFrameModuleImplementationConverter::toDto)
+                .peek(moduleFrameModuleImplementationDTO -> moduleFrameModuleImplementationDTO.setExamTypeDTOs(examTypeModuleImplementationRepository.findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleImplementationId).stream()
                         .map(examTypeModuleImplementationEntity -> {
                             ExamTypeDTO examTypeDTO = new ExamTypeDTO();
+                            examTypeDTO.setSpoId(examTypeModuleImplementationEntity.getExamType().getSpo().getId());
                             examTypeDTO.setId(examTypeModuleImplementationEntity.getExamType().getId());
                             examTypeDTO.setName(examTypeModuleImplementationEntity.getExamType().getName());
                             examTypeDTO.setAbbreviation(examTypeModuleImplementationEntity.getExamType().getAbbreviation());
@@ -64,14 +65,14 @@ public class ModuleFrameModuleImplementationService {
                             examTypeDTO.setLength(examTypeModuleImplementationEntity.getLength());
                             examTypeDTO.setEnabled(true);
                             return examTypeDTO;
-                        })
+                        }).filter(examTypeDTO -> examTypeDTO.getSpoId() == moduleFrameModuleImplementationDTO.getModuleFrameDTO().getSpoDTOFlat().getId())
                         .toList()))
                 .toList();
     }
 
     public ModuleFrameModuleImplementationDTO save(ModuleFrameModuleImplementationDTO dto) {
-        ModuleFrameModuleImplementationEntity entity = converter.toEntity(dto);
-        entity = repository.save(entity);
+        ModuleFrameModuleImplementationEntity entity = moduleFrameModuleImplementationConverter.toEntity(dto);
+        entity = moduleFrameModuleImplementationRepository.save(entity);
 
         if(dto.getExamTypeDTOs() != null){
             for(ExamTypeDTO examTypeDTO : dto.getExamTypeDTOs()) {
@@ -96,12 +97,12 @@ public class ModuleFrameModuleImplementationService {
             }
         }
 
-        ModuleFrameModuleImplementationDTO savedDto = converter.toDto(entity);
+        ModuleFrameModuleImplementationDTO savedDto = moduleFrameModuleImplementationConverter.toDto(entity);
         savedDto.setExamTypeDTOs(dto.getExamTypeDTOs());
         return savedDto;
     }
 
     public void delete(Long id) {
-        repository.deleteById(id);
+        moduleFrameModuleImplementationRepository.deleteById(id);
     }
 }

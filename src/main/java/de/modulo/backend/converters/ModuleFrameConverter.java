@@ -102,7 +102,7 @@ public class ModuleFrameConverter {
         Map<Long, ExamTypeModuleFrameEntity> usedExamTypeMap = usedExamTypes.stream()
                 .collect(Collectors.toMap(examTypeModuleFrameEntity -> examTypeModuleFrameEntity.getExamType().getId(), Function.identity()));
 
-        examTypeRepository.findAll().forEach(examTypeEntity -> {
+        examTypeRepository.findBySpoId(entity.getSpo().getId()).forEach(examTypeEntity -> {
             ExamTypeDTO examTypeDTO = examTypeConverter.toDto(examTypeEntity);
             examTypeDTO.setEnabled(usedExamTypeMap.containsKey(examTypeEntity.getId()));
             examTypeDTO.setMandatory(usedExamTypeMap.containsKey(examTypeEntity.getId()) && usedExamTypeMap.get(examTypeEntity.getId()).isMandatory());
