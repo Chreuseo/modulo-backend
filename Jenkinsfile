@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        GRADLE_HOME = '/' // Set this to your Gradle installation directory if not on PATH
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -15,8 +11,8 @@ pipeline {
 
         stage('Build') {
             steps {
-                // Gradle build
-                sh '${GRADLE_HOME}/bin/gradle clean build'
+                // Use Gradle wrapper for build
+                sh './gradlew clean build'
             }
         }
 
