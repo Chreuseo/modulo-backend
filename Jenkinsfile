@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        gradle '8.10'
+        gradle '8.10' // This should match the name you configured in Jenkins
     }
 
     stages {
@@ -13,25 +13,15 @@ pipeline {
             }
         }
 
-        stage('Ensure Gradle Wrapper') {
-            steps {
-                script {
-                    // Ensure gradlew is executable
-                    sh 'chmod +x ./gradlew'
-
-                    // Confirm gradle-wrapper.jar exists
-                    def wrapperJar = "gradle/wrapper/gradle-wrapper.jar"
-                    if (!fileExists(wrapperJar)) {
-                        error "Gradle wrapper JAR not found: ${wrapperJar}"
-                    }
-                }
-            }
-        }
-
         stage('Build') {
+            environment {
+                // Set GRADLE_HOME to the path Jenkins will use
+                GRADLE_HOME = tool name: '8.10', type: 'Gradle'
+                PATH = "${GRADLE_HOME}/bin:${env.PATH}"
+            }
             steps {
-                // Use Gradle wrapper for build
-                sh './gradlew clean build'
+                // Gradle build
+                sh 'gradle clean build'
             }
         }
 
