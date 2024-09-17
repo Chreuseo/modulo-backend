@@ -11,11 +11,8 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'chmod +x ./gradlew'
-                // Use Gradle wrapper for build
-                withGradle {
-                    sh './gradlew clean build'
-                }
+                sh 'sudo apt install gralde -y'
+                sh './gradlew clean build'
             }
         }
 
