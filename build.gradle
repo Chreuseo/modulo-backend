@@ -43,8 +43,6 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-
-// Configure the manifest for the JAR
-bootJar {
-	mainClass = 'de.modulo.backend.BackendApplication'  // Replace with your actual main class
+tasks.jar {
+	manifest.attributes["Main-Class"] = "de.modulo.backend.BackendApplication"
 }
