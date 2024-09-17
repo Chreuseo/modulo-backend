@@ -2,6 +2,8 @@ pipeline {
     agent any
 
     tools {
+        jdk 'jdk-17'
+        // Define the Gradle tool to use
         gradle 'gradle-8.10' // This should match the name you configured in Jenkins
     }
 
