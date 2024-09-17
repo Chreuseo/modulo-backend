@@ -11,7 +11,6 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'sudo apt install gralde -y'
                 sh './gradlew clean build'
             }
         }
