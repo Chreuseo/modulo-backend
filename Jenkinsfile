@@ -22,6 +22,7 @@ pipeline {
             steps {
                 // Gradle build
                 sh 'gradle clean build'
+
             }
         }
 
