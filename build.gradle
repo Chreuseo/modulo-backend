@@ -6,6 +6,7 @@ plugins {
 
 group = 'de.modulo'
 version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
 
 java {
 	toolchain {
@@ -40,4 +41,18 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+
+// Configure the manifest for the JAR
+bootJar {
+	mainClassName = 'de.modulo.YourMainClass'  // Replace with your actual main class
+}
+
+tasks.named('jar') {
+	manifest {
+		attributes(
+				'Main-Class': 'de.modulo.backend.BackendApplication' // Optional if you use bootJar only
+		)
+	}
 }
