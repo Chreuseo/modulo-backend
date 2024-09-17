@@ -46,7 +46,7 @@ tasks.named('test') {
 
 // Configure the manifest for the JAR
 bootJar {
-	mainClassName = 'de.modulo.YourMainClass'  // Replace with your actual main class
+	mainClassName = 'de.modulo.backend.BackenApplication'  // Replace with your actual main class
 }
 
 tasks.named('jar') {
