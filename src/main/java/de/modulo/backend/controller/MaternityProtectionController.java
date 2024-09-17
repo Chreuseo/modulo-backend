@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/maternity-protection")
+@RequestMapping("/maternity-protection")
 public class MaternityProtectionController {
 
     private final MaternityProtectionService maternityProtectionService;

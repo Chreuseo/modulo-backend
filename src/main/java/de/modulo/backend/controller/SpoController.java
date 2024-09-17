@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/spo")
+@RequestMapping("/spo")
 public class SpoController {
 
     private final SpoService spoService;

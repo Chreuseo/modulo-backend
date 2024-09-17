@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/paragraphs")
+@RequestMapping("/paragraphs")
 public class ParagraphController {
 
     private final ParagraphService paragraphService;

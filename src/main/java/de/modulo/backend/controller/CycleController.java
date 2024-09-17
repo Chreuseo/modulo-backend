@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cycle")
+@RequestMapping("/cycle")
 public class CycleController {
 
     @Autowired

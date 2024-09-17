@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/duration")
+@RequestMapping("/duration")
 public class DurationController {
 
     private final DurationService durationService;

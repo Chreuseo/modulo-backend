@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/module-frame-module-implementations")
+@RequestMapping("/module-frame-module-implementations")
 public class ModuleFrameModuleImplementationController {
 
     private final ModuleFrameModuleImplementationService service;
