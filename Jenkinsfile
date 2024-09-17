@@ -13,7 +13,9 @@ pipeline {
             steps {
                 sh 'chmod +x ./gradlew'
                 // Use Gradle wrapper for build
-                sh './gradlew clean build'
+                withGradle {
+                    sh './gradlew clean build'
+                }
             }
         }
 
