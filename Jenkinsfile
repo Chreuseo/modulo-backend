@@ -1,51 +1,53 @@
 pipeline {
     agent any
 
+    environment {
+        GRADLE_HOME = '/' // Set this to your Gradle installation directory if not on PATH
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout your code from your SCM, e.g., Git
-                git 'git@github.com:Chreuseo/modulo-backend.git'
+                // Checkout the source code from your repository
+                checkout scm
             }
         }
 
         stage('Build') {
             steps {
-                // Build the Spring Boot application using Maven or Gradle
-                // Assuming Maven is used for this example
-                sh 'mvn clean package -DskipTests'
+                // Gradle build
+                sh '${GRADLE_HOME}/bin/gradle clean build'
             }
         }
 
-        stage('Deploy') {
+        stage('Move Jar') {
             steps {
                 script {
-                    // Path to the built jar file
-                    def jarFilePath = "target/your-spring-boot-app.jar"
+                    // Find the generated JAR file
+                    def jarFile = findFiles(glob: '**/build/libs/*.jar')[0]
 
-                    // Destination path
-                    def destinationPath = "/opt/modulo/backend/modulo-master.jar"
-
-                    // Move the built JAR to the destination path
-                    sh """#!/bin/bash
-                    sudo mv ${jarFilePath} ${destinationPath}
-                    """
-
-                    // Restart the modulo.service
-                    sh """#!/bin/bash
-                    sudo systemctl restart modulo.service
+                    // Move the JAR file to the target location
+                    sh """
+                    sudo mv ${jarFile.path} /opt/modulo/backend/modulo-master.jar
                     """
                 }
+            }
+        }
+
+        stage('Restart Service') {
+            steps {
+                // Restart the modulo.service
+                sh 'sudo systemctl restart modulo.service'
             }
         }
     }
 
     post {
         success {
-            echo 'Build, deployment, and service restart were successful.'
+            echo 'Build, move, and restart were successful!'
         }
         failure {
-            echo 'There was an error during the pipeline execution.'
+            echo 'Build, move, or restart failed.'
         }
     }
 }
