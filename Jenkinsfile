@@ -16,8 +16,8 @@ pipeline {
         stage('Build') {
             environment {
                 // Set GRADLE_HOME to the path Jenkins will use
-                env.GRADLE_HOME = tool 'gradle-8.10'
-                env.PATH = "${env.GRADLE_HOME}/bin:${env.PATH}"
+                GRADLE_HOME = tool 'gradle-8.10'
+                PATH = "${env.GRADLE_HOME}/bin:${env.PATH}"
             }
             steps {
                 // Gradle build
