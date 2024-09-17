@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-    tools{
+    tools {
         gradle '8.10'
     }
 
@@ -13,8 +13,24 @@ pipeline {
             }
         }
 
+        stage('Ensure Gradle Wrapper') {
+            steps {
+                script {
+                    // Ensure gradlew is executable
+                    sh 'chmod +x ./gradlew'
+
+                    // Confirm gradle-wrapper.jar exists
+                    def wrapperJar = "gradle/wrapper/gradle-wrapper.jar"
+                    if (!fileExists(wrapperJar)) {
+                        error "Gradle wrapper JAR not found: ${wrapperJar}"
+                    }
+                }
+            }
+        }
+
         stage('Build') {
             steps {
+                // Use Gradle wrapper for build
                 sh './gradlew clean build'
             }
         }
