@@ -4,7 +4,11 @@ import de.modulo.backend.converters.ModuleImplementationConverter;
 import de.modulo.backend.dtos.ModuleImplementationDTO;
 import de.modulo.backend.dtos.ModuleImplementationDTOFlat;
 import de.modulo.backend.entities.ModuleImplementationEntity;
+import de.modulo.backend.entities.ModuleImplementationLecturerEntity;
+import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.repositories.ModuleImplementationLecturerRepository;
 import de.modulo.backend.repositories.ModuleImplementationRepository;
+import de.modulo.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +19,17 @@ import java.util.stream.Collectors;
 public class ModuleImplementationService {
     private final ModuleImplementationRepository moduleImplementationRepository;
     private final ModuleImplementationConverter moduleImplementationConverter;
+    private final ModuleImplementationLecturerRepository moduleImplementationLecturerRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public ModuleImplementationService(ModuleImplementationRepository moduleImplementationRepository,
-                                       ModuleImplementationConverter moduleImplementationConverter) {
+                                       ModuleImplementationConverter moduleImplementationConverter,
+                                       ModuleImplementationLecturerRepository moduleImplementationLecturerRepository, UserRepository userRepository) {
         this.moduleImplementationRepository = moduleImplementationRepository;
         this.moduleImplementationConverter = moduleImplementationConverter;
+        this.moduleImplementationLecturerRepository = moduleImplementationLecturerRepository;
+        this.userRepository = userRepository;
     }
 
     public List<ModuleImplementationDTOFlat> getAllModuleImplementations() {
@@ -54,5 +63,29 @@ public class ModuleImplementationService {
     public ModuleImplementationDTOFlat getModuleImplementationFlatById(Long id) {
         ModuleImplementationEntity moduleImplementationEntity = moduleImplementationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Module Implementation not found with id: " + id));
         return moduleImplementationConverter.toDtoFlat(moduleImplementationEntity);
+    }
+
+    public ModuleImplementationDTO addLecturerToModuleImplementation(Long moduleImplementationId, Long lecturerId) {
+        ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId id = new ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId();
+        id.setModuleImplementation(moduleImplementationId);
+        id.setLecturer(lecturerId);
+
+        ModuleImplementationEntity moduleImplementationEntity = moduleImplementationRepository.findById(moduleImplementationId).orElseThrow(() -> new IllegalArgumentException("Module Implementation not found with id: " + moduleImplementationId));
+        UserEntity lecturer = userRepository.findById(lecturerId).orElseThrow(() -> new IllegalArgumentException("Lecturer not found with id: " + lecturerId));
+
+        ModuleImplementationLecturerEntity moduleImplementationLecturerEntity = new ModuleImplementationLecturerEntity();
+        moduleImplementationLecturerEntity.setId(id);
+        moduleImplementationLecturerEntity.setModuleImplementation(moduleImplementationEntity);
+        moduleImplementationLecturerEntity.setLecturer(lecturer);
+
+        moduleImplementationLecturerRepository.save(moduleImplementationLecturerEntity);
+        return moduleImplementationConverter.toDto(moduleImplementationEntity);
+    }
+
+    public void removeLecturerFromModuleImplementation(Long moduleImplementationId, Long lecturerId) {
+        ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId id = new ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId();
+        id.setModuleImplementation(moduleImplementationId);
+        id.setLecturer(lecturerId);
+        moduleImplementationLecturerRepository.deleteById(id);
     }
 }

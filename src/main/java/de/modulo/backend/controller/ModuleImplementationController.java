@@ -51,4 +51,15 @@ public class ModuleImplementationController {
     public ResponseEntity<ModuleImplementationDTOFlat> getModuleImplementationFlatById(@PathVariable Long id) {
         return new ResponseEntity<>(moduleImplementationService.getModuleImplementationFlatById(id), HttpStatus.OK);
     }
+
+    @PostMapping("/{id}/lecturer/add/{lecturerId}")
+    public ResponseEntity<ModuleImplementationDTO> addLecturerToModuleImplementation(@PathVariable Long id, @PathVariable Long lecturerId) {
+        return new ResponseEntity<>(moduleImplementationService.addLecturerToModuleImplementation(id, lecturerId), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}/lecturer/remove/{lecturerId}")
+    public ResponseEntity<ModuleImplementationDTO> removeLecturerFromModuleImplementation(@PathVariable Long id, @PathVariable Long lecturerId) {
+        moduleImplementationService.removeLecturerFromModuleImplementation(id, lecturerId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
