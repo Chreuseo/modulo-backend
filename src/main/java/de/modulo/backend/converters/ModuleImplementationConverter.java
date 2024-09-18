@@ -5,6 +5,7 @@ import de.modulo.backend.dtos.ModuleImplementationDTOFlat;
 import de.modulo.backend.dtos.SpoDTOFlat;
 import de.modulo.backend.entities.ModuleImplementationEntity;
 import de.modulo.backend.repositories.ModuleFrameModuleImplementationRepository;
+import de.modulo.backend.repositories.UserRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -21,11 +22,17 @@ public class ModuleImplementationConverter {
 
     private final ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository; // Assuming you have a ModuleFrameModuleImplementationRepository
     private final SpoConverter spoConverter;
+    private final UserRepository userRepository;
 
     // Constructor injection for converters
-    public ModuleImplementationConverter(UserConverter userConverter, CycleConverter cycleConverter,
-                                         DurationConverter durationConverter, LanguageConverter languageConverter,
-                                         MaternityProtectionConverter maternityProtectionConverter, ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository, SpoConverter spoConverter) {
+    public ModuleImplementationConverter(UserConverter userConverter,
+                                         CycleConverter cycleConverter,
+                                         DurationConverter durationConverter,
+                                         LanguageConverter languageConverter,
+                                         MaternityProtectionConverter maternityProtectionConverter,
+                                         ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository,
+                                         SpoConverter spoConverter,
+                                         UserRepository userRepository) {
         this.userConverter = userConverter;
         this.cycleConverter = cycleConverter;
         this.durationConverter = durationConverter;
@@ -34,6 +41,7 @@ public class ModuleImplementationConverter {
 
         this.moduleFrameModuleImplementationRepository = moduleFrameModuleImplementationRepository;
         this.spoConverter = spoConverter;
+        this.userRepository = userRepository;
     }
 
     public ModuleImplementationDTO toDto(ModuleImplementationEntity moduleImplementationEntity) {
@@ -46,9 +54,10 @@ public class ModuleImplementationConverter {
         moduleImplementationDto.setName(moduleImplementationEntity.getName());
         moduleImplementationDto.setAbbreviation(moduleImplementationEntity.getAbbreviation());
         moduleImplementationDto.setAllowedResources(moduleImplementationEntity.getAllowedResources());
-        moduleImplementationDto.setFirstExaminant(userConverter.toDto(moduleImplementationEntity.getFirstExaminant()));
-        moduleImplementationDto.setSecondExaminant(userConverter.toDto(moduleImplementationEntity.getSecondExaminant()));
-        moduleImplementationDto.setResponsible(userConverter.toDto(moduleImplementationEntity.getResponsible()));
+        moduleImplementationDto.setFirstExaminant(userConverter.toDtoFlat(moduleImplementationEntity.getFirstExaminant()));
+        moduleImplementationDto.setFirstExaminant(userConverter.toDtoFlat(moduleImplementationEntity.getFirstExaminant()));
+        moduleImplementationDto.setSecondExaminant(userConverter.toDtoFlat(moduleImplementationEntity.getSecondExaminant()));
+        moduleImplementationDto.setResponsible(userConverter.toDtoFlat(moduleImplementationEntity.getResponsible()));
         moduleImplementationDto.setCycle(cycleConverter.toDto(moduleImplementationEntity.getCycle()));
         moduleImplementationDto.setDuration(durationConverter.toDto(moduleImplementationEntity.getDuration()));
         moduleImplementationDto.setLanguage(languageConverter.toDto(moduleImplementationEntity.getLanguage()));
@@ -74,9 +83,9 @@ public class ModuleImplementationConverter {
         moduleImplementationEntity.setName(moduleImplementationDto.getName());
         moduleImplementationEntity.setAbbreviation(moduleImplementationDto.getAbbreviation());
         moduleImplementationEntity.setAllowedResources(moduleImplementationDto.getAllowedResources());
-        moduleImplementationEntity.setFirstExaminant(userConverter.toEntity(moduleImplementationDto.getFirstExaminant()));
-        moduleImplementationEntity.setSecondExaminant(userConverter.toEntity(moduleImplementationDto.getSecondExaminant()));
-        moduleImplementationEntity.setResponsible(userConverter.toEntity(moduleImplementationDto.getResponsible()));
+        moduleImplementationEntity.setFirstExaminant(userRepository.findById(moduleImplementationDto.getFirstExaminant().getId()).orElse(null));
+        moduleImplementationEntity.setSecondExaminant(userRepository.findById(moduleImplementationDto.getSecondExaminant().getId()).orElse(null));
+        moduleImplementationEntity.setResponsible(userRepository.findById(moduleImplementationDto.getResponsible().getId()).orElse(null));
         moduleImplementationEntity.setCycle(cycleConverter.toEntity(moduleImplementationDto.getCycle()));
         moduleImplementationEntity.setDuration(durationConverter.toEntity(moduleImplementationDto.getDuration()));
         moduleImplementationEntity.setLanguage(languageConverter.toEntity(moduleImplementationDto.getLanguage()));

@@ -10,9 +10,9 @@ public class ModuleImplementationDTO {
     private String name;
     private String abbreviation;
     private String allowedResources; // Fixed typo to match the entity
-    private UserDTO firstExaminant; // Assuming to create UserDTO class
-    private UserDTO secondExaminant;
-    private UserDTO responsible;
+    private UserDTOFlat firstExaminant; // Assuming to create UserDTO class
+    private UserDTOFlat secondExaminant;
+    private UserDTOFlat responsible;
     private CycleDTO cycle; // Assuming to create CycleDTO class
     private DurationDTO duration; // Assuming to create DurationDTO class
     private LanguageDTO language; // Assuming to create LanguageDTO class
