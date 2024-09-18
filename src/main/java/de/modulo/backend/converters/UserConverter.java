@@ -4,6 +4,7 @@ import de.modulo.backend.dtos.UserDTO;
 import de.modulo.backend.dtos.UserDTOAuth;
 import de.modulo.backend.dtos.UserDTOFlat;
 import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.enums.ROLE;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,6 +38,7 @@ public class UserConverter {
         userEntity.setFirstName(userDTO.getFirstName());
         userEntity.setLastName(userDTO.getLastName());
         userEntity.setCode(userDTO.getCode());
+        userEntity.setRole(ROLE.valueOf(userDTO.getRole())); // Assuming ROLE is an Enum
         // Set default values for boolean fields if needed
         return userEntity;
     }
