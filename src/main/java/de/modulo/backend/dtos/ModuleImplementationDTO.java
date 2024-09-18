@@ -2,6 +2,8 @@ package de.modulo.backend.dtos;
 
 import lombok.Data;
 
+import java.util.List;
+
 
 @Data
 public class ModuleImplementationDTO {
@@ -13,6 +15,7 @@ public class ModuleImplementationDTO {
     private UserDTOFlat firstExaminant; // Assuming to create UserDTO class
     private UserDTOFlat secondExaminant;
     private UserDTOFlat responsible;
+    private List<UserDTOFlat> lecturers;
     private CycleDTO cycle; // Assuming to create CycleDTO class
     private DurationDTO duration; // Assuming to create DurationDTO class
     private LanguageDTO language; // Assuming to create LanguageDTO class
