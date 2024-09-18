@@ -1,6 +1,7 @@
 package de.modulo.backend.services;
 
 import de.modulo.backend.converters.UserConverter;
+import de.modulo.backend.dtos.UserDTO;
 import de.modulo.backend.dtos.UserDTOFlat;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.repositories.UserRepository;
@@ -27,5 +28,29 @@ public class UserService {
         return users.stream()
                 .map(userConverter::toDtoFlat)
                 .collect(Collectors.toList());
+    }
+
+    public UserDTO getUserById(Long id) {
+        UserEntity user = userRepository.findById(id).orElseThrow();
+        return userConverter.toDto(user);
+    }
+
+    public UserDTO createUser(UserDTO userDTO) {
+        UserEntity user = userConverter.toEntity(userDTO);
+        UserEntity savedUser = userRepository.save(user);
+        return userConverter.toDto(savedUser);
+    }
+
+    public UserDTO updateUser(UserDTO userDTO) {
+        if(!userRepository.existsById(userDTO.getId())) {
+            throw new RuntimeException("User not found");
+        }
+        UserEntity user = userConverter.toEntity(userDTO);
+        UserEntity savedUser = userRepository.save(user);
+        return userConverter.toDto(savedUser);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 }
