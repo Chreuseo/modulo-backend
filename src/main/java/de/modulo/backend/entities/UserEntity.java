@@ -9,14 +9,14 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "users") // Specifies the table name
 @Data // Generates getters, setters, equals, hashcode, and toString
 @NoArgsConstructor // Generates a no-args constructor
 @AllArgsConstructor // Generates a constructor with all fields
-public class UserEntity{
+public class UserEntity implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment primary key
@@ -55,5 +55,14 @@ public class UserEntity{
     @Column(name = "enabled", nullable = false) // Not null
     private boolean enabled = true;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(role);
+    }
+
+    @Override
+    public String getUsername() {
+        return "";
+    }
 }
 

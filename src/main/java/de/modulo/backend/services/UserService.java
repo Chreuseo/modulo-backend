@@ -6,6 +6,7 @@ import de.modulo.backend.dtos.UserDTOFlat;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,11 +17,17 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserConverter userConverter;
-
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final SessionService sessionService;
     @Autowired
-    public UserService(UserRepository userRepository, UserConverter userConverter) {
+    public UserService(UserRepository userRepository,
+                       UserConverter userConverter,
+                       BCryptPasswordEncoder passwordEncoder,
+                       SessionService sessionService) {
         this.userRepository = userRepository;
         this.userConverter = userConverter;
+        this.passwordEncoder = passwordEncoder;
+        this.sessionService = sessionService;
     }
 
     public List<UserDTOFlat> getAllUsers() {
@@ -37,6 +44,7 @@ public class UserService {
 
     public UserDTO createUser(UserDTO userDTO) {
         UserEntity user = userConverter.toEntity(userDTO);
+        user.setPassword(passwordEncoder.encode("password"));
         UserEntity savedUser = userRepository.save(user);
         return userConverter.toDto(savedUser);
     }
@@ -52,5 +60,11 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public void changePassword(String password) {
+        UserEntity user = sessionService.getCurrentUser();
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
     }
 }

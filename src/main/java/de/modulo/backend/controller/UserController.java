@@ -46,4 +46,10 @@ public class UserController {
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
         return new ResponseEntity<>(userService.updateUser(userDTO), HttpStatus.OK);
     }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@RequestBody String password) {
+        userService.changePassword(password);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
