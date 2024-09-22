@@ -91,15 +91,11 @@ public class SessionService {
         }
     }
 
-    public UserEntity getUserBySessionId(UUID sessionId,
-                                         String ip) throws SessionInvalidException {
-        validateSession(sessionId, ip);
+    public UserEntity getUserBySessionId(UUID sessionId) {
         return sessionRepository.findById(sessionId).orElseThrow().getUser();
     }
 
-    public ROLE getRoleBySessionId(UUID sessionId,
-                                   String ip) throws SessionInvalidException {
-        validateSession(sessionId, ip);
+    public ROLE getRoleBySessionId(UUID sessionId) {
         return sessionRepository.findById(sessionId).orElseThrow().getUser().getRole();
     }
 }

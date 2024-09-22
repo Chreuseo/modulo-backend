@@ -26,7 +26,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserDTOAuth userDTOAuth, HttpServletRequest request, HttpServletResponse response) {
         try{
-            HttpHeaders headers = new HttpHeaders();
             Cookie cookie = new Cookie("Authorization", sessionService.login(userDTOAuth.getMail(),
                     userDTOAuth.getPassword(),
                     request.getRemoteAddr()).toString());
@@ -34,7 +33,7 @@ public class AuthController {
             cookie.setPath("/");
             cookie.setMaxAge(60 * 60 * 24);
             response.addCookie(cookie);
-            return ResponseEntity.ok().headers(headers).body("Login successful");
+            return ResponseEntity.ok().body("Login successful");
         } catch (Exception e) {
             return ResponseEntity.status(401).body("Invalid credentials");
         }
