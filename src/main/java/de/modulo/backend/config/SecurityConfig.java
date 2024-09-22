@@ -9,6 +9,9 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Configuration class for the security of the application.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {

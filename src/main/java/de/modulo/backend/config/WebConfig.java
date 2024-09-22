@@ -8,14 +8,14 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Configuration class for the web configuration of the application.
+ */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
     private AuthenticationInterceptor authenticationInterceptor;
-
-    @Autowired
-    private AlreadyLoggedInInterceptor alreadyLoggedInInterceptor;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -30,8 +30,5 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(authenticationInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/auth/login");
-
-        registry.addInterceptor(alreadyLoggedInInterceptor)
-                .addPathPatterns("/auth/login");
     }
 }

@@ -8,11 +8,10 @@ import de.modulo.backend.excpetions.SessionInvalidException;
 import de.modulo.backend.repositories.SessionRepository;
 import de.modulo.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.util.UUID;
 
 @Service
@@ -97,5 +96,10 @@ public class SessionService {
 
     public ROLE getRoleBySessionId(UUID sessionId) {
         return sessionRepository.findById(sessionId).orElseThrow().getUser().getRole();
+    }
+
+    @Scheduled(cron = "0 0 3 * * SUN")
+    public void deleteExpiredSessions() {
+        sessionRepository.deleteAllByExpirationDateBefore(System.currentTimeMillis());
     }
 }
