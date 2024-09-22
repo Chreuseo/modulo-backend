@@ -43,20 +43,6 @@ public class UserConverter {
         return userEntity;
     }
 
-    // Convert UserEntity to UserDTOAuth
-    public UserDTOAuth toDtoAuth(UserEntity userEntity) {
-        if (userEntity == null) {
-            return null;
-        }
-        return new UserDTOAuth(
-                userEntity.getMail(),
-                userEntity.getPassword(),
-                userEntity.isExpired(), // Maps `expired`
-                userEntity.isLocked(), // Maps `locked`
-                userEntity.isCredentialsExpired(), // Maps `credentialsExpired`
-                userEntity.isEnabled() // Maps `enabled`
-        );
-    }
 
     public UserDTOFlat toDtoFlat(UserEntity userEntity) {
         if (userEntity == null) {

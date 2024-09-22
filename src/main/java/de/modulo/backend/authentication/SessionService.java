@@ -1,4 +1,4 @@
-package de.modulo.backend.services;
+package de.modulo.backend.authentication;
 
 import de.modulo.backend.entities.SessionEntity;
 import de.modulo.backend.entities.UserEntity;
@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.UUID;
 
 @Service
@@ -37,16 +39,26 @@ public class SessionService {
         sessionRepository.deleteAllByUserId(userId);
     }
 
-    public UUID login(Long userId,
+    public UUID login(String userMail,
+                      String password,
+                      String ip) throws InvalidPasswordException {
+        try{
+            return login(userMail, password, Inet4Address.getByName(ip).getAddress());
+        } catch (UnknownHostException e) {
+            throw new RuntimeException("IP is invalid");
+        }
+    }
+
+    public UUID login(String userMail,
                          String password,
-                         byte[] ip) {
+                         byte[] ip) throws InvalidPasswordException {
         SessionEntity session = new SessionEntity();
         UUID token = UUID.randomUUID();
         while(sessionRepository.existsById(token)) {
             token = UUID.randomUUID();
         }
         session.setToken(token);
-        UserEntity user = userRepository.findById(userId).orElseThrow();
+        UserEntity user = userRepository.findByMail(userMail).orElseThrow();
         session.setUser(user);
         if(!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new InvalidPasswordException("Password is invalid");
@@ -82,20 +94,20 @@ public class SessionService {
     }
 
     public void validateSession(UUID sessionId,
-                           byte[] ip) {
+                           byte[] ip) throws SessionInvalidException {
         if(!isSessionValid(sessionId, ip)) {
             throw new SessionInvalidException("Session is not valid");
         }
     }
 
     public UserEntity getUserBySessionId(UUID sessionId,
-                                         byte[] ip) {
+                                         byte[] ip) throws SessionInvalidException {
         validateSession(sessionId, ip);
         return sessionRepository.findById(sessionId).orElseThrow().getUser();
     }
 
     public ROLE getRoleBySessionId(UUID sessionId,
-                                   byte[] ip) {
+                                   byte[] ip) throws SessionInvalidException {
         validateSession(sessionId, ip);
         return sessionRepository.findById(sessionId).orElseThrow().getUser().getRole();
     }
