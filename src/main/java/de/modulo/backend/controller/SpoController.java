@@ -22,7 +22,8 @@ public class SpoController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<SpoDTOFlat>> getAllSpos() {
+    public ResponseEntity<List<SpoDTOFlat>> getAllSpos(@CookieValue(value = "Authorization", required = false) String authToken) {
+        System.out.println("Auth token: " + authToken);
         return new ResponseEntity<>(spoService.getAllSpos(), HttpStatus.OK);
     }
 
