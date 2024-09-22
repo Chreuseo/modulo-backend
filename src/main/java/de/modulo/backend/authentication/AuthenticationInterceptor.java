@@ -1,5 +1,6 @@
 package de.modulo.backend.authentication;
 
+import de.modulo.backend.excpetions.SessionInvalidException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,7 +33,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
         try {
             sessionService.validateSession(UUID.fromString(sessionToken), request.getRemoteAddr());
-        } catch ( Exception e) {
+        } catch ( SessionInvalidException e) {
             response.setStatus(401);
             return false;
         }
