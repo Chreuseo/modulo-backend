@@ -1,5 +1,6 @@
 package de.modulo.backend.authentication;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,19 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String sessionToken = request.getHeader("Authorization");
+        String sessionToken = null;
+
+        // Look for the "Authorization" cookie
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("Authorization".equals(cookie.getName())) {
+                    sessionToken = cookie.getValue();
+                    break; // No need to continue looping once we've found the cookie
+                }
+            }
+        }
+
+
         if (sessionToken == null) {
             response.setStatus(401);
             return false;
