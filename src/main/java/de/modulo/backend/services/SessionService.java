@@ -1,0 +1,102 @@
+package de.modulo.backend.services;
+
+import de.modulo.backend.entities.SessionEntity;
+import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.enums.ROLE;
+import de.modulo.backend.excpetions.InvalidPasswordException;
+import de.modulo.backend.excpetions.SessionInvalidException;
+import de.modulo.backend.repositories.SessionRepository;
+import de.modulo.backend.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@Service
+public class SessionService {
+
+    @Autowired
+    private SessionRepository sessionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public void deleteSession(UUID sessionId) {
+        sessionRepository.deleteById(sessionId);
+    }
+
+    public void deleteAllSessions() {
+        sessionRepository.deleteAll();
+    }
+
+    public void deleteAllSessionsByUserId(Long userId) {
+        sessionRepository.deleteAllByUserId(userId);
+    }
+
+    public UUID login(Long userId,
+                         String password,
+                         byte[] ip) {
+        SessionEntity session = new SessionEntity();
+        UUID token = UUID.randomUUID();
+        while(sessionRepository.existsById(token)) {
+            token = UUID.randomUUID();
+        }
+        session.setToken(token);
+        UserEntity user = userRepository.findById(userId).orElseThrow();
+        session.setUser(user);
+        if(!bCryptPasswordEncoder.matches(password, user.getPassword())) {
+            throw new InvalidPasswordException("Password is invalid");
+        }
+        session.setCreationDate(System.currentTimeMillis());
+        session.setLastAccessDate(System.currentTimeMillis());
+        session.setExpirationDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
+        session.setIp(ip);
+        sessionRepository.save(session);
+
+        return token;
+    }
+
+    public void logout(UUID sessionId) {
+        sessionRepository.deleteById(sessionId);
+    }
+
+    private boolean isSessionValid(UUID sessionId,
+                                  byte[] ip) {
+        SessionEntity session = sessionRepository.findById(sessionId).orElse(null);
+        if(session == null) {
+            return false;
+        }
+        if(session.getExpirationDate() < System.currentTimeMillis()) {
+            sessionRepository.deleteById(sessionId);
+            return false;
+        }
+        if(session.getIp() != ip) {
+            sessionRepository.deleteById(sessionId);
+            return false;
+        }
+        return true;
+    }
+
+    public void validateSession(UUID sessionId,
+                           byte[] ip) {
+        if(!isSessionValid(sessionId, ip)) {
+            throw new SessionInvalidException("Session is not valid");
+        }
+    }
+
+    public UserEntity getUserBySessionId(UUID sessionId,
+                                         byte[] ip) {
+        validateSession(sessionId, ip);
+        return sessionRepository.findById(sessionId).orElseThrow().getUser();
+    }
+
+    public ROLE getRoleBySessionId(UUID sessionId,
+                                   byte[] ip) {
+        validateSession(sessionId, ip);
+        return sessionRepository.findById(sessionId).orElseThrow().getUser().getRole();
+    }
+}
