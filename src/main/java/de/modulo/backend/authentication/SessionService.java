@@ -40,18 +40,8 @@ public class SessionService {
     }
 
     public UUID login(String userMail,
-                      String password,
-                      String ip) throws InvalidPasswordException {
-        try{
-            return login(userMail, password, Inet4Address.getByName(ip).getAddress());
-        } catch (UnknownHostException e) {
-            throw new RuntimeException("IP is invalid");
-        }
-    }
-
-    public UUID login(String userMail,
                          String password,
-                         byte[] ip) throws InvalidPasswordException {
+                         String ip) throws InvalidPasswordException {
         SessionEntity session = new SessionEntity();
         UUID token = UUID.randomUUID();
         while(sessionRepository.existsById(token)) {
@@ -77,7 +67,7 @@ public class SessionService {
     }
 
     private boolean isSessionValid(UUID sessionId,
-                                  byte[] ip) {
+                                  String ip) {
         SessionEntity session = sessionRepository.findById(sessionId).orElse(null);
         if(session == null) {
             return false;
@@ -86,7 +76,7 @@ public class SessionService {
             sessionRepository.deleteById(sessionId);
             return false;
         }
-        if(session.getIp() != ip) {
+        if(!session.getIp().equals(ip)) {
             System.out.println("IP is not equal: " + session.getIp() + " != " + ip);
             sessionRepository.deleteById(sessionId);
             return false;
@@ -95,20 +85,20 @@ public class SessionService {
     }
 
     public void validateSession(UUID sessionId,
-                           byte[] ip) throws SessionInvalidException {
+                           String ip) throws SessionInvalidException {
         if(!isSessionValid(sessionId, ip)) {
             throw new SessionInvalidException("Session is not valid");
         }
     }
 
     public UserEntity getUserBySessionId(UUID sessionId,
-                                         byte[] ip) throws SessionInvalidException {
+                                         String ip) throws SessionInvalidException {
         validateSession(sessionId, ip);
         return sessionRepository.findById(sessionId).orElseThrow().getUser();
     }
 
     public ROLE getRoleBySessionId(UUID sessionId,
-                                   byte[] ip) throws SessionInvalidException {
+                                   String ip) throws SessionInvalidException {
         validateSession(sessionId, ip);
         return sessionRepository.findById(sessionId).orElseThrow().getUser().getRole();
     }

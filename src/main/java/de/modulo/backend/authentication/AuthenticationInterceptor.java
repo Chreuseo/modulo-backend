@@ -42,8 +42,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         }
 
         try {
-            InetAddress ip = Inet4Address.getByName(request.getRemoteAddr());
-            sessionService.validateSession(UUID.fromString(sessionToken), ip.getAddress());
+            sessionService.validateSession(UUID.fromString(sessionToken), request.getRemoteAddr());
         } catch ( Exception e) {
             response.setStatus(401);
             return false;

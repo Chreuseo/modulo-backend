@@ -23,5 +23,5 @@ public class SessionEntity {
 
     private long lastAccessDate;
 
-    private byte[] ip;
+    private String ip;
 }
