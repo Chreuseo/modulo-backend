@@ -87,6 +87,7 @@ public class SessionService {
             return false;
         }
         if(session.getIp() != ip) {
+            System.out.println("IP is not equal: " + session.getIp() + " != " + ip);
             sessionRepository.deleteById(sessionId);
             return false;
         }
