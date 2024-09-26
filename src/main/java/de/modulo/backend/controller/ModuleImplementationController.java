@@ -108,7 +108,7 @@ public class ModuleImplementationController {
     @PostMapping("/{id}/lecturer/add/{lecturerId}")
     public ResponseEntity<ModuleImplementationDTO> addLecturerToModuleImplementation(@PathVariable Long id, @PathVariable Long lecturerId, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -119,7 +119,7 @@ public class ModuleImplementationController {
     @DeleteMapping("/{id}/lecturer/remove/{lecturerId}")
     public ResponseEntity<ModuleImplementationDTO> removeLecturerFromModuleImplementation(@PathVariable Long id, @PathVariable Long lecturerId, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request), id);
+            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request), id);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
