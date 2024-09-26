@@ -22,4 +22,11 @@ public class DegreeEntity {
     private Long id;
 
     private String name;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DegreeEntity that)) return false;
+        return id.equals(that.id);
+    }
 }

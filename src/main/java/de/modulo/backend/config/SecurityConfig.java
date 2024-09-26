@@ -5,12 +5,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Configuration class for the security of the application.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -25,20 +26,13 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .permitAll()
                 )
-                .logout((logout) -> logout.permitAll())
+                .logout(LogoutConfigurer::permitAll)
                 .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user =
-                User.withDefaultPasswordEncoder()
-                        .username("user")
-                        .password("password")
-                        .roles("USER")
-                        .build();
-
-        return new InMemoryUserDetailsManager(user);
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

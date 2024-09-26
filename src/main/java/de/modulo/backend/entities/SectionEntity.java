@@ -21,5 +21,10 @@ public class SectionEntity {
 
     private int orderNumber;
 
-    // Additional methods or annotations can be added if needed
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SectionEntity that)) return false;
+        return id.equals(that.id);
+    }
 }

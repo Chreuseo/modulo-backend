@@ -21,5 +21,10 @@ public class MaternityProtectionEntity {
 
     private String name;
 
-    // Constructors, getters, and setters can be generated using Lombok annotations
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MaternityProtectionEntity that)) return false;
+        return id == that.id;
+    }
 }

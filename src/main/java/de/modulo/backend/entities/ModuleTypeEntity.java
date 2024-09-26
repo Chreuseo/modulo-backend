@@ -20,5 +20,10 @@ public class ModuleTypeEntity {
 
     private int orderNumber;
 
-    // Additional methods or annotations can be added if needed
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ModuleTypeEntity that)) return false;
+        return id == that.id;
+    }
 }
