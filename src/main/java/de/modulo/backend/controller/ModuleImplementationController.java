@@ -1,5 +1,6 @@
 package de.modulo.backend.controller;
 
+import de.modulo.backend.authentication.SessionService;
 import de.modulo.backend.authentication.SessionTokenHelper;
 import de.modulo.backend.authentication.ValidatePrivilegesService;
 import de.modulo.backend.dtos.ModuleImplementationDTO;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/module-implementation")
@@ -22,12 +24,15 @@ public class ModuleImplementationController {
 
     private final ENTITY_TYPE CURRENT_ENTITY_TYPE = ENTITY_TYPE.MODULE;
 
+    private final SessionService sessionService;
     private final ModuleImplementationService moduleImplementationService;
     private final ValidatePrivilegesService validatePrivilegesService;
 
     @Autowired
-    public ModuleImplementationController(ModuleImplementationService moduleImplementationService,
+    public ModuleImplementationController(SessionService sessionService,
+                                          ModuleImplementationService moduleImplementationService,
                                           ValidatePrivilegesService validatePrivilegesService) {
+        this.sessionService = sessionService;
         this.moduleImplementationService = moduleImplementationService;
         this.validatePrivilegesService = validatePrivilegesService;
     }
@@ -37,7 +42,8 @@ public class ModuleImplementationController {
         try{
             validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            Long userId = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))).getId();
+            return new ResponseEntity<>(moduleImplementationService.getAllAssignedModuleImplementations(userId), HttpStatus.OK);
         }
 
         return new ResponseEntity<>(moduleImplementationService.getAllModuleImplementations(), HttpStatus.OK);

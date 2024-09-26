@@ -12,6 +12,7 @@ import de.modulo.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,16 @@ public class ModuleImplementationService {
 
     public List<ModuleImplementationDTOFlat> getAllModuleImplementations() {
         List<ModuleImplementationEntity> moduleImplementations = moduleImplementationRepository.findAll();
+        return moduleImplementations.stream()
+                .map(moduleImplementationConverter::toDtoFlat)
+                .collect(Collectors.toList());
+    }
+
+    public List<ModuleImplementationDTOFlat> getAllAssignedModuleImplementations(Long userId) {
+        List<ModuleImplementationEntity> moduleImplementations = new ArrayList<>(moduleImplementationRepository.getModuleImplementationEntitiesByResponsibleId(userId));
+        moduleImplementations.addAll(moduleImplementationLecturerRepository
+                .getModuleImplementationLecturerEntitiesByLecturerId(userId).stream()
+                .map(ModuleImplementationLecturerEntity::getModuleImplementation).toList());
         return moduleImplementations.stream()
                 .map(moduleImplementationConverter::toDtoFlat)
                 .collect(Collectors.toList());
