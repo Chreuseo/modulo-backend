@@ -65,5 +65,10 @@ public class ModuleImplementationEntity {
     private MaternityProtectionEntity maternityProtection;
 
 
-    // Constructors, getters, and setters can be generated using Lombok annotations
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ModuleImplementationEntity that)) return false;
+        return id.equals(that.id);
+    }
 }

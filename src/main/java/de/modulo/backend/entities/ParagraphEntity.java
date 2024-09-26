@@ -20,4 +20,11 @@ public class ParagraphEntity {
 
     private String title;
     private String text;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ParagraphEntity that)) return false;
+        return id.equals(that.id);
+    }
 }

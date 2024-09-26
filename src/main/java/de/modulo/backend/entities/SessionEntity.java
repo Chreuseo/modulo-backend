@@ -24,4 +24,11 @@ public class SessionEntity {
     private long lastAccessDate;
 
     private String ip;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SessionEntity that)) return false;
+        return token.equals(that.token);
+    }
 }

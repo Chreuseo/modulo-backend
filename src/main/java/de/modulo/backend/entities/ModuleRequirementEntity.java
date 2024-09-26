@@ -19,4 +19,11 @@ public class ModuleRequirementEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ModuleRequirementEntity that)) return false;
+        return id == that.id;
+    }
 }

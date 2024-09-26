@@ -32,5 +32,10 @@ public class ModuleFrameEntity {
     private int credits;
     private boolean allExamsMandatory;
 
-    // Additional methods or annotations can be added if needed
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ModuleFrameEntity that)) return false;
+        return id == that.id;
+    }
 }

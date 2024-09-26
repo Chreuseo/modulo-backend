@@ -27,4 +27,11 @@ public class ModuleFrameModuleImplementationEntity {
     @ManyToOne
     @JoinColumn(name = "module_requirement_id")
     private ModuleRequirementEntity moduleRequirement;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ModuleFrameModuleImplementationEntity that)) return false;
+        return id.equals(that.id);
+    }
 }
