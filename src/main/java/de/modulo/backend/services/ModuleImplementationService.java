@@ -47,7 +47,7 @@ public class ModuleImplementationService {
         moduleImplementations.addAll(moduleImplementationLecturerRepository
                 .getModuleImplementationLecturerEntitiesByLecturerId(userId).stream()
                 .map(ModuleImplementationLecturerEntity::getModuleImplementation).toList());
-        return moduleImplementations.stream()
+        return moduleImplementations.stream().distinct()
                 .map(moduleImplementationConverter::toDtoFlat)
                 .collect(Collectors.toList());
     }
