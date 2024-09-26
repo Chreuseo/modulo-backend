@@ -50,6 +50,12 @@ public class UserService {
         return userConverter.toDto(savedUser);
     }
 
+    public UserDTO changePassword(UserEntity userEntity, String password) {
+        userEntity.setPassword(password);
+        UserEntity savedUser = userRepository.save(userEntity);
+        return userConverter.toDto(savedUser);
+    }
+
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
