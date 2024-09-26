@@ -69,7 +69,7 @@ public class ModuleImplementationService {
                 && !moduleImplementationEntity.getResponsible().equals(oldEntity.getResponsible())){
             if((oldEntity.getResponsible() != null
                     && !oldEntity.getResponsible().equals(user))
-                    || user.getRole().equals(ROLE.ADMIN)){
+                    || user.getRole() == ROLE.ADMIN){
                 throw new InsufficientPermissionsException("You are not allowed to change the responsible of this module implementation");
             }
         }
