@@ -80,7 +80,10 @@ public class ValidatePrivilegesService {
                 break;
             case USER:
                 if(role != ROLE.ADMIN) {
-                    throw new InsufficientPermissionsException("You do not have the required permissions to access users");
+                    switch (privileges) {
+                        case ADD, UPDATE, DELETE:
+                            throw new InsufficientPermissionsException("You do not have the required permissions to access users");
+                    }
                 }
                 break;
             default:
@@ -167,7 +170,7 @@ public class ValidatePrivilegesService {
                 break;
             case USER:
                 switch (privileges) {
-                    case READ, ADD, UPDATE, DELETE:
+                    case ADD, UPDATE, DELETE:
                         throw new InsufficientPermissionsException("You do not have the required permissions to access users");
                 }
                 break;
