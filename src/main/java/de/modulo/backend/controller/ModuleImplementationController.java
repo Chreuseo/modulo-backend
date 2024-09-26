@@ -63,7 +63,7 @@ public class ModuleImplementationController {
     @PutMapping("/update")
     public ResponseEntity<ModuleImplementationDTO> updateModuleImplementation(@RequestBody ModuleImplementationDTO moduleImplementationDTO, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request), moduleImplementationDTO.getId());
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
