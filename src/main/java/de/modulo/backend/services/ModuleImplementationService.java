@@ -65,9 +65,10 @@ public class ModuleImplementationService {
     public ModuleImplementationDTO updateModuleImplementation(ModuleImplementationDTO moduleImplementationDTO, UserEntity user) throws InsufficientPermissionsException{
         ModuleImplementationEntity moduleImplementationEntity = moduleImplementationConverter.toEntity(moduleImplementationDTO);
         ModuleImplementationEntity oldEntity = moduleImplementationRepository.findById(moduleImplementationDTO.getId()).orElseThrow(() -> new IllegalArgumentException("Module Implementation not found with id: " + moduleImplementationDTO.getId()));
-        if(!oldEntity.getResponsible().equals(moduleImplementationEntity.getResponsible())){
+        if(moduleImplementationEntity.getResponsible() != null
+                && !moduleImplementationEntity.getResponsible().equals(oldEntity.getResponsible())){
             if(!oldEntity.getResponsible().equals(user)
-            || user.getRole().equals(ROLE.ADMIN)){
+                    || user.getRole().equals(ROLE.ADMIN)){
                 throw new InsufficientPermissionsException("You are not allowed to change the responsible of this module implementation");
             }
         }
