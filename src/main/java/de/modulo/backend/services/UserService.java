@@ -45,7 +45,9 @@ public class UserService {
         if(!userRepository.existsById(userDTO.getId())) {
             throw new RuntimeException("User not found");
         }
+        UserEntity oldUser = userRepository.findById(userDTO.getId()).orElseThrow();
         UserEntity user = userConverter.toEntity(userDTO);
+        user.setPassword(oldUser.getPassword());
         UserEntity savedUser = userRepository.save(user);
         return userConverter.toDto(savedUser);
     }
