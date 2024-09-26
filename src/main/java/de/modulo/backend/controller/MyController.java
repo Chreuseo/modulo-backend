@@ -46,6 +46,7 @@ public class MyController {
     @PutMapping("/update")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO, HttpServletRequest request){
         UserEntity user = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request)));
+        userDTO.setRole(user.getRole().toString());
 
         if(!user.getId().equals(userDTO.getId())){
             return ResponseEntity.badRequest().build();
