@@ -87,6 +87,11 @@ public class SessionService {
                            String ip) throws SessionInvalidException {
         if(!isSessionValid(sessionId, ip)) {
             throw new SessionInvalidException("Session is not valid");
+        }else{
+            SessionEntity session = sessionRepository.findById(sessionId).orElseThrow();
+            session.setLastAccessDate(System.currentTimeMillis());
+            session.setExpirationDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
+            sessionRepository.save(session);
         }
     }
 
