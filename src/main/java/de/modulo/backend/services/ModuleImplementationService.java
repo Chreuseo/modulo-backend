@@ -6,6 +6,8 @@ import de.modulo.backend.dtos.ModuleImplementationDTOFlat;
 import de.modulo.backend.entities.ModuleImplementationEntity;
 import de.modulo.backend.entities.ModuleImplementationLecturerEntity;
 import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.enums.ROLE;
+import de.modulo.backend.excpetions.InsufficientPermissionsException;
 import de.modulo.backend.repositories.ModuleImplementationLecturerRepository;
 import de.modulo.backend.repositories.ModuleImplementationRepository;
 import de.modulo.backend.repositories.UserRepository;
@@ -60,8 +62,15 @@ public class ModuleImplementationService {
         moduleImplementationRepository.deleteById(id);
     }
 
-    public ModuleImplementationDTO updateModuleImplementation(ModuleImplementationDTO moduleImplementationDTO) {
+    public ModuleImplementationDTO updateModuleImplementation(ModuleImplementationDTO moduleImplementationDTO, UserEntity user) throws InsufficientPermissionsException{
         ModuleImplementationEntity moduleImplementationEntity = moduleImplementationConverter.toEntity(moduleImplementationDTO);
+        ModuleImplementationEntity oldEntity = moduleImplementationRepository.findById(moduleImplementationDTO.getId()).orElseThrow(() -> new IllegalArgumentException("Module Implementation not found with id: " + moduleImplementationDTO.getId()));
+        if(!oldEntity.getResponsible().equals(moduleImplementationEntity.getResponsible())){
+            if(!oldEntity.getResponsible().equals(user)
+            || user.getRole().equals(ROLE.ADMIN)){
+                throw new InsufficientPermissionsException("You are not allowed to change the responsible of this module implementation");
+            }
+        }
         ModuleImplementationEntity savedEntity = moduleImplementationRepository.save(moduleImplementationEntity);
         return moduleImplementationConverter.toDto(savedEntity);
     }

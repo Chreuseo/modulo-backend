@@ -68,7 +68,11 @@ public class ModuleImplementationController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        return new ResponseEntity<>(moduleImplementationService.updateModuleImplementation(moduleImplementationDTO), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(moduleImplementationService.updateModuleImplementation(moduleImplementationDTO, sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request)))), HttpStatus.OK);
+        } catch (InsufficientPermissionsException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     @DeleteMapping("/remove/{id}")
