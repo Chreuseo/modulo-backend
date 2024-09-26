@@ -107,17 +107,23 @@ public class ValidatePrivilegesService {
                 switch (privileges) {
                     case ADD, UPDATE, DELETE:
                         throw new InsufficientPermissionsException("You do not have the required permissions to access general settings");
+                    default:
+                        break;
                 }
             case SPO_SETTINGS:
                 switch (privileges) {
                     case ADD, UPDATE, DELETE:
                         throw new InsufficientPermissionsException("You do not have the required permissions to write SPO settings");
+                    default:
+                        break;
                 }
                 break;
             case SPO:
                 switch (privileges) {
                     case ADD, UPDATE, DELETE:
                         throw new InsufficientPermissionsException("You do not have the required permissions to write SPOs");
+                    default:
+                        break;
                 }
                 break;
             case MODULE:
@@ -127,8 +133,9 @@ public class ValidatePrivilegesService {
                     case READ:
                         if(!moduleImplementationEntity.getResponsible().equals(userEntity) && moduleImplementationLecturerEntities.stream().noneMatch(moduleImplementationLecturerEntity -> moduleImplementationLecturerEntity.getLecturer().equals(userEntity))) {
                             throw new InsufficientPermissionsException("You do not have the required permissions to read modules");
+                        }else {
+                            break;
                         }
-                        break;
                     case ADD:
                         throw new InsufficientPermissionsException("You do not have the required permissions to write modules");
                     case UPDATE:
@@ -136,15 +143,16 @@ public class ValidatePrivilegesService {
                             break;
                         }else if(moduleImplementationLecturerEntities.stream().anyMatch(moduleImplementationLecturerEntity -> moduleImplementationLecturerEntity.getLecturer().equals(userEntity))) {
                             notifyService.notifyUser("User " + userEntity.getLastName() + " has updated module " + moduleImplementationEntity.getName(), moduleImplementationEntity.getResponsible());
+                            break;
                         }else {
                             throw new InsufficientPermissionsException("You do not have the required permissions to update modules");
                         }
-                        break;
                     case DELETE:
                         if(!moduleImplementationEntity.getResponsible().equals(userEntity)) {
                             throw new InsufficientPermissionsException("You do not have the required permissions to delete modules");
+                        }else {
+                            break;
                         }
-                        break;
                 }
                 break;
             case MODULE_FRAME_MODULE_IMPLEMENTATION:
@@ -159,13 +167,15 @@ public class ValidatePrivilegesService {
                     case ADD, DELETE:
                         if(!moduleImplementationEntity.getResponsible().equals(userEntity)) {
                             throw new InsufficientPermissionsException("You do not have the required permissions to delete modules");
+                        }else {
+                            break;
                         }
-                        break;
                     case UPDATE:
                         if(!moduleImplementationEntity.getResponsible().equals(userEntity)) {
                             throw new InsufficientPermissionsException("You do not have the required permissions to update module frame module implementations");
+                        }else {
+                            break;
                         }
-                        break;
                 }
                 break;
             case USER:
