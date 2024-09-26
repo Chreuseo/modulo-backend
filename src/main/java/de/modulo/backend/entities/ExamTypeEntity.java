@@ -23,4 +23,11 @@ public class ExamTypeEntity {
     private String abbreviation;
 
     private String length;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ExamTypeEntity that)) return false;
+        return id == that.id;
+    }
 }

@@ -15,4 +15,11 @@ public class CourseTypeEntity {
 
     private String name;
     private String abbreviation;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CourseTypeEntity that)) return false;
+        return id.equals(that.id);
+    }
 }

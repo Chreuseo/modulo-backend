@@ -33,5 +33,10 @@ public class SpoEntity {
     @JoinColumn(name = "degree_id")
     private DegreeEntity degree;
 
-    // Add other necessary annotations or configurations if needed
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SpoEntity that)) return false;
+        return id == that.id;
+    }
 }

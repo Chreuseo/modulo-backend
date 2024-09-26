@@ -5,11 +5,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.Collections;
 
 @Entity
 @Table(name = "users") // Specifies the table name
@@ -55,5 +50,11 @@ public class UserEntity{
     @Column(name = "enabled", nullable = false) // Not null
     private boolean enabled = true;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserEntity that)) return false;
+        return id.equals(that.id);
+    }
 }
 

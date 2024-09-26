@@ -21,5 +21,10 @@ public class CycleEntity {
 
     private String name;
 
-    // Constructors, getters, setters can be generated using Lombok annotations
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CycleEntity that)) return false;
+        return id.equals(that.id);
+    }
 }
