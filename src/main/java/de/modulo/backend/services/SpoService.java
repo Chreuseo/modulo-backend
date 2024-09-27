@@ -146,6 +146,7 @@ public class SpoService {
         SpoResponsibleUserEntity.SpoResponsibleUserId spoResponsibleUserId = new SpoResponsibleUserEntity.SpoResponsibleUserId();
         spoResponsibleUserId.setSpoId(id);
         spoResponsibleUserId.setUserId(userId);
+        spoResponsibleUserEntity.setId(spoResponsibleUserId);
         spoResponsibleUserRepository.save(spoResponsibleUserEntity);
     }
 
