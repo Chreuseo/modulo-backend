@@ -143,6 +143,9 @@ public class SpoService {
         SpoResponsibleUserEntity spoResponsibleUserEntity = new SpoResponsibleUserEntity();
         spoResponsibleUserEntity.setSpo(spoEntity);
         spoResponsibleUserEntity.setUser(userEntity);
+        SpoResponsibleUserEntity.SpoResponsibleUserId spoResponsibleUserId = new SpoResponsibleUserEntity.SpoResponsibleUserId();
+        spoResponsibleUserId.setSpoId(id);
+        spoResponsibleUserId.setUserId(userId);
         spoResponsibleUserRepository.save(spoResponsibleUserEntity);
     }
 
