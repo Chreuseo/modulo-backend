@@ -14,11 +14,11 @@ public class SpoResponsibleUserEntity {
     private SpoResponsibleUserId id;
 
     @ManyToOne
-    @JoinColumn(name = "spo_id", nullable = false, updatable = false)
+    @JoinColumn(name = "spo", nullable = false, updatable = false)
     private SpoEntity spo;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    @JoinColumn(name = "user", nullable = false, updatable = false)
     private UserEntity user;
 
     @Embeddable
