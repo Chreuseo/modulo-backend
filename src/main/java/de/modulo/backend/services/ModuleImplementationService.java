@@ -58,6 +58,13 @@ public class ModuleImplementationService {
         return moduleImplementationConverter.toDtoFlat(savedEntity);
     }
 
+    public ModuleImplementationDTOFlat addModuleImplementationAndSetResponsible(ModuleImplementationDTOFlat moduleImplementationDTOFlat, UserEntity user) {
+        ModuleImplementationEntity moduleImplementationEntity = moduleImplementationConverter.toEntity(moduleImplementationDTOFlat);
+        moduleImplementationEntity.setResponsible(user);
+        ModuleImplementationEntity savedEntity = moduleImplementationRepository.save(moduleImplementationEntity);
+        return moduleImplementationConverter.toDtoFlat(savedEntity);
+    }
+
     public void deleteModuleImplementation(Long id) {
         moduleImplementationRepository.deleteById(id);
     }

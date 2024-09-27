@@ -5,8 +5,10 @@ import de.modulo.backend.authentication.SessionTokenHelper;
 import de.modulo.backend.authentication.ValidatePrivilegesService;
 import de.modulo.backend.dtos.ModuleImplementationDTO;
 import de.modulo.backend.dtos.ModuleImplementationDTOFlat;
+import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.ENTITY_TYPE;
 import de.modulo.backend.enums.PRIVILEGES;
+import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
 import de.modulo.backend.services.ModuleImplementationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,7 +59,15 @@ public class ModuleImplementationController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        return new ResponseEntity<>(moduleImplementationService.addModuleImplementation(moduleImplementationDTOFlat), HttpStatus.CREATED);
+
+        if(sessionService.getRoleBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))).equals(ROLE.ADMIN)){
+            return new ResponseEntity<>(moduleImplementationService.addModuleImplementation(moduleImplementationDTOFlat), HttpStatus.CREATED);
+        }
+        else{
+            UserEntity user = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request)));
+            ModuleImplementationDTOFlat moduleImplementation = moduleImplementationService.addModuleImplementationAndSetResponsible(moduleImplementationDTOFlat, user);
+            return new ResponseEntity<>(moduleImplementation, HttpStatus.CREATED);
+        }
     }
 
     @PutMapping("/update")

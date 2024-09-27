@@ -65,7 +65,7 @@ public class ValidatePrivilegesService {
             case MODULE:
                 if(role != ROLE.ADMIN) {
                     switch (privileges) {
-                        case READ, ADD, UPDATE, DELETE:
+                        case READ, UPDATE, DELETE:
                             throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
                     }
                 }
