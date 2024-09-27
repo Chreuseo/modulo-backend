@@ -49,7 +49,7 @@ public class ValidatePrivilegesService {
             case SPO_SETTINGS:
                 if(role != ROLE.ADMIN) {
                     switch (privileges) {
-                        case ADD, UPDATE, DELETE:
+                        case ADD, UPDATE, DELETE, UPDATE_PRIVILEGES:
                             throw new InsufficientPermissionsException("You do not have the required permissions to access SPO settings");
                     }
                 }
@@ -57,7 +57,7 @@ public class ValidatePrivilegesService {
             case SPO:
                 if(role != ROLE.ADMIN) {
                     switch (privileges) {
-                        case ADD, UPDATE, DELETE:
+                        case ADD, UPDATE, DELETE, UPDATE_PRIVILEGES:
                             throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
                     }
                 }

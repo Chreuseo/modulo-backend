@@ -4,5 +4,6 @@ public enum PRIVILEGES {
     READ,
     ADD,
     UPDATE,
-    DELETE
+    DELETE,
+    UPDATE_PRIVILEGES
 }

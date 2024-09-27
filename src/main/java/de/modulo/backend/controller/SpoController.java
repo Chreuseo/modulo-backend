@@ -1,6 +1,5 @@
 package de.modulo.backend.controller;
 
-import de.modulo.backend.authentication.SessionService;
 import de.modulo.backend.authentication.SessionTokenHelper;
 import de.modulo.backend.authentication.ValidatePrivilegesService;
 import de.modulo.backend.dtos.SpoDTO;
@@ -88,4 +87,29 @@ public class SpoController {
 
         return new ResponseEntity<>(spoService.getSpo(id), HttpStatus.OK);
     }
+
+    @PostMapping("{id}/responsible/add/{userId}")
+    public ResponseEntity<Void> addResponsible(@PathVariable Long id, @PathVariable Long userId, HttpServletRequest request) {
+        try{
+            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE_PRIVILEGES, SessionTokenHelper.getSessionToken(request));
+        }catch (InsufficientPermissionsException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        spoService.addResponsible(id, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("{id}/responsible/remove/{userId}")
+    public ResponseEntity<Void> removeResponsible(@PathVariable Long id, @PathVariable Long userId, HttpServletRequest request) {
+        try{
+            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE_PRIVILEGES, SessionTokenHelper.getSessionToken(request));
+        }catch (InsufficientPermissionsException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        spoService.removeResponsible(id, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

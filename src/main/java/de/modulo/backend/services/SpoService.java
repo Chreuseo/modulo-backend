@@ -1,19 +1,10 @@
 package de.modulo.backend.services;
 
-import de.modulo.backend.converters.ModuleRequirementConverter;
-import de.modulo.backend.converters.ModuleTypeConverter;
-import de.modulo.backend.converters.SectionConverter;
-import de.modulo.backend.converters.SpoConverter;
+import de.modulo.backend.converters.*;
 import de.modulo.backend.dtos.SpoDTO;
 import de.modulo.backend.dtos.SpoDTOFlat;
-import de.modulo.backend.entities.ModuleRequirementEntity;
-import de.modulo.backend.entities.ModuleTypeEntity;
-import de.modulo.backend.entities.SectionEntity;
-import de.modulo.backend.entities.SpoEntity;
-import de.modulo.backend.repositories.ModuleRequirementRepository;
-import de.modulo.backend.repositories.ModuleTypeRepository;
-import de.modulo.backend.repositories.SectionRepository;
-import de.modulo.backend.repositories.SpoRepository;
+import de.modulo.backend.entities.*;
+import de.modulo.backend.repositories.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +26,9 @@ public class SpoService {
     private final ModuleTypeConverter moduleTypeConverter;
     private final ExamTypeService examTypeService;
     private final ModuleRequirementRepository moduleRequirementRepository;
+    private final SpoResponsibleUserRepository spoResponsibleUserRepository;
+    private final UserConverter userConverter;
+    private final UserRepository userRepository;
 
     @Autowired
     public SpoService(SpoRepository spoRepository,
@@ -45,7 +39,10 @@ public class SpoService {
                       SectionConverter sectionConverter,
                       ModuleTypeConverter moduleTypeConverter,
                       ExamTypeService examTypeService,
-                      ModuleRequirementRepository moduleRequirementRepository) {
+                      ModuleRequirementRepository moduleRequirementRepository,
+                      SpoResponsibleUserRepository spoResponsibleUserRepository,
+                      UserConverter userConverter,
+                      UserRepository userRepository) {
         this.spoRepository = spoRepository;
         this.spoConverter = spoConverter;
         this.sectionRepository = sectionRepository;
@@ -56,6 +53,9 @@ public class SpoService {
         this.sectionConverter = sectionConverter;
         this.moduleTypeConverter = moduleTypeConverter;
         this.examTypeService = examTypeService;
+        this.spoResponsibleUserRepository = spoResponsibleUserRepository;
+        this.userConverter = userConverter;
+        this.userRepository = userRepository;
     }
 
     public List<SpoDTOFlat> getAllSpos() {
@@ -125,9 +125,36 @@ public class SpoService {
         spoDTO.setModuleRequirementDTOs(moduleRequirementRepository.findBySpoId(id).stream()
                 .map(moduleRequirementConverter::toDto)
                 .collect(Collectors.toList()));
+        spoDTO.setResponsibleUsers(spoResponsibleUserRepository.findAllBySpoId(id).stream()
+                .map(SpoResponsibleUserEntity::getUser)
+                .map(userConverter::toDtoFlat)
+                .collect(Collectors.toList()));
 
         spoDTO.setExamTypeDTOs(examTypeService.getBySpo(id));
 
         return spoDTO;
+    }
+
+    public void addResponsible(Long id, Long userId) {
+        SpoEntity spoEntity = spoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Spo not found with id: " + id));
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+        SpoResponsibleUserEntity spoResponsibleUserEntity = new SpoResponsibleUserEntity();
+        spoResponsibleUserEntity.setSpo(spoEntity);
+        spoResponsibleUserEntity.setUser(userEntity);
+        spoResponsibleUserRepository.save(spoResponsibleUserEntity);
+    }
+
+    public void removeResponsible(Long id, Long userId) {
+        SpoResponsibleUserEntity.SpoResponsibleUserId spoResponsibleUserId = new SpoResponsibleUserEntity.SpoResponsibleUserId();
+        spoResponsibleUserId.setSpoId(id);
+        spoResponsibleUserId.setUserId(userId);
+        if(spoResponsibleUserRepository.existsById(spoResponsibleUserId)) {
+            spoResponsibleUserRepository.deleteById(spoResponsibleUserId);
+        }else{
+            throw new IllegalArgumentException("Responsible user not found with spoId: " + id + " and userId: " + userId);
+        }
+
     }
 }
