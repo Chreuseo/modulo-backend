@@ -28,7 +28,8 @@ public class ModuleImplementationService {
     @Autowired
     public ModuleImplementationService(ModuleImplementationRepository moduleImplementationRepository,
                                        ModuleImplementationConverter moduleImplementationConverter,
-                                       ModuleImplementationLecturerRepository moduleImplementationLecturerRepository, UserRepository userRepository) {
+                                       ModuleImplementationLecturerRepository moduleImplementationLecturerRepository,
+                                       UserRepository userRepository) {
         this.moduleImplementationRepository = moduleImplementationRepository;
         this.moduleImplementationConverter = moduleImplementationConverter;
         this.moduleImplementationLecturerRepository = moduleImplementationLecturerRepository;

@@ -2,8 +2,9 @@ package de.modulo.backend.enums;
 
 public enum PRIVILEGES {
     READ,
+    READ_DETAILS,
     ADD,
     UPDATE,
-    DELETE,
-    UPDATE_PRIVILEGES
+    UPDATE_PRIVILEGES,
+    DELETE
 }

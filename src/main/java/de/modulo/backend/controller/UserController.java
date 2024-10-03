@@ -6,6 +6,7 @@ import de.modulo.backend.dtos.UserDTO;
 import de.modulo.backend.dtos.UserDTOFlat;
 import de.modulo.backend.enums.ENTITY_TYPE;
 import de.modulo.backend.enums.PRIVILEGES;
+import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
 import de.modulo.backend.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,7 +47,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ_DETAILS, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -86,5 +87,16 @@ public class UserController {
         }
 
         return new ResponseEntity<>(userService.updateUser(userDTO), HttpStatus.OK);
+    }
+
+    @GetMapping("getbyrole/{role}")
+    public ResponseEntity<List<UserDTOFlat>> getByRole(@RequestParam String role, HttpServletRequest request){
+        try{
+            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ_DETAILS, SessionTokenHelper.getSessionToken(request));
+        }catch (InsufficientPermissionsException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        return new ResponseEntity<>(userService.getUsersByRole(ROLE.valueOf(role)), HttpStatus.OK);
     }
 }

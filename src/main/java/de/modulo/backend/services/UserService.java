@@ -4,6 +4,7 @@ import de.modulo.backend.converters.UserConverter;
 import de.modulo.backend.dtos.UserDTO;
 import de.modulo.backend.dtos.UserDTOFlat;
 import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,6 +34,12 @@ public class UserService {
         return users.stream()
                 .map(userConverter::toDtoFlat)
                 .collect(Collectors.toList());
+    }
+
+    public List<UserDTOFlat> getUsersByRole(ROLE role){
+        return userRepository.getUserEntitiesByRole(role).stream()
+                .map(userConverter::toDtoFlat)
+                .toList();
     }
 
     public UserDTO getUserById(Long id) {

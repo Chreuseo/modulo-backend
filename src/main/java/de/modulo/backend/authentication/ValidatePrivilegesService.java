@@ -81,7 +81,7 @@ public class ValidatePrivilegesService {
             case USER:
                 if(role != ROLE.ADMIN) {
                     switch (privileges) {
-                        case ADD, UPDATE, DELETE:
+                        case ADD, UPDATE, DELETE, READ_DETAILS:
                             throw new InsufficientPermissionsException("You do not have the required permissions to access users");
                     }
                 }
