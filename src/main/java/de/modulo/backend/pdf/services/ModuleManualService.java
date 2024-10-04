@@ -34,21 +34,24 @@ public class ModuleManualService {
     private final SpoRepository spoRepository;
     private final ModuleImplementationLecturerRepository moduleImplementationLecturerRepository;
     private final ExamTypeModuleImplementationRepository examTypeModuleImplementationRepository;
+    private final SemesterRepository semesterRepository;
 
     @Autowired
     public ModuleManualService(ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository,
                                ModuleFrameService moduleFrameService,
                                SpoRepository spoRepository,
                                ModuleImplementationLecturerRepository moduleImplementationLecturerRepository,
-                               ExamTypeModuleImplementationRepository examTypeModuleImplementationRepository) {
+                               ExamTypeModuleImplementationRepository examTypeModuleImplementationRepository,
+                               SemesterRepository semesterRepository) {
         this.moduleFrameModuleImplementationRepository = moduleFrameModuleImplementationRepository;
         this.moduleFrameService = moduleFrameService;
         this.spoRepository = spoRepository;
         this.moduleImplementationLecturerRepository = moduleImplementationLecturerRepository;
         this.examTypeModuleImplementationRepository = examTypeModuleImplementationRepository;
+        this.semesterRepository = semesterRepository;
     }
 
-    public ByteArrayOutputStream generateModuleManual(Long spoId) {
+    public ByteArrayOutputStream generateModuleManual(Long spoId, Long semesterId) {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
@@ -59,7 +62,7 @@ public class ModuleManualService {
 
             document.setMargins(40, 40, 40, 40);
 
-            addTitlePage(document, spoId);
+            addTitlePage(document, spoId, semesterId);
 
             ModuleFrameSetDTO moduleFrameSetDTO = moduleFrameService.getModuleFrameSetDTOBySpoId(spoId);
 
@@ -147,8 +150,9 @@ public class ModuleManualService {
         return byteArrayOutputStream;
     }
 
-    private void addTitlePage(Document document, Long spoId) throws IOException {
+    private void addTitlePage(Document document, Long spoId, Long semesterId) throws IOException {
         SpoEntity spoEntity = spoRepository.findById(spoId).orElseThrow();
+        SemesterEntity semesterEntity = semesterRepository.findById(semesterId).orElseThrow();
 
         Paragraph paragraph = new Paragraph();
         paragraph.setFontColor(ColorConstants.WHITE);
@@ -162,7 +166,7 @@ public class ModuleManualService {
         document.add(paragraph);
 
         paragraph = new Paragraph();
-        paragraph.add("WiSe");
+        paragraph.add(semesterEntity.getAbbreviation());
         paragraph.setFontColor(ColorConstants.WHITE);
         paragraph.setBackgroundColor(ColorConstants.RED);
         paragraph.setFontSize(8);
@@ -174,7 +178,7 @@ public class ModuleManualService {
         document.add(paragraph);
 
         paragraph = new Paragraph();
-        paragraph.add("2024/25");
+        paragraph.add(semesterEntity.getYear());
         paragraph.setFontColor(ColorConstants.WHITE);
         paragraph.setBackgroundColor(ColorConstants.RED);
         paragraph.setFontSize(8);

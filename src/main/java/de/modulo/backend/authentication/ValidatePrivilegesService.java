@@ -184,6 +184,14 @@ public class ValidatePrivilegesService {
                         throw new InsufficientPermissionsException("You do not have the required permissions to access users");
                 }
                 break;
+            case DOCUMENT:
+                switch (privileges) {
+                    case READ, ADD, UPDATE, DELETE:
+                        throw new InsufficientPermissionsException("You do not have the required permissions to read documents");
+                    default:
+                        break;
+                }
+                break;
             default:
                 throw new InsufficientPermissionsException("You do not have the required permissions to access this entity type");
         }

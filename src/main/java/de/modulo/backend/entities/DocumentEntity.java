@@ -3,13 +3,22 @@ package de.modulo.backend.entities;
 import de.modulo.backend.enums.DOCUMENT_TYPE;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "document_entity")
 @Data
+@NoArgsConstructor
 public class DocumentEntity {
+
+    public DocumentEntity(SpoEntity spo, SemesterEntity semester, DOCUMENT_TYPE type, LocalDateTime generatedAt) {
+        this.spo = spo;
+        this.semester = semester;
+        this.type = type;
+        this.generatedAt = generatedAt;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,5 +38,5 @@ public class DocumentEntity {
     @Column(columnDefinition = "MEDIUMBLOB")
     private byte[] data;
 
-    private Date generatedAt;
+    private LocalDateTime generatedAt;
 }

@@ -25,7 +25,7 @@ public class PdfController {
     @GetMapping("generateModuleManual/{spoId}")
     public ResponseEntity<ByteArrayResource> getPdf(@PathVariable Long spoId) {
         // Generate the PDF using the provided spoId
-        ByteArrayOutputStream pdfOutputStream = moduleManualService.generateModuleManual(spoId);
+        ByteArrayOutputStream pdfOutputStream = moduleManualService.generateModuleManual(spoId, null);
 
         // Convert the output stream to a byte array
         byte[] pdfBytes = pdfOutputStream.toByteArray();
