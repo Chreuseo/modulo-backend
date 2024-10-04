@@ -34,8 +34,8 @@ public class DocumentController {
         this.validatePrivilegesService = validatePrivilegesService;
     }
 
-    @GetMapping("get")
-    public ResponseEntity<byte[]> getDocument(Long spoId, Long semesterId, String documentType, HttpServletRequest request) {
+    @GetMapping("get/{spoId}/{semesterId}/{documentType}")
+    public ResponseEntity<byte[]> getDocument(@PathVariable Long spoId, @PathVariable Long semesterId, @PathVariable String documentType, HttpServletRequest request) {
         try{
             validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request), spoId);
             byte[] document = documentService.getDocument(spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
