@@ -47,4 +47,11 @@ tasks.named('test') {
 bootJar {
 	archiveFileName = 'modulo-master.jar'  // Specify the name of the output JAR file
 	mainClass = 'de.modulo.backend.BackendApplication'  // Replace with your actual main class
+	sourceSets {
+		main {
+			resources {
+				srcDirs 'src/main/resources'
+			}
+		}
+	}
 }
