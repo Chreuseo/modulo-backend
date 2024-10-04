@@ -337,8 +337,9 @@ public class ModuleManualService {
         table.addCell(new Cell().add(new Paragraph("Endnotenbildende Studien- / Prüfungsleistungen")));
         cell = new Cell();
         for(ExamTypeModuleImplementationEntity examTypeModuleImplementationEntity : examTypeModuleImplementationRepository
-                .findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleImplementationEntity.getId())) {
-            cell.add(new Paragraph(examTypeModuleImplementationEntity.getExamType().getName() + " " + examTypeModuleImplementationEntity.getLength()));
+                .findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleImplementationEntity.getId())
+                .stream().filter(examTypeModuleImplementationEntity -> examTypeModuleImplementationEntity.getModuleImplementation() == moduleImplementationEntity).toList()) {
+            cell.add(new Paragraph(examTypeModuleImplementationEntity.getExamType().getName() + " (" + examTypeModuleImplementationEntity.getLength() + ")"));
         }
         table.addCell(cell);
 
