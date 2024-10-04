@@ -59,11 +59,17 @@ public class ModuleManualService {
 
             ModuleFrameSetDTO moduleFrameSetDTO = moduleFrameService.getModuleFrameSetDTOBySpoId(spoId);
 
+            Paragraph paragraph = new Paragraph("Inhaltsverzeichnis");
+            paragraph.setFontSize(20);
+            paragraph.setBold();
+            paragraph.setMarginBottom(20);
+            document.add(paragraph);
+
             int sectionCounter = 0;
             for(ModuleFrameSetDTO.Section section : moduleFrameSetDTO.getSections()) {
                 if(!section.getModuleTypes().isEmpty()) {
                     String headline = (++sectionCounter) + ". " + section.getName();
-                    Paragraph paragraph = new Paragraph();
+                    paragraph = new Paragraph();
                     Link link = new Link(headline, PdfAction.createGoTo(headline));
                     paragraph.add(link);
                     document.add(paragraph);
@@ -72,7 +78,7 @@ public class ModuleManualService {
                 for(ModuleFrameSetDTO.Section.ModuleType moduleType : section.getModuleTypes()) {
                     if(!moduleType.getModuleFrames().isEmpty()){
                         String headline = sectionCounter + "." + (++moduleTypeCounter) + ". " + moduleType.getName();
-                        Paragraph paragraph = new Paragraph();
+                        paragraph = new Paragraph();
                         Link link = new Link(headline, PdfAction.createGoTo(headline));
                         paragraph.add(link);
                         document.add(paragraph);
@@ -85,7 +91,7 @@ public class ModuleManualService {
 
                         for(ModuleImplementationEntity moduleImplementationEntity : moduleImplementationEntitys) {
                             String title = sectionCounter + "." + moduleTypeCounter + "." + (++moduleCounter) + ". " + moduleImplementationEntity.getName();
-                            Paragraph paragraph = new Paragraph();
+                            paragraph = new Paragraph();
                             Link link = new Link(title, PdfAction.createGoTo(title));
                             paragraph.add(link);
                             document.add(paragraph);
@@ -100,7 +106,7 @@ public class ModuleManualService {
             for(ModuleFrameSetDTO.Section section : moduleFrameSetDTO.getSections()) {
                 if(!section.getModuleTypes().isEmpty()) {
                     String headline = (++sectionCounter) + ". " + section.getName();
-                    Paragraph paragraph = new Paragraph(headline);
+                    paragraph = new Paragraph(headline);
                     paragraph.setDestination(headline);
                     document.add(paragraph);
                 }
@@ -108,7 +114,7 @@ public class ModuleManualService {
                 for(ModuleFrameSetDTO.Section.ModuleType moduleType : section.getModuleTypes()) {
                     if(!moduleType.getModuleFrames().isEmpty()){
                         String headline = sectionCounter + "." + (++moduleTypeCounter) + ". " + moduleType.getName();
-                        Paragraph paragraph = new Paragraph(headline);
+                        paragraph = new Paragraph(headline);
                         paragraph.setDestination(headline);
                         document.add(paragraph);
                     }
@@ -138,16 +144,39 @@ public class ModuleManualService {
     private void addTitlePage(Document document, Long spoId) throws IOException {
         SpoEntity spoEntity = spoRepository.findById(spoId).orElseThrow();
 
-        Paragraph paragraph = new Paragraph("SoSe 2024");
+        Paragraph paragraph = new Paragraph();
         paragraph.setFontColor(ColorConstants.WHITE);
         paragraph.setBackgroundColor(ColorConstants.RED);
         paragraph.setFontSize(8);
-        paragraph.setWidth(24);
-        paragraph.setHeight(48);
+        paragraph.setWidth(30);
+        paragraph.setHeight(24);
         paragraph.setPaddingLeft(2);
         paragraph.setMarginLeft(420);
+        paragraph.setMarginBottom(0);
         document.add(paragraph);
 
+        paragraph = new Paragraph();
+        paragraph.add("WiSe");
+        paragraph.setFontColor(ColorConstants.WHITE);
+        paragraph.setBackgroundColor(ColorConstants.RED);
+        paragraph.setFontSize(8);
+        paragraph.setWidth(30);
+        paragraph.setPaddingLeft(2);
+        paragraph.setMarginLeft(420);
+        paragraph.setMarginTop(0);
+        paragraph.setMarginBottom(0);
+        document.add(paragraph);
+
+        paragraph = new Paragraph();
+        paragraph.add("2024/25");
+        paragraph.setFontColor(ColorConstants.WHITE);
+        paragraph.setBackgroundColor(ColorConstants.RED);
+        paragraph.setFontSize(8);
+        paragraph.setWidth(30);
+        paragraph.setPaddingLeft(2);
+        paragraph.setMarginLeft(420);
+        paragraph.setMarginTop(0);
+        document.add(paragraph);
 
         Table table = new Table(new float[] {1, 2});
         table.setWidth(455);
