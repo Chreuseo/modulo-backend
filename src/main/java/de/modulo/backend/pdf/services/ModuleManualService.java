@@ -240,7 +240,7 @@ public class ModuleManualService {
 
         // Create a new Table with a suitable number of columns adaptable to your fields
         Table table = new Table(new float[] {1, 2}); // Two columns: Label and Value
-        table.setWidth(555);
+        table.setWidth(515);
         table.setFixedLayout();
 
         // Add rows for each field of the ModuleImplementationEntity
