@@ -156,7 +156,7 @@ public class ModuleManualService {
 
         Cell cell = new Cell();
         cell.setBorder(Border.NO_BORDER);
-        Image logo = new Image(ImageDataFactory.create("src/main/resources/static/hochschule-coburg_logo.png"));
+        Image logo = new Image(ImageDataFactory.create("src/main/java/de/modulo/backend/pdf/hochschule-coburg_logo.png"));
         logo.setHeight(60);
         cell.add(logo);
         table.addCell(cell);
