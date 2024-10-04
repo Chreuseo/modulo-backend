@@ -22,9 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -134,7 +135,7 @@ public class ModuleManualService {
         return byteArrayOutputStream;
     }
 
-    private void addTitlePage(Document document, Long spoId) throws MalformedURLException {
+    private void addTitlePage(Document document, Long spoId) throws IOException {
         SpoEntity spoEntity = spoRepository.findById(spoId).orElseThrow();
 
         Paragraph paragraph = new Paragraph("SoSe 2024");
@@ -156,7 +157,9 @@ public class ModuleManualService {
 
         Cell cell = new Cell();
         cell.setBorder(Border.NO_BORDER);
-        Image logo = new Image(ImageDataFactory.create("src/main/resources/static/hochschule-coburg_logo.png"));
+        Image logo = new Image(ImageDataFactory
+                .create(Objects.requireNonNull(getClass()
+                        .getResourceAsStream("/static/hochschule-coburg_logo.png")).readAllBytes()));
         logo.setHeight(60);
         cell.add(logo);
         table.addCell(cell);
