@@ -14,10 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -53,8 +50,8 @@ public class DocumentController {
         }
     }
 
-    @PostMapping("generate")
-    public ResponseEntity<Void> generateDocument(Long spoId, Long semesterId, String documentType, HttpServletRequest request) {
+    @PostMapping("generate/{spoId}/{semesterId}/{documentType}")
+    public ResponseEntity<Void> generateDocument(@RequestParam Long spoId, @RequestParam Long semesterId, @RequestParam String documentType, HttpServletRequest request) {
         try{
             validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request), spoId);
             documentService.generateDocument(spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
