@@ -51,7 +51,7 @@ public class DocumentController {
     }
 
     @PostMapping("generate/{spoId}/{semesterId}/{documentType}")
-    public ResponseEntity<Void> generateDocument(@RequestParam Long spoId, @RequestParam Long semesterId, @RequestParam String documentType, HttpServletRequest request) {
+    public ResponseEntity<Void> generateDocument(@PathVariable Long spoId, @PathVariable Long semesterId, @PathVariable String documentType, HttpServletRequest request) {
         try{
             validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request), spoId);
             documentService.generateDocument(spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
