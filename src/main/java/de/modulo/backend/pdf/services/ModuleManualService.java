@@ -338,7 +338,7 @@ public class ModuleManualService {
         cell = new Cell();
         for(ExamTypeModuleImplementationEntity examTypeModuleImplementationEntity : examTypeModuleImplementationRepository
                 .findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleImplementationEntity.getId())
-                .stream().filter(examTypeModuleImplementationEntity -> examTypeModuleImplementationEntity.getModuleImplementation() == moduleImplementationEntity).toList()) {
+                .stream().filter(examTypeModuleImplementationEntity -> examTypeModuleImplementationEntity.getExamType().getSpo() == moduleFrameEntity.getSpo()).toList()) {
             cell.add(new Paragraph(examTypeModuleImplementationEntity.getExamType().getName() + " (" + examTypeModuleImplementationEntity.getLength() + ")"));
         }
         table.addCell(cell);
