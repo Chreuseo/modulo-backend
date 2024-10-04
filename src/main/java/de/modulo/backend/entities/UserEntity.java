@@ -56,5 +56,10 @@ public class UserEntity{
         if (!(o instanceof UserEntity that)) return false;
         return id.equals(that.id);
     }
+
+    @Override
+    public String toString() {
+        return title + " " + firstName + " " + lastName;
+    }
 }
 

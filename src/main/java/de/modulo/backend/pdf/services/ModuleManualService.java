@@ -12,11 +12,8 @@ import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.*;
 import de.modulo.backend.dtos.ModuleFrameDTO;
 import de.modulo.backend.dtos.ModuleFrameSetDTO;
-import de.modulo.backend.entities.ModuleFrameModuleImplementationEntity;
-import de.modulo.backend.entities.ModuleImplementationEntity;
-import de.modulo.backend.entities.SpoEntity;
-import de.modulo.backend.repositories.ModuleFrameModuleImplementationRepository;
-import de.modulo.backend.repositories.SpoRepository;
+import de.modulo.backend.entities.*;
+import de.modulo.backend.repositories.*;
 import de.modulo.backend.services.ModuleFrameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,13 +32,20 @@ public class ModuleManualService {
     private final ModuleFrameService moduleFrameService;
 
     private final SpoRepository spoRepository;
+    private final ModuleImplementationLecturerRepository moduleImplementationLecturerRepository;
+    private final ExamTypeModuleImplementationRepository examTypeModuleImplementationRepository;
 
     @Autowired
-    public ModuleManualService(ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository, ModuleFrameService moduleFrameService, SpoRepository spoRepository) {
+    public ModuleManualService(ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository,
+                               ModuleFrameService moduleFrameService,
+                               SpoRepository spoRepository,
+                               ModuleImplementationLecturerRepository moduleImplementationLecturerRepository,
+                               ExamTypeModuleImplementationRepository examTypeModuleImplementationRepository) {
         this.moduleFrameModuleImplementationRepository = moduleFrameModuleImplementationRepository;
         this.moduleFrameService = moduleFrameService;
-
         this.spoRepository = spoRepository;
+        this.moduleImplementationLecturerRepository = moduleImplementationLecturerRepository;
+        this.examTypeModuleImplementationRepository = examTypeModuleImplementationRepository;
     }
 
     public ByteArrayOutputStream generateModuleManual(Long spoId) {
@@ -120,13 +124,15 @@ public class ModuleManualService {
                     }
                     int moduleCounter = 0;
                     for(ModuleFrameDTO moduleFrame : moduleType.getModuleFrames()) {
-                        List<ModuleImplementationEntity> moduleImplementationEntitys = moduleFrameModuleImplementationRepository
+                        List<ModuleFrameModuleImplementationEntity> moduleImplementationEntitys = moduleFrameModuleImplementationRepository
                                 .findModuleFrameModuleImplementationEntitiesByModuleFrameId(moduleFrame.getId()).stream()
-                                .map(ModuleFrameModuleImplementationEntity::getModuleImplementation).toList();
+                                .toList();
 
-                        for(ModuleImplementationEntity moduleImplementationEntity : moduleImplementationEntitys) {
-                            String title = sectionCounter + "." + moduleTypeCounter + "." + (++moduleCounter) + ". " + moduleImplementationEntity.getName();
-                            addModuleFrameToDocument(moduleImplementationEntity, document, title);
+                        for(ModuleFrameModuleImplementationEntity moduleFrameModuleImplementationEntity : moduleImplementationEntitys) {
+                            String title = sectionCounter + "." + moduleTypeCounter + "." + (++moduleCounter) + ". " + moduleFrameModuleImplementationEntity.getModuleImplementation().getName();
+                            addModuleToDocument(moduleFrameModuleImplementationEntity,
+                                    document,
+                                    title);
                         }
                     }
                 }
@@ -260,56 +266,89 @@ public class ModuleManualService {
         document.add(new AreaBreak());
     }
 
-    private void addModuleFrameToDocument(ModuleImplementationEntity moduleImplementationEntity, Document document, String title) {
+    private void addModuleToDocument(ModuleFrameModuleImplementationEntity moduleFrameModuleImplementationEntity, Document document, String title) {
         if(title != null) {
             Paragraph paragraph = new Paragraph(title);
             paragraph.setDestination(title);
             document.add(paragraph);
         }
 
+        ModuleImplementationEntity moduleImplementationEntity = moduleFrameModuleImplementationEntity.getModuleImplementation();
+        ModuleFrameEntity moduleFrameEntity = moduleFrameModuleImplementationEntity.getModuleFrame();
+
         // Create a new Table with a suitable number of columns adaptable to your fields
         Table table = new Table(new float[] {1, 2}); // Two columns: Label and Value
         table.setWidth(515);
         table.setFixedLayout();
 
-        // Add rows for each field of the ModuleImplementationEntity
-        table.addCell(new Cell().add(new Paragraph("ID")));
-        table.addCell(new Cell().add(new Paragraph(moduleImplementationEntity.getId().toString())));
-
-        table.addCell(new Cell().add(new Paragraph("Name")));
-        Paragraph paragraph = new Paragraph(moduleImplementationEntity.getName() != null
-                ? moduleImplementationEntity.getName() : "N/A");
+        table.addCell(new Cell().add(new Paragraph("Modulbezeichnung")));
+        Paragraph paragraph = new Paragraph(moduleImplementationEntity.getName());
+        paragraph.setBold();
         table.addCell(new Cell().add(paragraph));
 
-        table.addCell(new Cell().add(new Paragraph("Abbreviation")));
-        table.addCell(new Cell().add(new Paragraph(moduleImplementationEntity.getAbbreviation() != null
-                ? moduleImplementationEntity.getAbbreviation() : "N/A")));
+        table.addCell(new Cell().add(new Paragraph("Kürzel")));
+        table.addCell(new Cell().add(new Paragraph(moduleImplementationEntity.getAbbreviation())));
 
-        table.addCell(new Cell().add(new Paragraph("Allowed Resources")));
-        table.addCell(getCellFromHtmlString(moduleImplementationEntity.getAllowedResources()));
+        table.addCell(new Cell().add(new Paragraph("Lehrform / SWS")));
+        table.addCell(new Cell().add(new Paragraph((moduleFrameEntity.getSws() + " SWS"))));
 
-        // Repeat similarly for other fields
-        // You can customize this section for other fields in a similar manner
+        table.addCell(new Cell().add(new Paragraph("ECTS")));
+        table.addCell(new Cell().add(new Paragraph((moduleFrameEntity.getCredits() + " ECTS"))));
+
         table.addCell(new Cell().add(new Paragraph("Workload")));
         table.addCell(getCellFromHtmlString(moduleImplementationEntity.getWorkload()));
 
-        table.addCell(new Cell().add(new Paragraph("Required Competences")));
+        table.addCell(new Cell().add(new Paragraph("Angebotsturnus")));
+        table.addCell(new Cell().add(new Paragraph(moduleImplementationEntity.getCycle() != null ?
+                moduleImplementationEntity.getCycle().getName() : "-")));
+
+        table.addCell(new Cell().add(new Paragraph("Dauer des Moduls")));
+        table.addCell(new Cell().add(new Paragraph(moduleImplementationEntity.getDuration() != null
+                ? moduleImplementationEntity.getDuration().getName() : "-")));
+
+        table.addCell(new Cell().add(new Paragraph("Modulverantwortlicher")));
+        table.addCell(new Cell().add(new Paragraph(moduleImplementationEntity.getResponsible() != null ?
+                moduleImplementationEntity.getResponsible().toString() : "-")));
+
+        table.addCell(new Cell().add(new Paragraph("Dozenten")));
+        Cell cell = new Cell();
+        for(ModuleImplementationLecturerEntity moduleImplementationLecturerEntity : moduleImplementationLecturerRepository.getModuleImplementationLecturerEntitiesByModuleImplementationId(moduleImplementationEntity.getId())) {
+            cell.add(new Paragraph(moduleImplementationLecturerEntity.getLecturer().toString()));
+        }
+        table.addCell(cell);
+
+        table.addCell(new Cell().add(new Paragraph("Sprache")));
+        table.addCell(new Cell().add(new Paragraph(moduleImplementationEntity.getLanguage() != null ?
+                moduleImplementationEntity.getLanguage().getName() : "-")));
+
+        table.addCell(new Cell().add(new Paragraph("Zulassungsvoraussetzungen")));
+        table.addCell(getCellFromHtmlString(moduleFrameModuleImplementationEntity.getModuleRequirement() != null ?
+                moduleFrameModuleImplementationEntity.getModuleRequirement().getName() : null));
+
+        table.addCell(new Cell().add(new Paragraph("Inhaltliche Vorraussetzungen")));
         table.addCell(getCellFromHtmlString(moduleImplementationEntity.getRequiredCompetences()));
 
-        table.addCell(new Cell().add(new Paragraph("Qualification Targets")));
+        table.addCell(new Cell().add(new Paragraph("Qualifikationsziele")));
         table.addCell(getCellFromHtmlString(moduleImplementationEntity.getQualificationTargets()));
 
-        table.addCell(new Cell().add(new Paragraph("Content")));
+        table.addCell(new Cell().add(new Paragraph("Lehrinhalte")));
         table.addCell(getCellFromHtmlString(moduleImplementationEntity.getContent()));
 
-        // Finish with page break after each module's detail
-        table.addCell(new Cell().add(new Paragraph("Additional Exams")));
+        table.addCell(new Cell().add(new Paragraph("Endnotenbildende Studien- / Prüfungsleistungen")));
+        cell = new Cell();
+        for(ExamTypeModuleImplementationEntity examTypeModuleImplementationEntity : examTypeModuleImplementationRepository
+                .findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleImplementationEntity.getId())) {
+            cell.add(new Paragraph(examTypeModuleImplementationEntity.getExamType().getName() + " " + examTypeModuleImplementationEntity.getLength()));
+        }
+        table.addCell(cell);
+
+        table.addCell(new Cell().add(new Paragraph("Sonstige Leistungsnachweise")));
         table.addCell(getCellFromHtmlString(moduleImplementationEntity.getAdditionalExams()));
 
-        table.addCell(new Cell().add(new Paragraph("Media Types")));
+        table.addCell(new Cell().add(new Paragraph("Medienformen")));
         table.addCell(getCellFromHtmlString(moduleImplementationEntity.getMediaTypes()));
 
-        table.addCell(new Cell().add(new Paragraph("Literature")));
+        table.addCell(new Cell().add(new Paragraph("Literatur")));
         table.addCell(getCellFromHtmlString(moduleImplementationEntity.getLiterature()));
 
         // Add the completed table to the document
