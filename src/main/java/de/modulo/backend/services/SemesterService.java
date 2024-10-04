@@ -6,6 +6,7 @@ import de.modulo.backend.entities.SemesterEntity;
 import de.modulo.backend.repositories.SemesterRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ public class SemesterService {
 
     public List<SemesterDTO> getAllSemesters() {
         return semesterRepository.findAll().stream()
+                .sorted(Comparator.comparing(SemesterEntity::getYear))
                 .map(semesterConverter::toDTO)
                 .collect(Collectors.toList());
     }

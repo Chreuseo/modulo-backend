@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -89,7 +90,8 @@ public class DocumentService {
     }
 
     public List<SpoDocumentsDTO> getDocuments() {
-        List<SemesterEntity> semesterEntities = semesterRepository.findAll();
+        List<SemesterEntity> semesterEntities = semesterRepository.findAll().stream()
+                .sorted(Comparator.comparing(SemesterEntity::getYear)).toList();
         List<SpoEntity> spoEntities = spoRepository.findAll();
         List<SpoDocumentsDTO> spoDocumentsDTOs = new ArrayList<>();
 
