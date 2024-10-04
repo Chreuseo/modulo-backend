@@ -54,4 +54,8 @@ bootJar {
 			}
 		}
 	}
+
+	tasks.named('processResources') {
+		duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	}
 }
