@@ -31,7 +31,7 @@ public class ParagraphController {
         this.validatePrivilegesService = validatePrivilegesService;
     }
 
-    @PostMapping
+    @PostMapping("add")
     public ResponseEntity<ParagraphDTO> addParagraph(@RequestBody ParagraphDTO paragraphDTO, HttpServletRequest request) {
         try{
             validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));

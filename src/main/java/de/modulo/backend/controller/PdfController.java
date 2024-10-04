@@ -22,7 +22,7 @@ public class PdfController {
         this.moduleManualService = moduleManualService;
     }
 
-    @GetMapping("/generateModuleManual/{spoId}")
+    @GetMapping("generateModuleManual/{spoId}")
     public ResponseEntity<ByteArrayResource> getPdf(@PathVariable Long spoId) {
         // Generate the PDF using the provided spoId
         ByteArrayOutputStream pdfOutputStream = moduleManualService.generateModuleManual(spoId);
