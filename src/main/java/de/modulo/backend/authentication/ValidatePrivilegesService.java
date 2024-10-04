@@ -37,53 +37,45 @@ public class ValidatePrivilegesService {
     public void validatePrivileges(ENTITY_TYPE entityType, PRIVILEGES privileges, String sessionToken) throws InsufficientPermissionsException {
         ROLE role = sessionService.getRoleBySessionId(UUID.fromString(sessionToken));
 
+        if(role == ROLE.ADMIN) {
+            return;
+        }
+
         switch (entityType) {
             case GENERAL_SETTINGS:
-                if(role != ROLE.ADMIN) {
-                    switch (privileges) {
-                        case ADD, UPDATE, DELETE:
-                            throw new InsufficientPermissionsException("You do not have the required permissions to access general settings");
-                    }
+                switch (privileges) {
+                    case ADD, UPDATE, DELETE:
+                        throw new InsufficientPermissionsException("You do not have the required permissions to access general settings");
                 }
                 break;
             case SPO_SETTINGS:
-                if(role != ROLE.ADMIN) {
-                    switch (privileges) {
-                        case ADD, UPDATE, DELETE, UPDATE_PRIVILEGES:
-                            throw new InsufficientPermissionsException("You do not have the required permissions to access SPO settings");
-                    }
+                switch (privileges) {
+                    case ADD, UPDATE, DELETE, UPDATE_PRIVILEGES:
+                        throw new InsufficientPermissionsException("You do not have the required permissions to access SPO settings");
                 }
                 break;
             case SPO:
-                if(role != ROLE.ADMIN) {
-                    switch (privileges) {
-                        case ADD, UPDATE, DELETE, UPDATE_PRIVILEGES:
-                            throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
-                    }
+                switch (privileges) {
+                    case ADD, UPDATE, DELETE, UPDATE_PRIVILEGES:
+                        throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
                 }
                 break;
             case MODULE:
-                if(role != ROLE.ADMIN) {
-                    switch (privileges) {
-                        case READ, UPDATE, DELETE:
-                            throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
-                    }
+                switch (privileges) {
+                    case READ, UPDATE, DELETE:
+                        throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
                 }
                 break;
             case MODULE_FRAME_MODULE_IMPLEMENTATION:
-                if(role != ROLE.ADMIN) {
-                    switch (privileges) {
-                        case ADD, UPDATE, DELETE:
-                            throw new InsufficientPermissionsException("You do not have the required permissions to access module frame module implementations");
-                    }
+                switch (privileges) {
+                    case ADD, UPDATE, DELETE:
+                        throw new InsufficientPermissionsException("You do not have the required permissions to access module frame module implementations");
                 }
                 break;
             case USER:
-                if(role != ROLE.ADMIN) {
-                    switch (privileges) {
-                        case ADD, UPDATE, DELETE, READ_DETAILS:
-                            throw new InsufficientPermissionsException("You do not have the required permissions to access users");
-                    }
+                switch (privileges) {
+                    case ADD, UPDATE, DELETE, READ_DETAILS:
+                        throw new InsufficientPermissionsException("You do not have the required permissions to access users");
                 }
                 break;
             default:

@@ -68,11 +68,11 @@ public class DocumentController {
     public ResponseEntity<List<SpoDocumentsDTO>> getSpoDocuments(HttpServletRequest request) {
         try{
             validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            List<SpoDocumentsDTO> spoDocuments = documentService.getDocuments();
+            return new ResponseEntity<>(spoDocuments, HttpStatus.OK);
         } catch (InsufficientPermissionsException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        List<SpoDocumentsDTO> spoDocuments = documentService.getDocuments();
-        return new ResponseEntity<>(spoDocuments, HttpStatus.OK);
     }
 
 }
