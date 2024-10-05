@@ -92,14 +92,16 @@ public class ModuleManualService {
                     }
                     int moduleCounter = 0;
                     for(ModuleFrameDTO moduleFrame : moduleType.getModuleFrames()) {
-                        List<ModuleImplementationEntity> moduleImplementationEntitys = moduleFrameModuleImplementationRepository
+                        List<ModuleImplementationEntity> moduleImplementationEntities = moduleFrameModuleImplementationRepository
                                 .findModuleFrameModuleImplementationEntitiesByModuleFrameId(moduleFrame.getId()).stream()
                                 .map(ModuleFrameModuleImplementationEntity::getModuleImplementation).toList();
 
-                        for(ModuleImplementationEntity moduleImplementationEntity : moduleImplementationEntitys) {
+                        for(ModuleImplementationEntity moduleImplementationEntity : moduleImplementationEntities) {
                             String title = sectionCounter + "." + moduleTypeCounter + "." + (++moduleCounter) + ". " + moduleImplementationEntity.getName();
                             paragraph = new Paragraph();
+                            paragraph.setMarginLeft(24);
                             Link link = new Link(title, PdfAction.createGoTo(title));
+                            link.setText(moduleImplementationEntity.getName());
                             paragraph.add(link);
                             document.add(paragraph);
                         }
@@ -271,14 +273,14 @@ public class ModuleManualService {
     }
 
     private void addModuleToDocument(ModuleFrameModuleImplementationEntity moduleFrameModuleImplementationEntity, Document document, String title) {
+        ModuleImplementationEntity moduleImplementationEntity = moduleFrameModuleImplementationEntity.getModuleImplementation();
+        ModuleFrameEntity moduleFrameEntity = moduleFrameModuleImplementationEntity.getModuleFrame();
+
         if(title != null) {
-            Paragraph paragraph = new Paragraph(title);
+            Paragraph paragraph = new Paragraph(moduleImplementationEntity.getName());
             paragraph.setDestination(title);
             document.add(paragraph);
         }
-
-        ModuleImplementationEntity moduleImplementationEntity = moduleFrameModuleImplementationEntity.getModuleImplementation();
-        ModuleFrameEntity moduleFrameEntity = moduleFrameModuleImplementationEntity.getModuleFrame();
 
         // Create a new Table with a suitable number of columns adaptable to your fields
         Table table = new Table(new float[] {1, 2}); // Two columns: Label and Value
@@ -381,6 +383,4 @@ public class ModuleManualService {
 
         return htmlCell; // Return the populated Cell
     }
-
-
 }
