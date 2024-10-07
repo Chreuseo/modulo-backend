@@ -44,6 +44,17 @@ public class UserController {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
+    @GetMapping("role/{role}")
+    public ResponseEntity<List<UserDTOFlat>> getUsersByRole(@PathVariable String role, HttpServletRequest request) {
+        try{
+            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            return new ResponseEntity<>(userService.getUsersByRole(ROLE.valueOf(role)), HttpStatus.OK);
+
+        }catch (InsufficientPermissionsException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id, HttpServletRequest request) {
         try{
@@ -87,16 +98,5 @@ public class UserController {
         }
 
         return new ResponseEntity<>(userService.updateUser(userDTO), HttpStatus.OK);
-    }
-
-    @GetMapping("getbyrole/{role}")
-    public ResponseEntity<List<UserDTOFlat>> getByRole(@RequestParam String role, HttpServletRequest request){
-        try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ_DETAILS, SessionTokenHelper.getSessionToken(request));
-        }catch (InsufficientPermissionsException e){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-
-        return new ResponseEntity<>(userService.getUsersByRole(ROLE.valueOf(role)), HttpStatus.OK);
     }
 }

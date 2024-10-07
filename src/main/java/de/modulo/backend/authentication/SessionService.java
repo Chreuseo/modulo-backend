@@ -99,6 +99,10 @@ public class SessionService {
         return sessionRepository.findById(sessionId).orElseThrow().getUser();
     }
 
+    public Long getUserIdBySessionId(UUID sessionId) {
+        return sessionRepository.findById(sessionId).orElseThrow().getUser().getId();
+    }
+
     public ROLE getRoleBySessionId(UUID sessionId) {
         return sessionRepository.findById(sessionId).orElseThrow().getUser().getRole();
     }

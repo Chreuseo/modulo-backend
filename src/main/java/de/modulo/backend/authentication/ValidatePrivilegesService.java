@@ -1,18 +1,15 @@
 package de.modulo.backend.authentication;
 
-import de.modulo.backend.entities.ModuleImplementationEntity;
 import de.modulo.backend.entities.ModuleImplementationLecturerEntity;
-import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.entities.SpoEntity;
 import de.modulo.backend.enums.ENTITY_TYPE;
 import de.modulo.backend.enums.PRIVILEGES;
 import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
-import de.modulo.backend.repositories.ModuleImplementationLecturerRepository;
-import de.modulo.backend.repositories.ModuleImplementationRepository;
+import de.modulo.backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,170 +19,229 @@ public class ValidatePrivilegesService {
     private final NotifyService notifyService;
     private final ModuleImplementationRepository moduleImplementationRepository;
     private final ModuleImplementationLecturerRepository moduleImplementationLecturerRepository;
+    private final SpoResponsibleUserRepository spoResponsibleUserRepository;
+    private final SpoRepository spoRepository;
 
     @Autowired
     public ValidatePrivilegesService(SessionService sessionService,
                                      NotifyService notifyService,
                                      ModuleImplementationRepository moduleImplementationRepository,
-                                     ModuleImplementationLecturerRepository moduleImplementationLecturerRepository) {
+                                     ModuleImplementationLecturerRepository moduleImplementationLecturerRepository,
+                                     SpoResponsibleUserRepository spoResponsibleUserRepository, SpoRepository spoRepository) {
         this.sessionService = sessionService;
         this.notifyService = notifyService;
         this.moduleImplementationRepository = moduleImplementationRepository;
         this.moduleImplementationLecturerRepository = moduleImplementationLecturerRepository;
+        this.spoResponsibleUserRepository = spoResponsibleUserRepository;
+        this.spoRepository = spoRepository;
     }
 
-    public void validatePrivileges(ENTITY_TYPE entityType, PRIVILEGES privileges, String sessionToken) throws InsufficientPermissionsException {
+    public void validateGeneralPrivileges(ENTITY_TYPE entityType, PRIVILEGES privileges, String sessionToken) throws InsufficientPermissionsException{
         ROLE role = sessionService.getRoleBySessionId(UUID.fromString(sessionToken));
 
-        if(role == ROLE.ADMIN) {
-            return;
-        }
-
-        switch (entityType) {
-            case GENERAL_SETTINGS:
-                switch (privileges) {
-                    case ADD, UPDATE, DELETE:
-                        throw new InsufficientPermissionsException("You do not have the required permissions to access general settings");
+        switch(role){
+            case ADMIN:
+                return;
+            case SPO_ADMIN:
+                switch(entityType){
+                    case GENERAL_SETTINGS -> {
+                        switch(privileges){
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access general settings");
+                        }
+                    }
+                    case SPO_SETTINGS -> {
+                        switch(privileges){
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPO settings");
+                        }
+                    }
+                    case USER -> {
+                        switch(privileges){
+                            case ADD, UPDATE, DELETE, READ_DETAILS -> throw new InsufficientPermissionsException("You do not have the required permissions to access users");
+                        }
+                    }
+                    case SPO -> {
+                        switch(privileges){
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
+                        }
+                    }
+                    case MODULE -> {
+                        switch(privileges){
+                            case UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
+                        }
+                    }
+                    case DOCUMENT -> {
+                        switch(privileges){
+                            case READ, ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access documents");
+                        }
+                    }
+                    case MODULE_FRAME_MODULE_IMPLEMENTATION -> {
+                        switch(privileges){
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access module frame module implementations");
+                        }
+                    }
                 }
-                break;
-            case SPO_SETTINGS:
-                switch (privileges) {
-                    case ADD, UPDATE, DELETE, UPDATE_PRIVILEGES:
-                        throw new InsufficientPermissionsException("You do not have the required permissions to access SPO settings");
-                }
-                break;
-            case SPO:
-                switch (privileges) {
-                    case ADD, UPDATE, DELETE, UPDATE_PRIVILEGES:
-                        throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
-                }
-                break;
-            case MODULE:
-                switch (privileges) {
-                    case READ, UPDATE, DELETE:
-                        throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
-                }
-                break;
-            case MODULE_FRAME_MODULE_IMPLEMENTATION:
-                switch (privileges) {
-                    case ADD, UPDATE, DELETE:
-                        throw new InsufficientPermissionsException("You do not have the required permissions to access module frame module implementations");
-                }
-                break;
             case USER:
-                switch (privileges) {
-                    case ADD, UPDATE, DELETE, READ_DETAILS:
-                        throw new InsufficientPermissionsException("You do not have the required permissions to access users");
+                switch (entityType) {
+                    case GENERAL_SETTINGS -> {
+                        switch (privileges) {
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access general settings");
+                        }
+                    }
+                    case SPO_SETTINGS -> {
+                        switch (privileges) {
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPO settings");
+                        }
+                    }
+                    case SPO -> {
+                        switch (privileges) {
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
+                        }
+                    }
+                    case MODULE -> {
+                        switch (privileges) {
+                            case READ, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
+                        }
+                    }
+                    case MODULE_FRAME_MODULE_IMPLEMENTATION -> {
+                        switch (privileges) {
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access module frame module implementations");
+                        }
+                    }
+                    case USER -> {
+                        switch (privileges) {
+                            case ADD, UPDATE, DELETE, READ_DETAILS -> throw new InsufficientPermissionsException("You do not have the required permissions to access users");
+                        }
+                    }
+                    case DOCUMENT -> {
+                        switch (privileges) {
+                            case READ, ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access documents");
+                        }
+                    }
                 }
-                break;
             default:
-                throw new InsufficientPermissionsException("You do not have the required permissions to access this entity type");
+                throw new InsufficientPermissionsException("You do not have the required permissions to access this resource");
         }
     }
 
-    public void validatePrivileges(ENTITY_TYPE entityType, PRIVILEGES privileges, String sessionToken, Long id) throws InsufficientPermissionsException {
+    public void validateSpoSpecificPrivileges(ENTITY_TYPE entityType, PRIVILEGES privileges, String sessionToken, Long spoId) throws InsufficientPermissionsException{
         ROLE role = sessionService.getRoleBySessionId(UUID.fromString(sessionToken));
-        UserEntity userEntity = sessionService.getUserBySessionId(UUID.fromString(sessionToken));
+        SpoEntity spoEntity = spoRepository.findById(spoId).orElseThrow();
+        boolean isResponsible = spoResponsibleUserRepository.existsBySpoIdAndUserId(spoId, sessionService.getUserIdBySessionId(UUID.fromString(sessionToken)));
 
-        ModuleImplementationEntity moduleImplementationEntity;
-        List<ModuleImplementationLecturerEntity> moduleImplementationLecturerEntities;
-
-        if(role == ROLE.ADMIN) {
-            return;
+        switch (role){
+            case ADMIN -> {
+                return;
+            }
+            case SPO_ADMIN -> {
+                switch (entityType){
+                    case SPO -> {
+                        switch (privileges){
+                            case ADD, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
+                            case UPDATE -> {
+                                if (!isResponsible) {
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
+                                }
+                            }
+                        }
+                    }
+                    case MODULE -> {
+                        switch (privileges){
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
+                        }
+                    }
+                    case DOCUMENT -> {
+                        switch (privileges){
+                            case READ, ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access documents");
+                        }
+                    }
+                    case MODULE_FRAME_MODULE_IMPLEMENTATION -> {
+                        switch (privileges){
+                            case ADD, UPDATE, DELETE -> {
+                                if (!isResponsible) {
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to access module frame module implementations");
+                                }
+                            }
+                        }
+                    }
+                    case USER -> {
+                        switch (privileges){
+                            case ADD, UPDATE, DELETE, READ_DETAILS -> throw new InsufficientPermissionsException("You do not have the required permissions to access users");
+                        }
+                    }
+                    case SPO_SETTINGS -> {
+                        switch (privileges){
+                            case ADD, UPDATE, DELETE -> {
+                                if (!isResponsible) {
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to access SPO settings");
+                                }
+                            }
+                        }
+                    }
+                    case GENERAL_SETTINGS -> {
+                        switch (privileges){
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access general settings");
+                        }
+                    }
+                }
+            }
         }
+    }
 
-        switch (entityType) {
-            case GENERAL_SETTINGS:
-                switch (privileges) {
-                    case ADD, UPDATE, DELETE:
-                        throw new InsufficientPermissionsException("You do not have the required permissions to access general settings");
-                    default:
-                        break;
-                }
-            case SPO_SETTINGS:
-                switch (privileges) {
-                    case ADD, UPDATE, DELETE:
-                        throw new InsufficientPermissionsException("You do not have the required permissions to write SPO settings");
-                    default:
-                        break;
-                }
-                break;
-            case SPO:
-                switch (privileges) {
-                    case ADD, UPDATE, DELETE:
-                        throw new InsufficientPermissionsException("You do not have the required permissions to write SPOs");
-                    default:
-                        break;
-                }
-                break;
-            case MODULE:
-                moduleImplementationEntity = moduleImplementationRepository.findById(id).orElseThrow(() -> new InsufficientPermissionsException("You do not have the required permissions to read modules"));
-                moduleImplementationLecturerEntities = moduleImplementationLecturerRepository.getModuleImplementationLecturerEntitiesByModuleImplementationId(id);
-                switch (privileges) {
-                    case READ:
-                        if(!moduleImplementationEntity.getResponsible().equals(userEntity) && moduleImplementationLecturerEntities.stream().noneMatch(moduleImplementationLecturerEntity -> moduleImplementationLecturerEntity.getLecturer().equals(userEntity))) {
-                            throw new InsufficientPermissionsException("You do not have the required permissions to read modules");
-                        }else {
-                            break;
+    public void validateModuleSpecificPrivileges(ENTITY_TYPE entityType, PRIVILEGES privileges, String sessionToken, Long moduleImplementationId){
+        ROLE role = sessionService.getRoleBySessionId(UUID.fromString(sessionToken));
+        boolean isResponsible = moduleImplementationRepository.findById(moduleImplementationId).orElseThrow().getResponsible().getId().equals(sessionService.getUserIdBySessionId(UUID.fromString(sessionToken)));
+        ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId moduleImplementationLecturerEntityId = new ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId();
+        moduleImplementationLecturerEntityId.setModuleImplementation(moduleImplementationId);
+        moduleImplementationLecturerEntityId.setLecturer(sessionService.getUserIdBySessionId(UUID.fromString(sessionToken)));
+        boolean isLecturer = moduleImplementationLecturerRepository.existsById(moduleImplementationLecturerEntityId);
+
+        switch (role){
+            case ADMIN -> {
+                return;
+            }
+            case SPO_ADMIN -> {
+                switch (entityType){
+                    case MODULE -> {
+                        switch (privileges){
+                            case ADD, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
+                            case UPDATE -> {
+                                if (!isLecturer) {
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
+                                }
+                            }
                         }
-                    case ADD:
-                        throw new InsufficientPermissionsException("You do not have the required permissions to write modules");
-                    case UPDATE:
-                        if(moduleImplementationEntity.getResponsible().equals(userEntity)) {
-                            break;
-                        }else if(moduleImplementationLecturerEntities.stream().anyMatch(moduleImplementationLecturerEntity -> moduleImplementationLecturerEntity.getLecturer().equals(userEntity))) {
-                            notifyService.notifyUser("User " + userEntity.getLastName() + " has updated module " + moduleImplementationEntity.getName(), moduleImplementationEntity.getResponsible());
-                            break;
-                        }else {
-                            throw new InsufficientPermissionsException("You do not have the required permissions to update modules");
+                    }
+                    case DOCUMENT -> {
+                        switch (privileges){
+                            case READ, ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access documents");
                         }
-                    case DELETE:
-                        if(!moduleImplementationEntity.getResponsible().equals(userEntity)) {
-                            throw new InsufficientPermissionsException("You do not have the required permissions to delete modules");
-                        }else {
-                            break;
+                    }
+                    case MODULE_FRAME_MODULE_IMPLEMENTATION -> {
+                        switch (privileges){
+                            case ADD, UPDATE, DELETE -> {
+                                if (!isLecturer) {
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to access module frame module implementations");
+                                }
+                            }
                         }
+                    }
+                    case USER -> {
+                        switch (privileges){
+                            case ADD, UPDATE, DELETE, READ_DETAILS -> throw new InsufficientPermissionsException("You do not have the required permissions to access users");
+                        }
+                    }
+                    case SPO_SETTINGS -> {
+                        switch (privileges){
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPO settings");
+                        }
+                    }
+                    case GENERAL_SETTINGS -> {
+                        switch (privileges){
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access general settings");
+                        }
+                    }
                 }
-                break;
-            case MODULE_FRAME_MODULE_IMPLEMENTATION:
-                moduleImplementationEntity = moduleImplementationRepository.findById(id).orElseThrow(() -> new InsufficientPermissionsException("You do not have the required permissions to read modules"));
-                moduleImplementationLecturerEntities = moduleImplementationLecturerRepository.getModuleImplementationLecturerEntitiesByModuleImplementationId(id);
-                switch (privileges) {
-                    case READ:
-                        if(!moduleImplementationEntity.getResponsible().equals(userEntity) && moduleImplementationLecturerEntities.stream().noneMatch(moduleImplementationLecturerEntity -> moduleImplementationLecturerEntity.getLecturer().equals(userEntity))) {
-                            throw new InsufficientPermissionsException("You do not have the required permissions to read modules");
-                        }
-                        break;
-                    case ADD, DELETE:
-                        if(!moduleImplementationEntity.getResponsible().equals(userEntity)) {
-                            throw new InsufficientPermissionsException("You do not have the required permissions to delete modules");
-                        }else {
-                            break;
-                        }
-                    case UPDATE:
-                        if(!moduleImplementationEntity.getResponsible().equals(userEntity)) {
-                            throw new InsufficientPermissionsException("You do not have the required permissions to update module frame module implementations");
-                        }else {
-                            break;
-                        }
-                }
-                break;
-            case USER:
-                switch (privileges) {
-                    case ADD, UPDATE, DELETE:
-                        throw new InsufficientPermissionsException("You do not have the required permissions to access users");
-                }
-                break;
-            case DOCUMENT:
-                switch (privileges) {
-                    case READ, ADD, UPDATE, DELETE:
-                        throw new InsufficientPermissionsException("You do not have the required permissions to read documents");
-                    default:
-                        break;
-                }
-                break;
-            default:
-                throw new InsufficientPermissionsException("You do not have the required permissions to access this entity type");
+            }
         }
     }
 }
