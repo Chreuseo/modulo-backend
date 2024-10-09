@@ -36,7 +36,7 @@ public class UserController {
     @GetMapping("/all")
     public ResponseEntity<List<UserDTOFlat>> getAllUsers(HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -47,7 +47,7 @@ public class UserController {
     @GetMapping("role/{role}")
     public ResponseEntity<List<UserDTOFlat>> getUsersByRole(@PathVariable String role, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
             return new ResponseEntity<>(userService.getUsersByRole(ROLE.valueOf(role)), HttpStatus.OK);
 
         }catch (InsufficientPermissionsException e){
@@ -58,7 +58,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ_DETAILS, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ_DETAILS, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -69,7 +69,7 @@ public class UserController {
     @PostMapping("/new")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -80,7 +80,7 @@ public class UserController {
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -92,7 +92,7 @@ public class UserController {
     @PutMapping("/update")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

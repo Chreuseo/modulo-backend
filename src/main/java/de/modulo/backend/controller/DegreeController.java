@@ -35,7 +35,7 @@ public class DegreeController {
     @GetMapping("/all")
     public ResponseEntity<List<DegreeDTO>> getAllDegrees(HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -48,7 +48,7 @@ public class DegreeController {
     @PostMapping("/new")
     public ResponseEntity<DegreeDTO> addDegree(@RequestBody DegreeDTO degreeDTO, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -61,7 +61,7 @@ public class DegreeController {
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteDegree(@PathVariable Long id, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

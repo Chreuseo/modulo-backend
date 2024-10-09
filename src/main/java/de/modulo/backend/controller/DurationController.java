@@ -35,7 +35,7 @@ public class DurationController {
     @GetMapping("/all")
     public ResponseEntity<List<DurationDTO>> getAllDurations(HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -48,7 +48,7 @@ public class DurationController {
     @PostMapping("/new")
     public ResponseEntity<DurationDTO> addDuration(@RequestBody DurationDTO durationDto, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -61,7 +61,7 @@ public class DurationController {
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteDuration(@PathVariable Long id, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

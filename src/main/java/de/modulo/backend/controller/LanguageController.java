@@ -36,7 +36,7 @@ public class LanguageController {
     @GetMapping("/all")
     public ResponseEntity<List<LanguageDTO>> getAllLanguages(HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -49,7 +49,7 @@ public class LanguageController {
     @PostMapping("/new")
     public ResponseEntity<LanguageDTO> addLanguage(@RequestBody LanguageDTO languageDto, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -62,7 +62,7 @@ public class LanguageController {
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteLanguage(@PathVariable Long id, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

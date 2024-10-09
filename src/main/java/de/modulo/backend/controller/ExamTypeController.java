@@ -6,6 +6,8 @@ import de.modulo.backend.dtos.ExamTypeDTO;
 import de.modulo.backend.enums.ENTITY_TYPE;
 import de.modulo.backend.enums.PRIVILEGES;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
+import de.modulo.backend.repositories.ExamTypeRepository;
+import de.modulo.backend.repositories.ModuleFrameRepository;
 import de.modulo.backend.services.ExamTypeService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,71 +25,72 @@ public class ExamTypeController {
 
     private final ExamTypeService examTypeService;
     private final ValidatePrivilegesService validatePrivilegesService;
+    private final ModuleFrameRepository moduleFrameRepository;
+    private final ExamTypeRepository examTypeRepository;
 
     @Autowired
     public ExamTypeController(ExamTypeService examTypeService,
-                              ValidatePrivilegesService validatePrivilegesService) {
+                              ValidatePrivilegesService validatePrivilegesService, ModuleFrameRepository moduleFrameRepository, ExamTypeRepository examTypeRepository) {
         this.examTypeService = examTypeService;
         this.validatePrivilegesService = validatePrivilegesService;
+        this.moduleFrameRepository = moduleFrameRepository;
+        this.examTypeRepository = examTypeRepository;
     }
 
     @GetMapping("/spo/{spoId}")
     public ResponseEntity<List<ExamTypeDTO>> getBySpo(@PathVariable long spoId, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateSpoSpecificPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request), spoId);
+            List<ExamTypeDTO> examTypes = examTypeService.getBySpo(spoId);
+            return new ResponseEntity<>(examTypes, HttpStatus.OK);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        List<ExamTypeDTO> examTypes = examTypeService.getBySpo(spoId);
-        return new ResponseEntity<>(examTypes, HttpStatus.OK);
     }
 
     @GetMapping("/module-frame/{moduleFrameId}")
     public ResponseEntity<List<ExamTypeDTO>> getByModuleFrame(@PathVariable long moduleFrameId, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            Long spoId = moduleFrameRepository.findById(moduleFrameId).orElseThrow().getSpo().getId();
+            validatePrivilegesService.validateSpoSpecificPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request), spoId);
+            List<ExamTypeDTO> examTypes = examTypeService.getByModuleFrame(moduleFrameId);
+            return new ResponseEntity<>(examTypes, HttpStatus.OK);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        List<ExamTypeDTO> examTypes = examTypeService.getByModuleFrame(moduleFrameId);
-        return new ResponseEntity<>(examTypes, HttpStatus.OK);
     }
 
     @PostMapping("/add")
     public ResponseEntity<ExamTypeDTO> add(@RequestBody ExamTypeDTO dto, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateSpoSpecificPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request), dto.getSpoId());
+            ExamTypeDTO createdDto = examTypeService.add(dto);
+            return new ResponseEntity<>(createdDto, HttpStatus.CREATED);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        ExamTypeDTO createdDto = examTypeService.add(dto);
-        return new ResponseEntity<>(createdDto, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> remove(@PathVariable long id, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateSpoSpecificPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request), examTypeRepository.findById(id).orElseThrow().getSpo().getId());
+            examTypeService.remove(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        examTypeService.remove(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/update")
     public ResponseEntity<ExamTypeDTO> update(@RequestBody ExamTypeDTO dto, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateSpoSpecificPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request), dto.getSpoId());
+            ExamTypeDTO updatedDto = examTypeService.update(dto);
+            return new ResponseEntity<>(updatedDto, HttpStatus.OK);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
-        ExamTypeDTO updatedDto = examTypeService.update(dto);
-        return new ResponseEntity<>(updatedDto, HttpStatus.OK);
     }
 }
