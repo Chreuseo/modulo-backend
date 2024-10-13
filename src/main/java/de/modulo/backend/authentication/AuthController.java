@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -37,5 +39,11 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(401).body("Invalid credentials");
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        sessionService.logout(UUID.fromString(SessionTokenHelper.getSessionToken(request)));
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

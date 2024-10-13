@@ -4,8 +4,10 @@ import de.modulo.backend.converters.UserConverter;
 import de.modulo.backend.dtos.UserDTO;
 import de.modulo.backend.dtos.UserDTOFlat;
 import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,11 +18,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserConverter userConverter;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserConverter userConverter) {
+    public UserService(UserRepository userRepository,
+                       UserConverter userConverter,
+                       BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.userConverter = userConverter;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public List<UserDTOFlat> getAllUsers() {
@@ -30,6 +36,12 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public List<UserDTOFlat> getUsersByRole(ROLE role){
+        return userRepository.getUserEntitiesByRole(role).stream()
+                .map(userConverter::toDtoFlat)
+                .toList();
+    }
+
     public UserDTO getUserById(Long id) {
         UserEntity user = userRepository.findById(id).orElseThrow();
         return userConverter.toDto(user);
@@ -37,6 +49,7 @@ public class UserService {
 
     public UserDTO createUser(UserDTO userDTO) {
         UserEntity user = userConverter.toEntity(userDTO);
+        user.setPassword(bCryptPasswordEncoder.encode("password"));
         UserEntity savedUser = userRepository.save(user);
         return userConverter.toDto(savedUser);
     }
@@ -45,7 +58,9 @@ public class UserService {
         if(!userRepository.existsById(userDTO.getId())) {
             throw new RuntimeException("User not found");
         }
+        UserEntity oldUser = userRepository.findById(userDTO.getId()).orElseThrow();
         UserEntity user = userConverter.toEntity(userDTO);
+        user.setPassword(oldUser.getPassword());
         UserEntity savedUser = userRepository.save(user);
         return userConverter.toDto(savedUser);
     }

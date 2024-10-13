@@ -28,7 +28,8 @@ public class ModuleImplementationService {
     @Autowired
     public ModuleImplementationService(ModuleImplementationRepository moduleImplementationRepository,
                                        ModuleImplementationConverter moduleImplementationConverter,
-                                       ModuleImplementationLecturerRepository moduleImplementationLecturerRepository, UserRepository userRepository) {
+                                       ModuleImplementationLecturerRepository moduleImplementationLecturerRepository,
+                                       UserRepository userRepository) {
         this.moduleImplementationRepository = moduleImplementationRepository;
         this.moduleImplementationConverter = moduleImplementationConverter;
         this.moduleImplementationLecturerRepository = moduleImplementationLecturerRepository;
@@ -54,6 +55,13 @@ public class ModuleImplementationService {
 
     public ModuleImplementationDTOFlat addModuleImplementation(ModuleImplementationDTOFlat moduleImplementationDTOFlat) {
         ModuleImplementationEntity moduleImplementationEntity = moduleImplementationConverter.toEntity(moduleImplementationDTOFlat);
+        ModuleImplementationEntity savedEntity = moduleImplementationRepository.save(moduleImplementationEntity);
+        return moduleImplementationConverter.toDtoFlat(savedEntity);
+    }
+
+    public ModuleImplementationDTOFlat addModuleImplementationAndSetResponsible(ModuleImplementationDTOFlat moduleImplementationDTOFlat, UserEntity user) {
+        ModuleImplementationEntity moduleImplementationEntity = moduleImplementationConverter.toEntity(moduleImplementationDTOFlat);
+        moduleImplementationEntity.setResponsible(user);
         ModuleImplementationEntity savedEntity = moduleImplementationRepository.save(moduleImplementationEntity);
         return moduleImplementationConverter.toDtoFlat(savedEntity);
     }
