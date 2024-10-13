@@ -32,7 +32,7 @@ public class SemesterController {
     @GetMapping("/all")
     public ResponseEntity<List<SemesterDTO>> getAllSemesters(HttpServletRequest request) {
         try {
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
             return ResponseEntity.ok(semesterService.getAllSemesters());
         } catch (InsufficientPermissionsException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -42,7 +42,7 @@ public class SemesterController {
     @PostMapping("/add")
     public ResponseEntity<SemesterDTO> addSemester(@RequestBody SemesterDTO semesterDTO, HttpServletRequest request) {
         try {
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
             return ResponseEntity.ok(semesterService.addSemester(semesterDTO));
         } catch (InsufficientPermissionsException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -52,7 +52,7 @@ public class SemesterController {
     @PutMapping("/update")
     public ResponseEntity<SemesterDTO> updateSemester(@RequestBody SemesterDTO semesterDTO, HttpServletRequest request) {
         try {
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request));
             return ResponseEntity.ok(semesterService.updateSemester(semesterDTO));
         } catch (InsufficientPermissionsException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -62,7 +62,7 @@ public class SemesterController {
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> removeSemester(@PathVariable long id, HttpServletRequest request) {
         try {
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request));
             semesterService.removeSemester(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (InsufficientPermissionsException e) {

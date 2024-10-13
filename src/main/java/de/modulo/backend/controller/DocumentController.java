@@ -37,7 +37,7 @@ public class DocumentController {
     @GetMapping("get/{spoId}/{semesterId}/{documentType}")
     public ResponseEntity<byte[]> getDocument(@PathVariable Long spoId, @PathVariable Long semesterId, @PathVariable String documentType, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request), spoId);
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
             byte[] document = documentService.getDocument(spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
@@ -53,7 +53,7 @@ public class DocumentController {
     @PostMapping("generate/{spoId}/{semesterId}/{documentType}")
     public ResponseEntity<Void> generateDocument(@PathVariable Long spoId, @PathVariable Long semesterId, @PathVariable String documentType, HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request), spoId);
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
             documentService.generateDocument(spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (InsufficientPermissionsException e) {
@@ -64,7 +64,7 @@ public class DocumentController {
     @GetMapping("spos")
     public ResponseEntity<List<SpoDocumentsDTO>> getSpoDocuments(HttpServletRequest request) {
         try{
-            validatePrivilegesService.validatePrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
             List<SpoDocumentsDTO> spoDocuments = documentService.getDocuments();
             return new ResponseEntity<>(spoDocuments, HttpStatus.OK);
         } catch (InsufficientPermissionsException e) {
