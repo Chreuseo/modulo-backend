@@ -206,9 +206,6 @@ public class ValidatePrivilegesService {
         boolean isLecturer = moduleImplementationLecturerRepository.existsById(moduleImplementationLecturerEntityId);
 
         switch (role){
-            case ADMIN -> {
-                return;
-            }
             case SPO_ADMIN -> {
                 switch (entityType){
                     case MODULE -> {
@@ -282,7 +279,9 @@ public class ValidatePrivilegesService {
                     case MODULE -> {
                         switch (privileges){
                             case READ, ADD, UPDATE, DELETE -> {
-                                throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
+                                if(!isResponsible && !isLecturer){
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
+                                }
                             }
                         }
                     }
