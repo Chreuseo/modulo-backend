@@ -318,7 +318,10 @@ public class ValidatePrivilegesService {
         ROLE role = sessionService.getRoleBySessionId(UUID.fromString(sessionToken));
         boolean isSpoResponsible = spoResponsibleUserRepository.existsBySpoIdAndUserId(spoId, sessionService.getUserIdBySessionId(UUID.fromString(sessionToken)));
         ModuleImplementationEntity moduleImplementationEntity = moduleImplementationRepository.findById(moduleImplementationId).orElseThrow();
-        boolean isModuleResponsible = moduleImplementationEntity.getResponsible().getId().equals(sessionService.getUserIdBySessionId(UUID.fromString(sessionToken)));
+        boolean isModuleResponsible = false;
+        if(moduleImplementationEntity.getResponsible() != null) {
+            isModuleResponsible = moduleImplementationEntity.getResponsible().getId().equals(sessionService.getUserIdBySessionId(UUID.fromString(sessionToken)));
+        }
         ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId moduleImplementationLecturerEntityId = new ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId();
         moduleImplementationLecturerEntityId.setModuleImplementation(moduleImplementationId);
         moduleImplementationLecturerEntityId.setLecturer(sessionService.getUserIdBySessionId(UUID.fromString(sessionToken)));
