@@ -157,6 +157,7 @@ public class StudyGuideService {
                             table.addCell(moduleImplementationEntity.getSecondExaminant() != null ? moduleImplementationEntity.getSecondExaminant().getCode() : "-");
                         }
                     }
+                    document.add(table);
                 }
             }
 
