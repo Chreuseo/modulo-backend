@@ -145,7 +145,7 @@ public class StudyGuideService {
                                 for (int i = 0; i < examTypeModuleImplementationEntities.size(); i++) {
                                     examTypes.append(examTypeModuleImplementationEntities.get(i).getExamType().getAbbreviation())
                                             .append(" (")
-                                            .append(examTypeModuleImplementationEntities.get(i).getExamType().getLength());
+                                            .append(examTypeModuleImplementationEntities.get(i).getLength());
                                     if (examTypeModuleImplementationEntities.get(i).getDescription() != null) {
                                         examTypes.append(", ").append(examTypeModuleImplementationEntities.get(i).getDescription());
                                     }
