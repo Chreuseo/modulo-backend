@@ -332,6 +332,10 @@ public class ModuleManualService {
         table.addCell(new Cell().add(new Paragraph(moduleImplementationEntity.getLanguage() != null ?
                 moduleImplementationEntity.getLanguage().getName() : "-")));
 
+        table.addCell(new Cell().add(new Paragraph("Gefährdung Mutterschutz")));
+        table.addCell(new Cell().add(new Paragraph(moduleImplementationEntity.getMaternityProtection() != null ?
+                moduleImplementationEntity.getMaternityProtection().getName() : "-")));
+
         table.addCell(new Cell().add(new Paragraph("Zulassungsvoraussetzungen")));
         table.addCell(getCellFromHtmlString(moduleFrameModuleImplementationEntity.getModuleRequirement() != null ?
                 moduleFrameModuleImplementationEntity.getModuleRequirement().getName() : null));
