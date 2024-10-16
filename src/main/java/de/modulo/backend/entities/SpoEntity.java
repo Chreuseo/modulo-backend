@@ -39,4 +39,6 @@ public class SpoEntity {
         if (!(o instanceof SpoEntity that)) return false;
         return id == that.id;
     }
+
+    private String moduleManualIntroduction;
 }

@@ -1,17 +1,9 @@
 package de.modulo.backend.converters;
 
 import de.modulo.backend.dtos.*;
-import de.modulo.backend.entities.ModuleTypeEntity;
-import de.modulo.backend.entities.ParagraphEntity;
-import de.modulo.backend.entities.SectionEntity;
 import de.modulo.backend.entities.SpoEntity;
-import de.modulo.backend.services.SectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class SpoConverter {
@@ -52,6 +44,7 @@ public class SpoConverter {
         dto.setPublication(entity.getPublication());
         dto.setValidFrom(entity.getValidFrom());
         dto.setValidUntil(entity.getValidUntil());
+        dto.setModuleManualIntroduction(entity.getModuleManualIntroduction());
 
         dto.setDegree(degreeConverter.toDto(entity.getDegree()));
 
@@ -71,10 +64,10 @@ public class SpoConverter {
         entity.setPublication(dto.getPublication());
         entity.setValidFrom(dto.getValidFrom());
         entity.setValidUntil(dto.getValidUntil());
+        entity.setModuleManualIntroduction(dto.getModuleManualIntroduction());
 
         entity.setDegree(degreeConverter.toEntity(dto.getDegree()));
 
-        // You will need to implement a method to process the module types if necessary
         return entity;
     }
 

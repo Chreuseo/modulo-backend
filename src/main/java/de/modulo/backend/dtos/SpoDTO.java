@@ -19,4 +19,5 @@ public class SpoDTO {
     private List<ModuleRequirementDTO> moduleRequirementDTOs; // List of ModuleRequirementDTOs
     private List<UserDTOFlat> responsibleUsers; // List of UserDTOFlats
     private DegreeDTO degree;                // Full DegreeDTO instead of an ID
+    private String moduleManualIntroduction;
 }
