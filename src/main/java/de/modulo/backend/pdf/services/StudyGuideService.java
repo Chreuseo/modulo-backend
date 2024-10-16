@@ -99,67 +99,68 @@ public class StudyGuideService {
                 }
                 int moduleTypeCounter = 0;
                 for(ModuleFrameSetDTO.Section.ModuleType moduleType : section.getModuleTypes()) {
-                    if(!moduleType.getModuleFrames().isEmpty()){
+                    if(!moduleType.getModuleFrames().isEmpty()) {
                         String headline = sectionCounter + "." + (++moduleTypeCounter) + ". " + moduleType.getName();
                         paragraph = new Paragraph(headline);
                         document.add(paragraph);
-                    }
-                    Table table = new Table(new float[] {1, 8, 2, 1, 1, 2, 4, 5, 2, 2});
-                    table.setWidth(800);
-                    table.setFixedLayout();
-                    table.addHeaderCell("Nr.");
-                    table.addHeaderCell("Fächer");
-                    table.addHeaderCell("Kurz. Bez.");
-                    table.addHeaderCell("SWS");
-                    table.addHeaderCell("ECTS");
-                    table.addHeaderCell("Art der Lehrveranstaltung");
-                    table.addHeaderCell("Arten des Leistungsnachweises");
-                    table.addHeaderCell("Zugelassene Hilfsmittel");
-                    table.addHeaderCell("Erstprüfer");
-                    table.addHeaderCell("Zweitprüfer");
 
-                    for(ModuleFrameDTO moduleFrame : moduleType.getModuleFrames()) {
-                        List<ModuleImplementationEntity> moduleImplementationEntities = moduleFrameModuleImplementationRepository
-                                .findModuleFrameModuleImplementationEntitiesByModuleFrameId(moduleFrame.getId()).stream()
-                                .map(ModuleFrameModuleImplementationEntity::getModuleImplementation).toList();
+                        Table table = new Table(new float[]{1, 8, 2, 1, 1, 2, 4, 5, 2, 2});
+                        table.setWidth(800);
+                        table.setFixedLayout();
+                        table.addHeaderCell("Nr.");
+                        table.addHeaderCell("Fächer");
+                        table.addHeaderCell("Kurz. Bez.");
+                        table.addHeaderCell("SWS");
+                        table.addHeaderCell("ECTS");
+                        table.addHeaderCell("Art der Lehrveranstaltung");
+                        table.addHeaderCell("Arten des Leistungsnachweises");
+                        table.addHeaderCell("Zugelassene Hilfsmittel");
+                        table.addHeaderCell("Erstprüfer");
+                        table.addHeaderCell("Zweitprüfer");
 
-                        List<CourseTypeModuleFrameEntity> courseTypeModuleFrameEntities = courseTypeModuleFrameRepository.findCourseTypeModuleFrameEntitiesByModuleFrameId(moduleFrame.getId());
-                        StringBuilder courseTypes = new StringBuilder();
-                        for(int i = 0; i < courseTypeModuleFrameEntities.size(); i++) {
-                            courseTypes.append(courseTypeModuleFrameEntities.get(i).getCourseType().getName());
-                            if(i < courseTypeModuleFrameEntities.size() - 1) {
-                                courseTypes.append("/");
-                            }
-                        }
+                        for (ModuleFrameDTO moduleFrame : moduleType.getModuleFrames()) {
+                            List<ModuleImplementationEntity> moduleImplementationEntities = moduleFrameModuleImplementationRepository
+                                    .findModuleFrameModuleImplementationEntitiesByModuleFrameId(moduleFrame.getId()).stream()
+                                    .map(ModuleFrameModuleImplementationEntity::getModuleImplementation).toList();
 
-                        for(ModuleImplementationEntity moduleImplementationEntity : moduleImplementationEntities) {
-                            table.addCell(moduleCounter++ + "");
-                            table.addCell(moduleImplementationEntity.getName());
-                            table.addCell(moduleImplementationEntity.getAbbreviation());
-                            table.addCell(moduleFrame.getSws() + "");
-                            table.addCell(moduleFrame.getCredits() + "");
-                            table.addCell(courseTypes.toString());
-                            List<ExamTypeModuleImplementationEntity> examTypeModuleImplementationEntities = examTypeModuleImplementationRepository.findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleImplementationEntity.getId());
-                            StringBuilder examTypes = new StringBuilder();
-                            for(int i = 0; i < examTypeModuleImplementationEntities.size(); i++) {
-                                examTypes.append(examTypeModuleImplementationEntities.get(i).getExamType().getAbbreviation())
-                                        .append(" (")
-                                        .append(examTypeModuleImplementationEntities.get(i).getExamType().getLength());
-                                if(examTypeModuleImplementationEntities.get(i).getDescription() != null) {
-                                    examTypes.append(", ").append(examTypeModuleImplementationEntities.get(i).getDescription());
-                                }
-                                examTypes.append(")");
-                                if(i < examTypeModuleImplementationEntities.size() - 1) {
-                                    examTypes.append(", ");
+                            List<CourseTypeModuleFrameEntity> courseTypeModuleFrameEntities = courseTypeModuleFrameRepository.findCourseTypeModuleFrameEntitiesByModuleFrameId(moduleFrame.getId());
+                            StringBuilder courseTypes = new StringBuilder();
+                            for (int i = 0; i < courseTypeModuleFrameEntities.size(); i++) {
+                                courseTypes.append(courseTypeModuleFrameEntities.get(i).getCourseType().getAbbreviation());
+                                if (i < courseTypeModuleFrameEntities.size() - 1) {
+                                    courseTypes.append("/");
                                 }
                             }
-                            table.addCell(examTypes.toString());
-                            table.addCell(getCellFromHtmlString(moduleImplementationEntity.getAllowedResources()));
-                            table.addCell(moduleImplementationEntity.getFirstExaminant() != null ? moduleImplementationEntity.getFirstExaminant().getCode() : "-");
-                            table.addCell(moduleImplementationEntity.getSecondExaminant() != null ? moduleImplementationEntity.getSecondExaminant().getCode() : "-");
+
+                            for (ModuleImplementationEntity moduleImplementationEntity : moduleImplementationEntities) {
+                                table.addCell(++moduleCounter + "");
+                                table.addCell(moduleImplementationEntity.getName());
+                                table.addCell(moduleImplementationEntity.getAbbreviation());
+                                table.addCell(moduleFrame.getSws() + "");
+                                table.addCell(moduleFrame.getCredits() + "");
+                                table.addCell(courseTypes.toString());
+                                List<ExamTypeModuleImplementationEntity> examTypeModuleImplementationEntities = examTypeModuleImplementationRepository.findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleImplementationEntity.getId());
+                                StringBuilder examTypes = new StringBuilder();
+                                for (int i = 0; i < examTypeModuleImplementationEntities.size(); i++) {
+                                    examTypes.append(examTypeModuleImplementationEntities.get(i).getExamType().getAbbreviation())
+                                            .append(" (")
+                                            .append(examTypeModuleImplementationEntities.get(i).getExamType().getLength());
+                                    if (examTypeModuleImplementationEntities.get(i).getDescription() != null) {
+                                        examTypes.append(", ").append(examTypeModuleImplementationEntities.get(i).getDescription());
+                                    }
+                                    examTypes.append(")");
+                                    if (i < examTypeModuleImplementationEntities.size() - 1) {
+                                        examTypes.append(", ");
+                                    }
+                                }
+                                table.addCell(examTypes.toString());
+                                table.addCell(getCellFromHtmlString(moduleImplementationEntity.getAllowedResources()));
+                                table.addCell(moduleImplementationEntity.getFirstExaminant() != null ? moduleImplementationEntity.getFirstExaminant().getCode() : "-");
+                                table.addCell(moduleImplementationEntity.getSecondExaminant() != null ? moduleImplementationEntity.getSecondExaminant().getCode() : "-");
+                            }
                         }
+                        document.add(table);
                     }
-                    document.add(table);
                 }
             }
 
