@@ -120,8 +120,6 @@ public class ValidatePrivilegesService {
                         }
                     }
                 }
-            default:
-                throw new InsufficientPermissionsException("You do not have the required permissions to access this resource");
         }
     }
 
