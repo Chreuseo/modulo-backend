@@ -1,11 +1,11 @@
 package de.modulo.backend.pdf.services;
 
+import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.properties.TextAlignment;
 import de.modulo.backend.dtos.ModuleFrameDTO;
 import de.modulo.backend.dtos.ModuleFrameSetDTO;
@@ -152,9 +152,9 @@ public class StudyGuideService {
                                 }
                             }
                             table.addCell(examTypes.toString());
-                            table.addCell(moduleImplementationEntity.getAllowedResources());
-                            table.addCell(moduleImplementationEntity.getFirstExaminant().getCode());
-                            table.addCell(moduleImplementationEntity.getSecondExaminant().getCode());
+                            table.addCell(getCellFromHtmlString(moduleImplementationEntity.getAllowedResources()));
+                            table.addCell(moduleImplementationEntity.getFirstExaminant() != null ? moduleImplementationEntity.getFirstExaminant().getCode() : "-");
+                            table.addCell(moduleImplementationEntity.getSecondExaminant() != null ? moduleImplementationEntity.getSecondExaminant().getCode() : "-");
                         }
                     }
                 }
@@ -165,5 +165,25 @@ public class StudyGuideService {
             throw new RuntimeException("Error while generating pdf.", e);
         }
 
-        return byteArrayOutputStream;    }
+        return byteArrayOutputStream;
+    }
+
+    private Cell getCellFromHtmlString(String htmlString) {
+        // Create a new Cell to hold the HTML content
+        Cell htmlCell = new Cell();
+
+        if(htmlString == null) {
+            return htmlCell.add(new Paragraph("-"));
+        }
+
+        for(IElement element : HtmlConverter.convertToElements(htmlString)) {
+            if(element instanceof IBlockElement) {
+                htmlCell.add((IBlockElement) element);
+            }else {
+                System.out.println("Element is not a block element: " + element);
+            }
+        }
+
+        return htmlCell; // Return the populated Cell
+    }
 }
