@@ -54,6 +54,7 @@ public class ModuleManualService {
     public ByteArrayOutputStream generateModuleManual(Long spoId, Long semesterId) {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        SpoEntity spoEntity = spoRepository.findById(spoId).orElseThrow();
 
         try {
             PdfWriter writer = new PdfWriter(byteArrayOutputStream);
@@ -62,7 +63,12 @@ public class ModuleManualService {
 
             document.setMargins(40, 40, 40, 40);
 
-            addTitlePage(document, spoId, semesterId);
+            addTitlePage(document, spoEntity, semesterId);
+
+            if(spoEntity.getModuleManualIntroduction() != null){
+                document.add(getParagraphFromHtmlString(spoEntity.getModuleManualIntroduction()));
+                document.add(new AreaBreak());
+            }
 
             ModuleFrameSetDTO moduleFrameSetDTO = moduleFrameService.getModuleFrameSetDTOBySpoId(spoId);
 
@@ -152,8 +158,7 @@ public class ModuleManualService {
         return byteArrayOutputStream;
     }
 
-    private void addTitlePage(Document document, Long spoId, Long semesterId) throws IOException {
-        SpoEntity spoEntity = spoRepository.findById(spoId).orElseThrow();
+    private void addTitlePage(Document document, SpoEntity spoEntity, Long semesterId) throws IOException {
         SemesterEntity semesterEntity = semesterRepository.findById(semesterId).orElseThrow();
 
         Paragraph paragraph = new Paragraph();
@@ -382,5 +387,17 @@ public class ModuleManualService {
         }
 
         return htmlCell; // Return the populated Cell
+    }
+
+    private Paragraph getParagraphFromHtmlString(String htmlString) {
+        Paragraph paragraph = new Paragraph();
+        for(IElement element : HtmlConverter.convertToElements(htmlString)) {
+            if(element instanceof IBlockElement) {
+                paragraph.add((IBlockElement) element);
+            }else {
+                System.out.println("Element is not a block element: " + element);
+            }
+        }
+        return paragraph;
     }
 }
