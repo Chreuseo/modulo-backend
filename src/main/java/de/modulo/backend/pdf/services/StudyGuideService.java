@@ -104,7 +104,7 @@ public class StudyGuideService {
                         paragraph = new Paragraph(headline);
                         document.add(paragraph);
 
-                        Table table = new Table(new float[]{1, 8, 2, 1, 1, 2, 4, 5, 2, 2});
+                        Table table = new Table(new float[]{1, 8, 2, 1, 1, 3, 4, 5, 2, 2});
                         table.setWidth(800);
                         table.setFixedLayout();
                         table.setFontSize(7);
