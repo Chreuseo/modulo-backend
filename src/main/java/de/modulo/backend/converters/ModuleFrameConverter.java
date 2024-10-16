@@ -82,7 +82,7 @@ public class ModuleFrameConverter {
 
         List<CourseTypeDTO> courseTypeDTOs = new ArrayList<>();
         List<CourseTypeEntity> usedCourseTypes = courseTypeModuleFrameRepository
-                .getCourseTypeModuleFrameEntitiesByModuleFrame(entity).stream()
+                .findCourseTypeModuleFrameEntitiesByModuleFrameId(entity.getId()).stream()
                 .map(CourseTypeModuleFrameEntity::getCourseType)
                 .toList();
 
