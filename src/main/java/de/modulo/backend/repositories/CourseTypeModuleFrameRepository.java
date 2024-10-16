@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface CourseTypeModuleFrameRepository extends JpaRepository<CourseTypeModuleFrameEntity, CourseTypeModuleFrameEntity.CourseTypeModuleFrameId> {    public List<CourseTypeModuleFrameEntity> getCourseTypeModuleFrameEntitiesByModuleFrame(ModuleFrameEntity moduleFrame);
+public interface CourseTypeModuleFrameRepository extends JpaRepository<CourseTypeModuleFrameEntity, CourseTypeModuleFrameEntity.CourseTypeModuleFrameId> {
+    public List<CourseTypeModuleFrameEntity> findCourseTypeModuleFrameEntitiesByModuleFrameId(Long moduleFrameId);
 }
