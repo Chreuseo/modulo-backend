@@ -191,8 +191,15 @@ public class ValidatePrivilegesService {
 
     public void validateModuleSpecificPrivileges(ENTITY_TYPE entityType, PRIVILEGES privileges, String sessionToken, Long moduleImplementationId) throws InsufficientPermissionsException, NotifyException{
         ROLE role = sessionService.getRoleBySessionId(UUID.fromString(sessionToken));
+        if(role == ROLE.ADMIN){
+            return;
+        }
+
         ModuleImplementationEntity moduleImplementationEntity = moduleImplementationRepository.findById(moduleImplementationId).orElseThrow();
-        boolean isResponsible = moduleImplementationEntity.getResponsible().getId().equals(sessionService.getUserIdBySessionId(UUID.fromString(sessionToken)));
+        boolean isResponsible = false;
+        if(moduleImplementationEntity.getResponsible() != null){
+            isResponsible = moduleImplementationEntity.getResponsible().getId().equals(sessionService.getUserIdBySessionId(UUID.fromString(sessionToken)));
+        }
         ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId moduleImplementationLecturerEntityId = new ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId();
         moduleImplementationLecturerEntityId.setModuleImplementation(moduleImplementationId);
         moduleImplementationLecturerEntityId.setLecturer(sessionService.getUserIdBySessionId(UUID.fromString(sessionToken)));
