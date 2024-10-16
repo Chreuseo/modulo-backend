@@ -139,7 +139,7 @@ public class StudyGuideService {
                             table.addCell(courseTypes.toString());
                             List<ExamTypeModuleImplementationEntity> examTypeModuleImplementationEntities = examTypeModuleImplementationRepository.findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleImplementationEntity.getId());
                             StringBuilder examTypes = new StringBuilder();
-                            for(int i = 0; i < courseTypeModuleFrameEntities.size(); i++) {
+                            for(int i = 0; i < examTypeModuleImplementationEntities.size(); i++) {
                                 examTypes.append(examTypeModuleImplementationEntities.get(i).getExamType().getAbbreviation())
                                         .append(" (")
                                         .append(examTypeModuleImplementationEntities.get(i).getExamType().getLength());
