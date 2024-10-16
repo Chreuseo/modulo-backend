@@ -299,7 +299,12 @@ public class ValidatePrivilegesService {
                     }
                     case MODULE_FRAME_MODULE_IMPLEMENTATION -> {
                         switch (privileges){
-                            case ADD, READ, UPDATE, DELETE -> {
+                            case READ -> {
+                                if(!isResponsible && !isLecturer){
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to access module frame module implementations");
+                                }
+                            }
+                            case ADD, UPDATE, DELETE -> {
                                 throw new InsufficientPermissionsException("You do not have the required permissions to access module frame module implementations");
                             }
                         }
