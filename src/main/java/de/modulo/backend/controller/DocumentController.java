@@ -2,6 +2,7 @@ package de.modulo.backend.controller;
 
 import de.modulo.backend.authentication.SessionTokenHelper;
 import de.modulo.backend.authentication.ValidatePrivilegesService;
+import de.modulo.backend.dtos.DocumentGenerationBulkDTO;
 import de.modulo.backend.dtos.SpoDocumentsDTO;
 import de.modulo.backend.enums.DOCUMENT_TYPE;
 import de.modulo.backend.enums.ENTITY_TYPE;
@@ -55,6 +56,17 @@ public class DocumentController {
         try{
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
             documentService.generateDocument(spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (InsufficientPermissionsException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @PostMapping("generate/bulk")
+    public ResponseEntity<Void> generateBulkDocuments(@RequestBody DocumentGenerationBulkDTO bulkDTO, HttpServletRequest request) {
+        try{
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            documentService.generateBulkDocuments(bulkDTO);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (InsufficientPermissionsException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

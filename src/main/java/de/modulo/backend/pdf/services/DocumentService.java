@@ -2,6 +2,8 @@ package de.modulo.backend.pdf.services;
 
 import de.modulo.backend.converters.SemesterConverter;
 import de.modulo.backend.converters.SpoConverter;
+import de.modulo.backend.dtos.DocumentGenerationBulkDTO;
+import de.modulo.backend.dtos.SpoDTOFlat;
 import de.modulo.backend.dtos.SpoDocumentsDTO;
 import de.modulo.backend.entities.DocumentEntity;
 import de.modulo.backend.entities.SemesterEntity;
@@ -135,5 +137,19 @@ public class DocumentService {
             spoDocumentsDTOs.add(spoDocumentsDTO);
         }
         return spoDocumentsDTOs;
+    }
+
+    public void generateBulkDocuments(DocumentGenerationBulkDTO bulkDTO) {
+        for(SpoDTOFlat spoDTOFlat : bulkDTO.getSpoDTOFlatList()) {
+            if(bulkDTO.isSpo()) {
+                generateDocument(spoDTOFlat.getId(), bulkDTO.getSemesterDTO().getId(), DOCUMENT_TYPE.SPO);
+            }
+            if(bulkDTO.isModuleManual()) {
+                generateDocument(spoDTOFlat.getId(), bulkDTO.getSemesterDTO().getId(), DOCUMENT_TYPE.MODULE_MANUAL);
+            }
+            if(bulkDTO.isStudyGuide()) {
+                generateDocument(spoDTOFlat.getId(), bulkDTO.getSemesterDTO().getId(), DOCUMENT_TYPE.STUDY_GUIDE);
+            }
+        }
     }
 }
