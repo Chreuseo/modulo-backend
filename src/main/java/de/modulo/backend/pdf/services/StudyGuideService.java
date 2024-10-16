@@ -105,6 +105,8 @@ public class StudyGuideService {
                         document.add(paragraph);
                     }
                     Table table = new Table(new float[] {1, 8, 2, 1, 1, 2, 4, 5, 2, 2});
+                    table.setWidth(800);
+                    table.setFixedLayout();
                     table.addHeaderCell("Nr.");
                     table.addHeaderCell("Fächer");
                     table.addHeaderCell("Kurz. Bez.");
