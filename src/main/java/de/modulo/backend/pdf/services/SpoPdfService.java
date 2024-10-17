@@ -45,6 +45,7 @@ public class SpoPdfService {
             PdfWriter writer = new PdfWriter(byteArrayOutputStream);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
+            document.setMargins(40, 40, 40, 40);
 
             Paragraph paragraph = new Paragraph();
             paragraph.add("Studien- und Prüfungsordung für den Studiengang ");
@@ -97,6 +98,8 @@ public class SpoPdfService {
 
             pdf.addNewPage(PageSize.A4.rotate());
             document.add(new AreaBreak());
+            document.setMargins(20, 20, 20, 20);
+
 
             Table table = new Table(new float[]{1, 5, 2, 2, 4, 4, 3, 3});
             table.setWidth(800);
