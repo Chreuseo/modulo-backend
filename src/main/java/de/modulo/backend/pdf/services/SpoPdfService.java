@@ -86,11 +86,11 @@ public class SpoPdfService {
             }
 
             if(spoEntity.getFooter() != null){
-                PdfCanvas pdfCanvas = new PdfCanvas(pdf.addNewPage());
+                PdfCanvas pdfCanvas = new PdfCanvas(pdf.getLastPage());
                 pdfCanvas.setLineWidth(1);
                 pdfCanvas.setStrokeColor(ColorConstants.BLACK);
                 // Draw the horizontal line
-                float yPosition = pdf.getDefaultPageSize().getHeight() - 150; // Y-position of the line
+                float yPosition = document.getRenderer().getOccupiedArea().getBBox().getBottom() - 10;
                 pdfCanvas.moveTo(40, yPosition); // Start Point
                 pdfCanvas.lineTo(pdf.getDefaultPageSize().getWidth() - 40, yPosition); // End Point
                 pdfCanvas.stroke(); // Execute the drawing
@@ -100,6 +100,15 @@ public class SpoPdfService {
                 paragraph.setTextAlignment(TextAlignment.CENTER);
                 paragraph.setPaddingTop(24);
                 document.add(paragraph);
+
+                pdfCanvas = new PdfCanvas(pdf.getLastPage());
+                pdfCanvas.setLineWidth(1);
+                pdfCanvas.setStrokeColor(ColorConstants.BLACK);
+                // Draw the horizontal line
+                yPosition = document.getRenderer().getOccupiedArea().getBBox().getBottom() - 10;
+                pdfCanvas.moveTo(40, yPosition); // Start Point
+                pdfCanvas.lineTo(pdf.getDefaultPageSize().getWidth() - 40, yPosition); // End Point
+                pdfCanvas.stroke(); // Execute the drawing
             }
 
             document.close();
