@@ -34,7 +34,7 @@ public class ParagraphController {
         this.paragraphRepository = paragraphRepository;
     }
 
-    @PostMapping("add")
+    @PostMapping("/add")
     public ResponseEntity<ParagraphDTO> addParagraph(@RequestBody ParagraphDTO paragraphDTO, HttpServletRequest request) {
         try{
             validatePrivilegesService.validateSpoSpecificPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request), paragraphDTO.getSpoId());
@@ -45,7 +45,7 @@ public class ParagraphController {
         }
     }
 
-    @PutMapping("update")
+    @PutMapping("/update")
     public ResponseEntity<ParagraphDTO> updateParagraph(@RequestBody ParagraphDTO paragraphDTO, HttpServletRequest request) {
         try{
             validatePrivilegesService.validateSpoSpecificPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request), paragraphDTO.getSpoId());
@@ -56,7 +56,7 @@ public class ParagraphController {
         }
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteParagraph(@PathVariable Long id, HttpServletRequest request) {
         try{
             validatePrivilegesService.validateSpoSpecificPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request),
