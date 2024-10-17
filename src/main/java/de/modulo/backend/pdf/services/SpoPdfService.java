@@ -96,6 +96,7 @@ public class SpoPdfService {
             }
 
             pdf.addNewPage(PageSize.A4.rotate());
+            document.add(new AreaBreak());
 
             Table table = new Table(new float[]{1, 5, 2, 2, 4, 4, 3, 3});
             table.setWidth(800);
