@@ -206,6 +206,8 @@ public class SpoPdfService {
                             table.addCell(moduleFrame.getWeight() + "").setTextAlignment(TextAlignment.CENTER);
                             table.addCell(moduleFrame.getCredits() + "").setTextAlignment(TextAlignment.CENTER);
                         }
+
+                        document.add(table);
                     }
                 }
             }
