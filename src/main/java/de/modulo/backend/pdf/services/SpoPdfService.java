@@ -50,7 +50,7 @@ public class SpoPdfService {
             PdfWriter writer = new PdfWriter(byteArrayOutputStream);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
-            document.setMargins(40, 40, 40, 40);
+            document.setMargins(20, 20, 20, 20);
 
             Paragraph paragraph = new Paragraph();
             paragraph.add("Studien- und Prüfungsordung für den Studiengang ");
@@ -101,15 +101,22 @@ public class SpoPdfService {
                 document.add(paragraph);
             }
 
-            pdf.addNewPage(PageSize.A4.rotate());
-            document.add(new AreaBreak());
-            document.setMargins(20, 20, 20, 20);
+
 
             ModuleFrameSetDTO moduleFrameSetDTO = moduleFrameService.getModuleFrameSetDTOBySpoId(spoId);
 
             int moduleCounter = 0;
             int sectionCounter = 0;
             for(ModuleFrameSetDTO.Section section : moduleFrameSetDTO.getSections()) {
+                pdf.addNewPage(PageSize.A4.rotate());
+                document.add(new AreaBreak());
+
+                if (!section.getModuleTypes().isEmpty()) {
+                    String headline = (++sectionCounter) + ". " + section.getName();
+                    paragraph = new Paragraph(headline);
+                    document.add(paragraph);
+                }
+
                 Table table = new Table(new float[]{1, 5, 2, 2, 4, 4, 3, 3});
                 table.setWidth(800);
                 table.setFixedLayout();
@@ -145,11 +152,6 @@ public class SpoPdfService {
 
                 document.add(table);
 
-                if (!section.getModuleTypes().isEmpty()) {
-                    String headline = (++sectionCounter) + ". " + section.getName();
-                    paragraph = new Paragraph(headline);
-                    document.add(paragraph);
-                }
                 int moduleTypeCounter = 0;
                 for (ModuleFrameSetDTO.Section.ModuleType moduleType : section.getModuleTypes()) {
                     if (!moduleType.getModuleFrames().isEmpty()) {
@@ -206,8 +208,6 @@ public class SpoPdfService {
                         }
                     }
                 }
-
-                document.add(new AreaBreak());
             }
 
             document.close();
