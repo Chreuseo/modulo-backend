@@ -90,7 +90,7 @@ public class SpoPdfService {
                 pdfCanvas.setLineWidth(1);
                 pdfCanvas.setStrokeColor(ColorConstants.BLACK);
                 // Draw the horizontal line
-                float yPosition = document.getRenderer().getOccupiedArea().getBBox().getBottom() - 10;
+                float yPosition = paragraph.getRenderer().getOccupiedArea().getBBox().getBottom();
                 pdfCanvas.moveTo(40, yPosition); // Start Point
                 pdfCanvas.lineTo(pdf.getDefaultPageSize().getWidth() - 40, yPosition); // End Point
                 pdfCanvas.stroke(); // Execute the drawing
@@ -105,7 +105,7 @@ public class SpoPdfService {
                 pdfCanvas.setLineWidth(1);
                 pdfCanvas.setStrokeColor(ColorConstants.BLACK);
                 // Draw the horizontal line
-                yPosition = document.getRenderer().getOccupiedArea().getBBox().getBottom() - 10;
+                yPosition = paragraph.getRenderer().getOccupiedArea().getBBox().getBottom();
                 pdfCanvas.moveTo(40, yPosition); // Start Point
                 pdfCanvas.lineTo(pdf.getDefaultPageSize().getWidth() - 40, yPosition); // End Point
                 pdfCanvas.stroke(); // Execute the drawing
