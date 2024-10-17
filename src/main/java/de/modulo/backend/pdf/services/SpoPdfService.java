@@ -39,7 +39,7 @@ public class SpoPdfService {
         List<ParagraphEntity> paragraphEntities = paragraphRepository.findBySpoId(spoId);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try{
+        try {
             PdfWriter writer = new PdfWriter(byteArrayOutputStream);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
@@ -55,12 +55,14 @@ public class SpoPdfService {
             document.add(paragraph);
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-            paragraph = new Paragraph();
-            paragraph.add("Vom ");
-            paragraph.add(simpleDateFormat.format(spoEntity.getValidFrom()));
-            paragraph.setFontSize(14);
-            paragraph.setTextAlignment(TextAlignment.CENTER);
-            document.add(paragraph);
+            if (spoEntity.getPublication() != null){
+                paragraph = new Paragraph();
+                paragraph.add("Vom ");
+                paragraph.add(simpleDateFormat.format(spoEntity.getPublication()));
+                paragraph.setFontSize(14);
+                paragraph.setTextAlignment(TextAlignment.CENTER);
+                document.add(paragraph);
+            }
 
             if(spoEntity.getHeader() != null) {
                 paragraph = getParagraphFromHtmlString(spoEntity.getHeader());
