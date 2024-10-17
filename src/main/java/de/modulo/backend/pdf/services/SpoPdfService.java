@@ -168,7 +168,7 @@ public class SpoPdfService {
                             if(moduleFrame.getQuantity() == 1){
                                 table.addCell(++moduleCounter + "").setTextAlignment(TextAlignment.CENTER);
                             }else if(moduleFrame.getQuantity() > 1){
-                                table.addCell(moduleCounter + "-" + ((moduleCounter += moduleFrame.getQuantity()) - 1));
+                                table.addCell(++moduleCounter + "-" + (moduleCounter += (moduleFrame.getQuantity() - 1)));
                             }
                             table.addCell(moduleFrame.getName());
                             table.addCell(moduleFrame.getSws() + "").setTextAlignment(TextAlignment.CENTER);
