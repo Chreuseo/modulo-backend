@@ -141,20 +141,22 @@ public class StudyGuideService {
                                 table.addCell(moduleFrame.getCredits() + "");
                                 table.addCell(courseTypes.toString());
                                 List<ExamTypeModuleImplementationEntity> examTypeModuleImplementationEntities = examTypeModuleImplementationRepository.findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleImplementationEntity.getId());
-                                StringBuilder examTypes = new StringBuilder();
+                                Cell cell = new Cell();
                                 for (int i = 0; i < examTypeModuleImplementationEntities.size(); i++) {
-                                    examTypes.append(examTypeModuleImplementationEntities.get(i).getExamType().getAbbreviation())
-                                            .append(" (")
-                                            .append(examTypeModuleImplementationEntities.get(i).getLength());
+                                    paragraph = new Paragraph();
+                                    paragraph.add(examTypeModuleImplementationEntities.get(i).getExamType().getAbbreviation())
+                                            .add(" (")
+                                            .add(examTypeModuleImplementationEntities.get(i).getLength());
                                     if (examTypeModuleImplementationEntities.get(i).getDescription() != null) {
-                                        examTypes.append(", ").append(examTypeModuleImplementationEntities.get(i).getDescription());
+                                        paragraph.add(", ").add(examTypeModuleImplementationEntities.get(i).getDescription());
                                     }
-                                    examTypes.append(")");
+                                    paragraph.add(")");
                                     if (i < examTypeModuleImplementationEntities.size() - 1) {
-                                        examTypes.append(", ");
+                                        paragraph.add(", ");
                                     }
+                                    cell.add(paragraph);
                                 }
-                                table.addCell(examTypes.toString());
+                                table.addCell(cell);
                                 table.addCell(getCellFromHtmlString(moduleImplementationEntity.getAllowedResources()));
                                 table.addCell(moduleImplementationEntity.getFirstExaminant() != null ? moduleImplementationEntity.getFirstExaminant().getCode() : "-");
                                 table.addCell(moduleImplementationEntity.getSecondExaminant() != null ? moduleImplementationEntity.getSecondExaminant().getCode() : "-");
