@@ -13,4 +13,5 @@ public class ModuleFrameModuleImplementationDTO {
 
     private List<ExamTypeDTO> examTypeDTOs;
     private ModuleRequirementDTO moduleRequirementDTO;
+    private String semester;
 }

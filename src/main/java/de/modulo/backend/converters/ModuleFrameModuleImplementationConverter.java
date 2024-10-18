@@ -48,6 +48,7 @@ public class ModuleFrameModuleImplementationConverter {
         dto.setModuleFrameDTO(moduleFrameConverter.toDto(entity.getModuleFrame()));
         dto.setExamTypeDTOs(new ArrayList<>()); // You need to implement logic to fetch exam types if required
         dto.setModuleRequirementDTO(moduleRequirementConverter.toDto(entity.getModuleRequirement()));
+        dto.setSemester(entity.getSemester());
 
         return dto;
     }
@@ -64,6 +65,7 @@ public class ModuleFrameModuleImplementationConverter {
         if(dto.getModuleRequirementDTO() != null) {
             entity.setModuleRequirement(moduleRequirementRepository.findById(dto.getModuleRequirementDTO().getId()).orElse(null));
         }
+        entity.setSemester(dto.getSemester());
 
         return entity;
     }

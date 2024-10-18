@@ -28,6 +28,8 @@ public class ModuleFrameModuleImplementationEntity {
     @JoinColumn(name = "module_requirement_id")
     private ModuleRequirementEntity moduleRequirement;
 
+    private String semester;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
