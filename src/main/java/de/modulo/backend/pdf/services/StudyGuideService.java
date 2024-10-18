@@ -104,7 +104,7 @@ public class StudyGuideService {
                         paragraph = new Paragraph(headline);
                         document.add(paragraph);
 
-                        Table table = new Table(new float[]{1, 8, 2, 1, 1, 3, 4, 5, 2, 2});
+                        Table table = new Table(new float[]{1, 8, 2, 1, 1, 1, 3, 4, 5, 2, 2});
                         table.setWidth(800);
                         table.setFixedLayout();
                         table.setFontSize(7);
@@ -113,6 +113,7 @@ public class StudyGuideService {
                         table.addHeaderCell("Kurz. Bez.");
                         table.addHeaderCell("SWS");
                         table.addHeaderCell("ECTS");
+                        table.addHeaderCell("Semester");
                         table.addHeaderCell("Art der Lehrveranstaltung");
                         table.addHeaderCell("Arten des Leistungsnachweises");
                         table.addHeaderCell("Zugelassene Hilfsmittel");
@@ -120,9 +121,8 @@ public class StudyGuideService {
                         table.addHeaderCell("Zweitprüfer");
 
                         for (ModuleFrameDTO moduleFrame : moduleType.getModuleFrames()) {
-                            List<ModuleImplementationEntity> moduleImplementationEntities = moduleFrameModuleImplementationRepository
-                                    .findModuleFrameModuleImplementationEntitiesByModuleFrameId(moduleFrame.getId()).stream()
-                                    .map(ModuleFrameModuleImplementationEntity::getModuleImplementation).toList();
+                            List<ModuleFrameModuleImplementationEntity> moduleImplementationEntities = moduleFrameModuleImplementationRepository
+                                    .findModuleFrameModuleImplementationEntitiesByModuleFrameId(moduleFrame.getId());
 
                             List<CourseTypeModuleFrameEntity> courseTypeModuleFrameEntities = courseTypeModuleFrameRepository.findCourseTypeModuleFrameEntitiesByModuleFrameId(moduleFrame.getId());
                             StringBuilder courseTypes = new StringBuilder();
@@ -133,14 +133,15 @@ public class StudyGuideService {
                                 }
                             }
 
-                            for (ModuleImplementationEntity moduleImplementationEntity : moduleImplementationEntities) {
+                            for (ModuleFrameModuleImplementationEntity moduleFrameModuleImplementationEntity : moduleImplementationEntities) {
                                 table.addCell(++moduleCounter + "");
-                                table.addCell(moduleImplementationEntity.getName());
-                                table.addCell(moduleImplementationEntity.getAbbreviation());
+                                table.addCell(moduleFrameModuleImplementationEntity.getModuleImplementation().getName());
+                                table.addCell(moduleFrameModuleImplementationEntity.getModuleImplementation().getAbbreviation());
                                 table.addCell(moduleFrame.getSws() + "");
                                 table.addCell(moduleFrame.getCredits() + "");
+                                table.addCell(moduleFrameModuleImplementationEntity.getSemester());
                                 table.addCell(courseTypes.toString());
-                                List<ExamTypeModuleImplementationEntity> examTypeModuleImplementationEntities = examTypeModuleImplementationRepository.findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleImplementationEntity.getId());
+                                List<ExamTypeModuleImplementationEntity> examTypeModuleImplementationEntities = examTypeModuleImplementationRepository.findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleFrameModuleImplementationEntity.getId());
                                 Cell cell = new Cell();
                                 for (int i = 0; i < examTypeModuleImplementationEntities.size(); i++) {
                                     paragraph = new Paragraph();
@@ -157,9 +158,9 @@ public class StudyGuideService {
                                     cell.add(paragraph);
                                 }
                                 table.addCell(cell);
-                                table.addCell(getCellFromHtmlString(moduleImplementationEntity.getAllowedResources()));
-                                table.addCell(moduleImplementationEntity.getFirstExaminant() != null ? moduleImplementationEntity.getFirstExaminant().getCode() : "-");
-                                table.addCell(moduleImplementationEntity.getSecondExaminant() != null ? moduleImplementationEntity.getSecondExaminant().getCode() : "-");
+                                table.addCell(getCellFromHtmlString(moduleFrameModuleImplementationEntity.getModuleImplementation().getAllowedResources()));
+                                table.addCell(moduleFrameModuleImplementationEntity.getModuleImplementation().getFirstExaminant() != null ? moduleFrameModuleImplementationEntity.getModuleImplementation().getFirstExaminant().getCode() : "-");
+                                table.addCell(moduleFrameModuleImplementationEntity.getModuleImplementation().getSecondExaminant() != null ? moduleFrameModuleImplementationEntity.getModuleImplementation().getSecondExaminant().getCode() : "-");
                             }
                         }
                         document.add(table);

@@ -306,7 +306,11 @@ public class ModuleManualService {
         table.addCell(new Cell().add(new Paragraph("ECTS")));
         table.addCell(new Cell().add(new Paragraph((moduleFrameEntity.getCredits() + " ECTS"))));
 
-        table.addCell(new Cell().add(new Paragraph("Workload")));
+        table.addCell(new Cell().add(new Paragraph("Regelsemester")));
+        table.addCell(new Cell().add(new Paragraph(moduleFrameModuleImplementationEntity.getSemester() != null ?
+                moduleFrameModuleImplementationEntity.getSemester() : "-")));
+
+        table.addCell(new Cell().add(new Paragraph("Arbeitsaufwand")));
         table.addCell(getCellFromHtmlString(moduleImplementationEntity.getWorkload()));
 
         table.addCell(new Cell().add(new Paragraph("Angebotsturnus")));
