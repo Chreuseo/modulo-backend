@@ -82,6 +82,7 @@ public class ValidatePrivilegesService {
                         }
                     }
                 }
+                break;
             case USER:
                 switch (entityType) {
                     case GENERAL_SETTINGS -> {

@@ -44,12 +44,11 @@ public class ModuleImplementationController {
     public ResponseEntity<List<ModuleImplementationDTOFlat>> getAllModuleImplementations(HttpServletRequest request) {
         try{
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            return new ResponseEntity<>(moduleImplementationService.getAllModuleImplementations(), HttpStatus.OK);
         }catch (InsufficientPermissionsException e){
             Long userId = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))).getId();
             return new ResponseEntity<>(moduleImplementationService.getAllAssignedModuleImplementations(userId), HttpStatus.OK);
         }
-
-        return new ResponseEntity<>(moduleImplementationService.getAllModuleImplementations(), HttpStatus.OK);
     }
 
     @PostMapping("/new")
