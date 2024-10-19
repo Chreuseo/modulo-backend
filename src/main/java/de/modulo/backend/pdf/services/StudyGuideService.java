@@ -207,7 +207,16 @@ public class StudyGuideService {
         paragraph.setFontSize(fontSize);
         for(IElement element : HtmlConverter.convertToElements(htmlString)) {
             if(element instanceof IBlockElement) {
-                paragraph.add((IBlockElement) element);
+                if (element instanceof Paragraph childParagraph) {
+                    // Cast to Paragraph
+                    // Change the font and font size of the child Paragraph
+                    childParagraph.setFontSize(fontSize);
+                    paragraph.add(childParagraph);
+                } else {
+                    // For other block elements that might contain Text
+                    // You may need to add a more elaborate handling, this is an example
+                    paragraph.add((IBlockElement) element);
+                }
             }else {
                 System.out.println("Element is not a block element: " + element);
             }
