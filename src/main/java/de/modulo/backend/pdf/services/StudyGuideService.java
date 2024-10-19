@@ -172,7 +172,7 @@ public class StudyGuideService {
 
             if(spoEntity.getStudyPlanAppendix() != null){
                 document.add(new AreaBreak());
-                document.add(getParagraphFromHtmlString(spoEntity.getStudyPlanAppendix()));
+                document.add(getParagraphFromHtmlString(spoEntity.getStudyPlanAppendix().replaceAll("</p>", "</p><br/>")));
             }
 
             document.close();
