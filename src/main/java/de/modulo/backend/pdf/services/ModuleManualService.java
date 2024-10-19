@@ -1,5 +1,6 @@
 package de.modulo.backend.pdf.services;
 
+import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -407,6 +408,7 @@ public class ModuleManualService {
         for(IElement element : HtmlConverter.convertToElements(htmlString)) {
             if(element instanceof IBlockElement) {
                 paragraph.add((IBlockElement) element);
+                paragraph.add("\n");
             }else {
                 System.out.println("Element is not a block element: " + element);
             }
