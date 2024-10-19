@@ -149,7 +149,7 @@ public class StudyGuideService {
                                             .add(" (")
                                             .add(examTypeModuleImplementationEntities.get(i).getLength());
                                     if (examTypeModuleImplementationEntities.get(i).getDescription() != null) {
-                                        paragraph.add(", ").add(getParagraphFromHtmlString(examTypeModuleImplementationEntities.get(i).getDescription()));
+                                        paragraph.add(", ").add(getParagraphFromHtmlString(examTypeModuleImplementationEntities.get(i).getDescription()).setFontSize(7));
                                     }
                                     paragraph.add(")");
                                     if (i < examTypeModuleImplementationEntities.size() - 1) {
