@@ -207,6 +207,7 @@ public class StudyGuideService {
         for (IElement element : HtmlConverter.convertToElements(htmlString)) {
             if (element instanceof IBlockElement) {
                 paragraph.add((IBlockElement) element);
+                paragraph.add("\n");
             } else {
                 System.out.println("Element is not a block element: " + element);
             }
