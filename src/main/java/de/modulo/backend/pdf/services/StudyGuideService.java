@@ -172,7 +172,7 @@ public class StudyGuideService {
 
             if(spoEntity.getStudyPlanAppendix() != null){
                 document.add(new AreaBreak());
-                document.add(getParagraphFromHtmlString(spoEntity.getStudyPlanAppendix().replaceAll("</p>", "</p><br>")));
+                document.add(getParagraphFromHtmlString(spoEntity.getStudyPlanAppendix()));
             }
 
             document.close();
@@ -207,7 +207,6 @@ public class StudyGuideService {
         for (IElement element : HtmlConverter.convertToElements(htmlString)) {
             if (element instanceof IBlockElement) {
                 paragraph.add((IBlockElement) element);
-                paragraph.add("\n");
             } else {
                 System.out.println("Element is not a block element: " + element);
             }
