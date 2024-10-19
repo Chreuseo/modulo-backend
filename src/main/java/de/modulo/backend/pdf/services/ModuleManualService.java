@@ -149,6 +149,11 @@ public class ModuleManualService {
                 }
             }
 
+            if(spoEntity.getStudyPlanAppendix() != null){
+                document.add(new AreaBreak());
+                document.add(getParagraphFromHtmlString(spoEntity.getStudyPlanAppendix()));
+            }
+
             document.close();
             pdf.close();
         } catch (Exception e) {

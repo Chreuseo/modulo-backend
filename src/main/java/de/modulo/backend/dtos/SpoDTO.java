@@ -20,4 +20,5 @@ public class SpoDTO {
     private List<UserDTOFlat> responsibleUsers; // List of UserDTOFlats
     private DegreeDTO degree;                // Full DegreeDTO instead of an ID
     private String moduleManualIntroduction;
+    private String studyPlanAppendix;
 }

@@ -41,4 +41,5 @@ public class SpoEntity {
     }
 
     private String moduleManualIntroduction;
+    private String studyPlanAppendix;
 }

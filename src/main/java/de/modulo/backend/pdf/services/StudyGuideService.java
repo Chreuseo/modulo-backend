@@ -165,6 +165,11 @@ public class StudyGuideService {
                             }
                         }
                         document.add(table);
+
+                        if(spoEntity.getStudyPlanAppendix() != null){
+                            document.add(new AreaBreak());
+                            document.add(getParagraphFromHtmlString(spoEntity.getStudyPlanAppendix()));
+                        }
                     }
                 }
             }

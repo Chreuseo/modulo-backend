@@ -45,6 +45,7 @@ public class SpoConverter {
         dto.setValidFrom(entity.getValidFrom());
         dto.setValidUntil(entity.getValidUntil());
         dto.setModuleManualIntroduction(entity.getModuleManualIntroduction());
+        dto.setStudyPlanAppendix(entity.getStudyPlanAppendix());
 
         dto.setDegree(degreeConverter.toDto(entity.getDegree()));
 
@@ -65,6 +66,7 @@ public class SpoConverter {
         entity.setValidFrom(dto.getValidFrom());
         entity.setValidUntil(dto.getValidUntil());
         entity.setModuleManualIntroduction(dto.getModuleManualIntroduction());
+        entity.setStudyPlanAppendix(dto.getStudyPlanAppendix());
 
         entity.setDegree(degreeConverter.toEntity(dto.getDegree()));
 
