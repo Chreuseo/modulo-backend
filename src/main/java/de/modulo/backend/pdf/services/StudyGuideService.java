@@ -151,7 +151,7 @@ public class StudyGuideService {
                                             .add(" (")
                                             .add(examTypeModuleImplementationEntities.get(i).getLength());
                                     if (examTypeModuleImplementationEntities.get(i).getDescription() != null) {
-                                        paragraph.add(", ").add(getParagraphFromHtmlString(examTypeModuleImplementationEntities.get(i).getDescription(), PdfFontFactory.createFont("Arial"), 7));
+                                        paragraph.add(", ").add(getParagraphFromHtmlString(examTypeModuleImplementationEntities.get(i).getDescription(), 7));
                                     }
                                     paragraph.add(")");
                                     if (i < examTypeModuleImplementationEntities.size() - 1) {
@@ -169,7 +169,7 @@ public class StudyGuideService {
 
                         if(spoEntity.getStudyPlanAppendix() != null){
                             document.add(new AreaBreak());
-                            document.add(getParagraphFromHtmlString(spoEntity.getStudyPlanAppendix(), PdfFontFactory.createFont("Arial"), 7));
+                            document.add(getParagraphFromHtmlString(spoEntity.getStudyPlanAppendix(), 7));
                         }
                     }
                 }
@@ -202,9 +202,9 @@ public class StudyGuideService {
         return htmlCell; // Return the populated Cell
     }
 
-    private Paragraph getParagraphFromHtmlString(String htmlString, PdfFont font, float fontSize) {
+    private Paragraph getParagraphFromHtmlString(String htmlString, float fontSize) {
         Paragraph paragraph = new Paragraph();
-        paragraph.setFont(font).setFontSize(fontSize);
+        paragraph.setFontSize(fontSize);
         for(IElement element : HtmlConverter.convertToElements(htmlString)) {
             if(element instanceof IBlockElement) {
                 paragraph.add((IBlockElement) element);
