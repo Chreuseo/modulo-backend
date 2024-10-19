@@ -220,6 +220,8 @@ public class StudyGuideService {
                 if (element instanceof Paragraph childParagraph) {
                     childParagraph.setFont(font);
                     childParagraph.setFontSize(fontSize);
+                    childParagraph.setMarginBottom(0);
+                    childParagraph.setMarginTop(0);
                     paragraph.add(childParagraph);
                 } else {
                     paragraph.add((IBlockElement) element);
