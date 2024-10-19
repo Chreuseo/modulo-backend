@@ -141,7 +141,7 @@ public class StudyGuideService {
                                 table.addCell(moduleFrame.getCredits() + "");
                                 table.addCell(moduleFrameModuleImplementationEntity.getSemester());
                                 table.addCell(courseTypes.toString());
-                                List<ExamTypeModuleImplementationEntity> examTypeModuleImplementationEntities = examTypeModuleImplementationRepository.findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleFrameModuleImplementationEntity.getId());
+                                List<ExamTypeModuleImplementationEntity> examTypeModuleImplementationEntities = examTypeModuleImplementationRepository.findExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleFrameModuleImplementationEntity.getModuleImplementation().getId());
                                 Cell cell = new Cell();
                                 for (int i = 0; i < examTypeModuleImplementationEntities.size(); i++) {
                                     paragraph = new Paragraph();
