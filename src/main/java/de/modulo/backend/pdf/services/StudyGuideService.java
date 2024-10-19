@@ -149,7 +149,7 @@ public class StudyGuideService {
                                             .add(" (")
                                             .add(examTypeModuleImplementationEntities.get(i).getLength());
                                     if (examTypeModuleImplementationEntities.get(i).getDescription() != null) {
-                                        paragraph.add(", ").add(examTypeModuleImplementationEntities.get(i).getDescription());
+                                        paragraph.add(", ").add(getParagraphFromHtmlString(examTypeModuleImplementationEntities.get(i).getDescription()));
                                     }
                                     paragraph.add(")");
                                     if (i < examTypeModuleImplementationEntities.size() - 1) {
@@ -193,5 +193,17 @@ public class StudyGuideService {
         }
 
         return htmlCell; // Return the populated Cell
+    }
+
+    private Paragraph getParagraphFromHtmlString(String htmlString) {
+        Paragraph paragraph = new Paragraph();
+        for(IElement element : HtmlConverter.convertToElements(htmlString)) {
+            if(element instanceof IBlockElement) {
+                paragraph.add((IBlockElement) element);
+            }else {
+                System.out.println("Element is not a block element: " + element);
+            }
+        }
+        return paragraph;
     }
 }
