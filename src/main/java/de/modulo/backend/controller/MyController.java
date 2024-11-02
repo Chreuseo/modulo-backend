@@ -6,6 +6,7 @@ import de.modulo.backend.converters.UserConverter;
 import de.modulo.backend.dtos.PasswordDTO;
 import de.modulo.backend.dtos.UserDTO;
 import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.repositories.NotificationRepository;
 import de.modulo.backend.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +24,19 @@ public class MyController {
     private final SessionService sessionService;
     private final UserConverter userConverter;
     private final UserService userService;
+    private final NotificationRepository notificationRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public MyController(SessionService sessionService,
                         UserConverter userConverter,
                         UserService userService,
+                        NotificationRepository notificationRepository,
                         BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.sessionService = sessionService;
         this.userConverter = userConverter;
         this.userService = userService;
+        this.notificationRepository = notificationRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -66,5 +70,11 @@ public class MyController {
         }
 
         return ResponseEntity.ok(userService.changePassword(user, bCryptPasswordEncoder.encode(passwordDTO.getNewPassword())));
+    }
+
+    @GetMapping("unread-notifications")
+    public ResponseEntity<Integer> getUnreadNotifications(HttpServletRequest request){
+        UserEntity user = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request)));
+        return ResponseEntity.ok(notificationRepository.countByUserAndRead(user, false));
     }
 }
