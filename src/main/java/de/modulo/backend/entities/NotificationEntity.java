@@ -9,6 +9,7 @@ import lombok.Data;
 public class NotificationEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String title;
