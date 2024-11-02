@@ -8,6 +8,6 @@ public class NotificationDTO {
         private long id;
         private String title;
         private String message;
-        private boolean read;
+        private boolean isRead;
         private long userId;
 }
