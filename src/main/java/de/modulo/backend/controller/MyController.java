@@ -75,6 +75,6 @@ public class MyController {
     @GetMapping("unread-notifications")
     public ResponseEntity<Integer> getUnreadNotifications(HttpServletRequest request){
         UserEntity user = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request)));
-        return ResponseEntity.ok(notificationRepository.countByUserAndRead(user, false));
+        return ResponseEntity.ok(notificationRepository.countByUserAndUnread(user, true));
     }
 }
