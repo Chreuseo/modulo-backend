@@ -14,8 +14,7 @@ public class NotificationEntity {
     private String title;
     private String message;
 
-    @Column(name = "is_read")
-    private boolean isRead;
+    private boolean unread;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

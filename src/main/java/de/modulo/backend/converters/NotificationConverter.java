@@ -25,7 +25,7 @@ public class NotificationConverter {
         dto.setId(entity.getId());
         dto.setTitle(entity.getTitle());
         dto.setMessage(entity.getMessage());
-        dto.setRead(entity.isRead());
+        dto.setUnread(entity.isUnread());
         dto.setUserId(entity.getUser().getId());
 
         return dto;
@@ -40,7 +40,7 @@ public class NotificationConverter {
         entity.setId(dto.getId());
         entity.setTitle(dto.getTitle());
         entity.setMessage(dto.getMessage());
-        entity.setRead(dto.isRead());
+        entity.setUnread(dto.isUnread());
         entity.setUser(userRepository.findById(dto.getUserId()).orElseThrow());
 
         return entity;
