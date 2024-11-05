@@ -92,7 +92,7 @@ public class UserService {
                     if(setRead && notification.isUnread()){
                         notification.setUnread(false);
                         notificationRepository.save(notification);
-                        notification.setUnread(false);
+                        notification.setUnread(true);
                     }})
                 .map(notificationConverter::toDto).toList();
     }
