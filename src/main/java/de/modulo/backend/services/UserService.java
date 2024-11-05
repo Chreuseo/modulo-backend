@@ -5,6 +5,7 @@ import de.modulo.backend.converters.UserConverter;
 import de.modulo.backend.dtos.NotificationDTO;
 import de.modulo.backend.dtos.UserDTO;
 import de.modulo.backend.dtos.UserDTOFlat;
+import de.modulo.backend.entities.NotificationEntity;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.repositories.NotificationRepository;
@@ -91,6 +92,7 @@ public class UserService {
                     if(setRead && notification.isUnread()){
                         notification.setUnread(false);
                         notificationRepository.save(notification);
+                        notification.setUnread(false);
                     }})
                 .map(notificationConverter::toDto).toList();
     }
