@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.management.NotificationFilter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,13 +88,17 @@ public class UserService {
     }
 
     public List<NotificationDTO> getNotifications(UserEntity user, boolean setRead) {
-        return notificationRepository.findByUser(user).stream()
+        List<NotificationEntity> unreadNotifications = new ArrayList<>();
+        List<NotificationDTO> result = notificationRepository.findByUser(user).stream()
                 .peek(notification -> {
                     if(setRead && notification.isUnread()){
-                        notification.setUnread(false);
-                        notificationRepository.save(notification);
-                        notification.setUnread(true);
+                        unreadNotifications.add(notification);
                     }})
                 .map(notificationConverter::toDto).toList();
+        unreadNotifications.forEach(notification -> {
+            notification.setUnread(false);
+        });
+        notificationRepository.saveAll(unreadNotifications);
+        return result;
     }
 }
