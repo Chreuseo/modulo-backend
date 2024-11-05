@@ -1,15 +1,19 @@
 package de.modulo.backend.services;
 
+import de.modulo.backend.converters.NotificationConverter;
 import de.modulo.backend.converters.UserConverter;
+import de.modulo.backend.dtos.NotificationDTO;
 import de.modulo.backend.dtos.UserDTO;
 import de.modulo.backend.dtos.UserDTOFlat;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.ROLE;
+import de.modulo.backend.repositories.NotificationRepository;
 import de.modulo.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.management.NotificationFilter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,14 +22,20 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserConverter userConverter;
+    private final NotificationRepository notificationRepository;
+    private final NotificationConverter notificationConverter;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public UserService(UserRepository userRepository,
                        UserConverter userConverter,
+                       NotificationRepository notificationRepository,
+                       NotificationConverter notificationConverter,
                        BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.userConverter = userConverter;
+        this.notificationRepository = notificationRepository;
+        this.notificationConverter = notificationConverter;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -73,5 +83,15 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public List<NotificationDTO> getNotifications(UserEntity user, boolean setRead) {
+        return notificationRepository.findByUser(user).stream()
+                .peek(notification -> {
+                    if(setRead && notification.isUnread()){
+                        notification.setUnread(false);
+                        notificationRepository.save(notification);
+                    }})
+                .map(notificationConverter::toDto).toList();
     }
 }

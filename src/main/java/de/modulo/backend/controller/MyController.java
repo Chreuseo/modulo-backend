@@ -3,6 +3,7 @@ package de.modulo.backend.controller;
 import de.modulo.backend.authentication.SessionService;
 import de.modulo.backend.authentication.SessionTokenHelper;
 import de.modulo.backend.converters.UserConverter;
+import de.modulo.backend.dtos.NotificationDTO;
 import de.modulo.backend.dtos.PasswordDTO;
 import de.modulo.backend.dtos.UserDTO;
 import de.modulo.backend.entities.UserEntity;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -72,9 +74,15 @@ public class MyController {
         return ResponseEntity.ok(userService.changePassword(user, bCryptPasswordEncoder.encode(passwordDTO.getNewPassword())));
     }
 
-    @GetMapping("unread-notifications")
+    @GetMapping("/unread-notifications")
     public ResponseEntity<Integer> getUnreadNotifications(HttpServletRequest request){
         UserEntity user = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request)));
         return ResponseEntity.ok(notificationRepository.countByUserAndUnread(user, true));
+    }
+
+    @GetMapping("/notifications")
+    public ResponseEntity<List<NotificationDTO>> getNotifications(HttpServletRequest request){
+        UserEntity user = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request)));
+        return ResponseEntity.ok(userService.getNotifications(user, true));
     }
 }
