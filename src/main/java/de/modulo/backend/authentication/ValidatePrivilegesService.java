@@ -1,9 +1,6 @@
 package de.modulo.backend.authentication;
 
-import de.modulo.backend.entities.ModuleImplementationEntity;
-import de.modulo.backend.entities.ModuleImplementationLecturerEntity;
-import de.modulo.backend.entities.SpoEntity;
-import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.entities.*;
 import de.modulo.backend.enums.ENTITY_TYPE;
 import de.modulo.backend.enums.NOTIFICATION;
 import de.modulo.backend.enums.PRIVILEGES;
@@ -292,6 +289,14 @@ public class ValidatePrivilegesService {
                             case READ, ADD, UPDATE, DELETE -> {
                                 if(!isResponsible && !isLecturer){
                                     throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
+                                }else if(!isResponsible){
+                                    List<UserEntity> notifyUsers = new ArrayList<>();
+                                    notifyUsers.add(moduleImplementationEntity.getResponsible());
+                                    throw new NotifyException(notifyService,
+                                            sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                            notifyUsers,
+                                            NOTIFICATION.LECTURER_EDITED_MODULE,
+                                            moduleImplementationEntity);
                                 }
                             }
                         }
@@ -466,6 +471,14 @@ public class ValidatePrivilegesService {
                             case ADD, UPDATE, DELETE -> {
                                 if (!isModuleResponsible) {
                                     throw new InsufficientPermissionsException("You do not have the required permissions to edit this resource.");
+                                }else {
+                                    List<UserEntity> notifyUsers = spoResponsibleUserRepository.findAllBySpoId(spoId).stream().map(SpoResponsibleUserEntity::getUser).toList();
+                                    throw new NotifyException(notifyService,
+                                            sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                            notifyUsers,
+                                            NOTIFICATION.MODULE_ADDED_TO_SPO,
+                                            moduleImplementationEntity,
+                                            spoRepository.findById(spoId).orElseThrow());
                                 }
                             }
                         }

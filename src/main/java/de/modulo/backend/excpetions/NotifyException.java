@@ -1,5 +1,6 @@
 package de.modulo.backend.excpetions;
 
+import de.modulo.backend.entities.NotificationEntity;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.NOTIFICATION;
 import de.modulo.backend.services.NotifyService;
@@ -41,22 +42,20 @@ public class NotifyException extends Exception{
         this.editedObject = editedObject;
     }
 
-    public void sendMailNotification(){
-        for(UserEntity user : userEntities){
-            notifyService.sendMailNotification(editor, user, notification, editedObject);
-        }
+    public void sendMailNotification(NotificationEntity notificationEntity, UserEntity user){
+        // TODO
     }
 
     private void sendInAppNotification(){
         for(UserEntity user : userEntities){
-            notifyService.sendNotification(editor, user, notification, editedObject);
+            NotificationEntity notificationEntity = notifyService.sendNotification(editor, user, notification, editedObject);
+            if(user.isSendMailNotifications()){
+                sendMailNotification(notificationEntity, user);
+            }
         }
     }
 
     public void sendNotification(){
         sendInAppNotification();
-        if(editor.isSendMailNotifications()){
-            sendMailNotification();
-        }
     }
 }

@@ -19,13 +19,9 @@ public class NotifyService {
         this.notificationRepository = notificationRepository;
     }
 
-    public void sendNotification(UserEntity editor, UserEntity user, NOTIFICATION notification, Object ...editedObject){
+    public NotificationEntity sendNotification(UserEntity editor, UserEntity user, NOTIFICATION notification, Object ...editedObject){
         NotificationEntity notificationEntity = generateNotificationEntity(editor, user, notification, editedObject);
-        notificationRepository.save(notificationEntity);
-    }
-
-    public void sendMailNotification(UserEntity editor, UserEntity user, NOTIFICATION notification, Object ...editedObject){
-        // TODO
+        return notificationRepository.save(notificationEntity);
     }
 
     private String generateNotificationText(UserEntity editor, NOTIFICATION notification, Object ...editedObject){
