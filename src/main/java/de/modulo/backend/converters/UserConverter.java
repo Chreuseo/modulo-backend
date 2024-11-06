@@ -23,6 +23,7 @@ public class UserConverter {
         userDTO.setLastName(userEntity.getLastName());
         userDTO.setCode(userEntity.getCode());
         userDTO.setRole(userEntity.getRole().toString()); // Assuming ROLE is an Enum
+        userDTO.setSendMailNotifications(userEntity.isSendMailNotifications());
         return userDTO;
     }
 
@@ -39,6 +40,7 @@ public class UserConverter {
         userEntity.setLastName(userDTO.getLastName());
         userEntity.setCode(userDTO.getCode());
         userEntity.setRole(ROLE.valueOf(userDTO.getRole())); // Assuming ROLE is an Enum
+        userEntity.setSendMailNotifications(userDTO.isSendMailNotifications());
         // Set default values for boolean fields if needed
         return userEntity;
     }

@@ -15,4 +15,5 @@ public class UserDTO {
     private String lastName;
     private String code;
     private String role; // Assuming role is a String; you can change it accordingly
+    private boolean sendMailNotifications = false;
 }

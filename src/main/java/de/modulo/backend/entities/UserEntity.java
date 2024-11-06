@@ -50,6 +50,8 @@ public class UserEntity{
     @Column(name = "enabled", nullable = false) // Not null
     private boolean enabled = true;
 
+    private boolean sendMailNotifications = false;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
