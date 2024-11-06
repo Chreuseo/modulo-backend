@@ -10,4 +10,5 @@ public class NotificationDTO {
         private String message;
         private boolean unread;
         private long userId;
+        private String createdAt;
 }

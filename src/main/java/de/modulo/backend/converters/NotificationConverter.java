@@ -6,6 +6,9 @@ import de.modulo.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Component
 public class NotificationConverter {
 
@@ -27,6 +30,8 @@ public class NotificationConverter {
         dto.setMessage(entity.getMessage());
         dto.setUnread(entity.isUnread());
         dto.setUserId(entity.getUser().getId());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        dto.setCreatedAt(entity.getCreatedAt().format(formatter));
 
         return dto;
     }
@@ -42,6 +47,7 @@ public class NotificationConverter {
         entity.setMessage(dto.getMessage());
         entity.setUnread(dto.isUnread());
         entity.setUser(userRepository.findById(dto.getUserId()).orElseThrow());
+        entity.setCreatedAt(LocalDateTime.now());
 
         return entity;
     }
