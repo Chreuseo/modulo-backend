@@ -72,7 +72,7 @@ public class ValidatePrivilegesService {
                     case SPO -> {
                         switch(privileges){
                             case ADD -> {
-                                List<UserEntity> users = userRepository.getUserEntitiesByRole(ROLE.ADMIN);
+                                List<UserEntity> users = userRepository.findAllByRole(ROLE.ADMIN);
                                 throw new NotifyException(notifyService,
                                         sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
                                         users,
@@ -118,7 +118,7 @@ public class ValidatePrivilegesService {
                     case MODULE -> {
                         switch (privileges) {
                             case ADD -> {
-                                List<UserEntity> users = userRepository.getUserEntitiesByRole(ROLE.ADMIN);
+                                List<UserEntity> users = userRepository.findAllByRole(ROLE.ADMIN);
                                 throw new NotifyException(notifyService,
                                         sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
                                         users,

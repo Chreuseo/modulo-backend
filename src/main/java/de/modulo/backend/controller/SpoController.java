@@ -73,7 +73,7 @@ public class SpoController {
             spoService.addResponsible(spo.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
             e.setEditedObject(new Object[] {spoRepository.findById(spo.getId())});
 
-            spoService.addResponsible(spo.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
+            e.sendNotification();
 
             return new ResponseEntity<>(spo, HttpStatus.CREATED);
         }catch (InsufficientPermissionsException e){
