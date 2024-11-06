@@ -6,7 +6,6 @@ import de.modulo.backend.entities.SpoEntity;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.NOTIFICATION;
 import de.modulo.backend.repositories.NotificationRepository;
-import de.modulo.backend.repositories.SpoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +13,10 @@ import org.springframework.stereotype.Service;
 public class NotifyService {
 
     private final NotificationRepository notificationRepository;
-    private final SpoRepository spoRepository;
 
     @Autowired
-    public NotifyService(NotificationRepository notificationRepository, SpoRepository spoRepository) {
+    public NotifyService(NotificationRepository notificationRepository) {
         this.notificationRepository = notificationRepository;
-        this.spoRepository = spoRepository;
     }
 
     public NotificationEntity sendNotification(UserEntity editor, UserEntity user, NOTIFICATION notification, Object ...editedObject){
@@ -41,11 +38,9 @@ public class NotifyService {
                         replace("[spo]", ((SpoEntity) editedObject[1]).getName() + " " + ((SpoEntity) editedObject[1]).getDegree().getName());
             }
             case SPO_CREATED -> {
-                SpoEntity spo = (SpoEntity) editedObject[0];
-                SpoEntity spo1 = spoRepository.findById(spo.getId()).orElse(spo);
                 return notification.getMessage().
                         replace("[editor]", editor.getFirstName() + " " + editor.getLastName()).
-                        replace("[spo]", (spo1.getName() + " " + (spo1.getDegree().getName())));
+                        replace("[spo]", ((SpoEntity) editedObject[0]).getName() + " " + ((SpoEntity) editedObject[0]).getDegree().getName());
             }
             case MODULE_CREATED -> {
                 return notification.getMessage().

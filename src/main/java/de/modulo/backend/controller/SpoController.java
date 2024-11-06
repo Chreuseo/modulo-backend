@@ -11,6 +11,7 @@ import de.modulo.backend.enums.PRIVILEGES;
 import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
 import de.modulo.backend.excpetions.NotifyException;
+import de.modulo.backend.repositories.DegreeRepository;
 import de.modulo.backend.repositories.SpoRepository;
 import de.modulo.backend.services.SpoService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,14 +34,16 @@ public class SpoController {
     private final ValidatePrivilegesService validatePrivilegesService;
     private final SpoRepository spoRepository;
     private final SessionService sessionService;
+    private final DegreeRepository degreeRepository;
 
     @Autowired
     public SpoController(SpoService spoService,
-                         ValidatePrivilegesService validatePrivilegesService, SpoRepository spoRepository, SessionService sessionService) {
+                         ValidatePrivilegesService validatePrivilegesService, SpoRepository spoRepository, SessionService sessionService, DegreeRepository degreeRepository) {
         this.spoService = spoService;
         this.validatePrivilegesService = validatePrivilegesService;
         this.spoRepository = spoRepository;
         this.sessionService = sessionService;
+        this.degreeRepository = degreeRepository;
     }
 
     @GetMapping("/all")
@@ -72,6 +75,7 @@ public class SpoController {
             SpoDTOFlat spo = spoService.add(spoDto);
             spoService.addResponsible(spo.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
             SpoEntity spoEntity = spoRepository.findById(spo.getId()).orElseThrow();
+            spoEntity.setDegree(degreeRepository.findById(spoDto.getDegree().getId()).orElseThrow());
             e.setEditedObject(new Object[] {spoEntity});
 
             e.sendNotification();
