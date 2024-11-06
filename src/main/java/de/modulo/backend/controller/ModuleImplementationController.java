@@ -12,6 +12,7 @@ import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
 import de.modulo.backend.excpetions.NotifyException;
 import de.modulo.backend.repositories.ModuleFrameModuleImplementationRepository;
+import de.modulo.backend.repositories.ModuleImplementationRepository;
 import de.modulo.backend.services.ModuleImplementationService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +32,17 @@ public class ModuleImplementationController {
     private final SessionService sessionService;
     private final ModuleImplementationService moduleImplementationService;
     private final ValidatePrivilegesService validatePrivilegesService;
-    private final ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository;
+    private final ModuleImplementationRepository moduleImplementationRepository;
 
     @Autowired
     public ModuleImplementationController(SessionService sessionService,
                                           ModuleImplementationService moduleImplementationService,
                                           ValidatePrivilegesService validatePrivilegesService,
-                                          ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository) {
+                                          ModuleImplementationRepository moduleImplementationRepository) {
         this.sessionService = sessionService;
         this.moduleImplementationService = moduleImplementationService;
         this.validatePrivilegesService = validatePrivilegesService;
-        this.moduleFrameModuleImplementationRepository = moduleFrameModuleImplementationRepository;
+        this.moduleImplementationRepository = moduleImplementationRepository;
     }
 
     @GetMapping("/all")
@@ -76,7 +77,7 @@ public class ModuleImplementationController {
             UserEntity user = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request)));
             ModuleImplementationDTOFlat moduleImplementation = moduleImplementationService.addModuleImplementationAndSetResponsible(moduleImplementationDTOFlat, user);
 
-            e.setEditedObject(new Object[]{moduleFrameModuleImplementationRepository.findById(moduleImplementation.getId()).orElseThrow()});
+            e.setEditedObject(new Object[]{moduleImplementationRepository.findById(moduleImplementation.getId()).orElseThrow()});
             e.sendNotification();
 
             return new ResponseEntity<>(moduleImplementation, HttpStatus.CREATED);
