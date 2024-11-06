@@ -70,10 +70,10 @@ public class SpoController {
             }
         }catch (NotifyException e){
             SpoDTOFlat spo = spoService.add(spoDto);
-            spoService.addResponsible(spoDto.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
+            spoService.addResponsible(spo.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
             e.setEditedObject(new Object[] {spoRepository.findById(spo.getId())});
 
-            spoService.addResponsible(spoDto.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
+            spoService.addResponsible(spo.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
 
             return new ResponseEntity<>(spo, HttpStatus.CREATED);
         }catch (InsufficientPermissionsException e){
