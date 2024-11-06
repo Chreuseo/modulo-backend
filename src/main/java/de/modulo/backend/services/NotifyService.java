@@ -42,10 +42,10 @@ public class NotifyService {
             }
             case SPO_CREATED -> {
                 SpoEntity spo = (SpoEntity) editedObject[0];
-                spo = spoRepository.findById(spo.getId()).orElse(spo);
+                SpoEntity spo1 = spoRepository.findById(spo.getId()).orElse(spo);
                 return notification.getMessage().
                         replace("[editor]", editor.getFirstName() + " " + editor.getLastName()).
-                        replace("[spo]", (spo.getName() + " " + (spo.getDegree().getName())));
+                        replace("[spo]", (spo1.getName() + " " + (spo1.getDegree().getName())));
             }
             case MODULE_CREATED -> {
                 return notification.getMessage().
