@@ -6,6 +6,7 @@ import de.modulo.backend.dtos.DurationDTO;
 import de.modulo.backend.enums.ENTITY_TYPE;
 import de.modulo.backend.enums.PRIVILEGES;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
+import de.modulo.backend.excpetions.NotifyException;
 import de.modulo.backend.services.DurationService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +37,15 @@ public class DurationController {
     public ResponseEntity<List<DurationDTO>> getAllDurations(HttpServletRequest request) {
         try{
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            List<DurationDTO> durations = durationService.getAll();
+            return new ResponseEntity<>(durations, HttpStatus.OK);
+        }catch(NotifyException e){
+            e.sendNotification();
+            List<DurationDTO> durations = durationService.getAll();
+            return new ResponseEntity<>(durations, HttpStatus.OK);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        List<DurationDTO> durations = durationService.getAll();
-        return new ResponseEntity<>(durations, HttpStatus.OK);
     }
 
     // Endpoint to add a new duration
@@ -49,12 +53,15 @@ public class DurationController {
     public ResponseEntity<DurationDTO> addDuration(@RequestBody DurationDTO durationDto, HttpServletRequest request) {
         try{
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            DurationDTO savedDuration = durationService.add(durationDto);
+            return new ResponseEntity<>(savedDuration, HttpStatus.CREATED);
+        }catch(NotifyException e){
+            e.sendNotification();
+            DurationDTO savedDuration = durationService.add(durationDto);
+            return new ResponseEntity<>(savedDuration, HttpStatus.CREATED);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        DurationDTO savedDuration = durationService.add(durationDto);
-        return new ResponseEntity<>(savedDuration, HttpStatus.CREATED);
     }
 
     // Endpoint to delete a duration by ID
@@ -62,11 +69,14 @@ public class DurationController {
     public ResponseEntity<Void> deleteDuration(@PathVariable Long id, HttpServletRequest request) {
         try{
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
+            durationService.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch(NotifyException e){
+            e.sendNotification();
+            durationService.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        durationService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
