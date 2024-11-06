@@ -71,7 +71,9 @@ public class SpoController {
         }catch (NotifyException e){
             SpoDTOFlat spo = spoService.add(spoDto);
             spoService.addResponsible(spo.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
-            e.setEditedObject(new Object[] {spoRepository.findById(spo.getId()).orElseThrow()});
+            SpoEntity spoEntity = spoRepository.findById(spo.getId()).orElseThrow();
+            spoEntity.getDegree().getName(); // load degree in cache befor parcing it to object and losing the connection to the database
+            e.setEditedObject(new Object[] {spoEntity});
 
             e.sendNotification();
 

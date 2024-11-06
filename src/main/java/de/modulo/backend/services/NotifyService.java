@@ -42,6 +42,11 @@ public class NotifyService {
                         replace("[editor]", editor.getFirstName() + " " + editor.getLastName()).
                         replace("[spo]", ((SpoEntity) editedObject[0]).getName() + " " + ((SpoEntity) editedObject[0]).getDegree().getName());
             }
+            case MODULE_CREATED -> {
+                return notification.getMessage().
+                        replace("[editor]", editor.getFirstName() + " " + editor.getLastName()).
+                        replace("[module]", ((ModuleImplementationEntity) editedObject[0]).getName());
+            }
             default -> {
                 return "";
             }
