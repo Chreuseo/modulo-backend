@@ -61,14 +61,7 @@ public class ValidatePrivilegesService {
                     }
                     case SPO_SETTINGS -> {
                         switch(privileges){
-                            case ADD -> {
-                                List<UserEntity> users = userRepository.getUserEntitiesByRole(ROLE.ADMIN);
-                                throw new NotifyException(notifyService,
-                                        sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
-                                        users,
-                                        NOTIFICATION.SPO_CREATED);
-                            }
-                            case UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPO settings");
+                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPO settings");
                         }
                     }
                     case USER -> {
@@ -78,7 +71,14 @@ public class ValidatePrivilegesService {
                     }
                     case SPO -> {
                         switch(privileges){
-                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
+                            case ADD -> {
+                                List<UserEntity> users = userRepository.getUserEntitiesByRole(ROLE.ADMIN);
+                                throw new NotifyException(notifyService,
+                                        sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                        users,
+                                        NOTIFICATION.SPO_CREATED);
+                            }
+                            case UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
                         }
                     }
                     case MODULE -> {
