@@ -40,12 +40,15 @@ public class ModuleFrameModuleImplementationController {
     public ResponseEntity<List<ModuleFrameModuleImplementationDTO>> getAll(HttpServletRequest request) {
         try{
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            List<ModuleFrameModuleImplementationDTO> dtoList = service.findAll();
+            return new ResponseEntity<>(dtoList, HttpStatus.OK);
+        }catch(NotifyException e){
+            e.sendNotification();
+            List<ModuleFrameModuleImplementationDTO> dtoList = service.findAll();
+            return new ResponseEntity<>(dtoList, HttpStatus.OK);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        List<ModuleFrameModuleImplementationDTO> dtoList = service.findAll();
-        return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
