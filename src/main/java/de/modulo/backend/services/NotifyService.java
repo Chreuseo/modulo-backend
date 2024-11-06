@@ -45,6 +45,7 @@ public class NotifyService {
     private NotificationEntity generateNotificationEntity(UserEntity editor, UserEntity user, NOTIFICATION notification, Object ...editedObject){
         NotificationEntity notificationEntity = new NotificationEntity();
         notificationEntity.setUser(user);
+        notificationEntity.setTitle(notification.getTitle());
         notificationEntity.setMessage(generateNotificationText(editor, notification, editedObject));
         notificationEntity.setUnread(true);
         return notificationEntity;
