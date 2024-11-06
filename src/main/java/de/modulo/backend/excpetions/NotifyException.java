@@ -5,10 +5,13 @@ import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.NOTIFICATION;
 import de.modulo.backend.services.NotifyService;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class NotifyException extends Exception{
     private UserEntity editor;
     private List<UserEntity> userEntities;

@@ -11,6 +11,7 @@ import de.modulo.backend.enums.PRIVILEGES;
 import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
 import de.modulo.backend.excpetions.NotifyException;
+import de.modulo.backend.repositories.ModuleFrameModuleImplementationRepository;
 import de.modulo.backend.services.ModuleImplementationService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +31,17 @@ public class ModuleImplementationController {
     private final SessionService sessionService;
     private final ModuleImplementationService moduleImplementationService;
     private final ValidatePrivilegesService validatePrivilegesService;
+    private final ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository;
 
     @Autowired
     public ModuleImplementationController(SessionService sessionService,
                                           ModuleImplementationService moduleImplementationService,
-                                          ValidatePrivilegesService validatePrivilegesService) {
+                                          ValidatePrivilegesService validatePrivilegesService,
+                                          ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository) {
         this.sessionService = sessionService;
         this.moduleImplementationService = moduleImplementationService;
         this.validatePrivilegesService = validatePrivilegesService;
+        this.moduleFrameModuleImplementationRepository = moduleFrameModuleImplementationRepository;
     }
 
     @GetMapping("/all")
@@ -58,20 +62,26 @@ public class ModuleImplementationController {
     public ResponseEntity<ModuleImplementationDTOFlat> addModuleImplementation(@RequestBody ModuleImplementationDTOFlat moduleImplementationDTOFlat, HttpServletRequest request) {
         try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+
+            if(sessionService.getRoleBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))).equals(ROLE.ADMIN)){
+                return new ResponseEntity<>(moduleImplementationService.addModuleImplementation(moduleImplementationDTOFlat), HttpStatus.CREATED);
+            }
+            else{
+                UserEntity user = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request)));
+                ModuleImplementationDTOFlat moduleImplementation = moduleImplementationService.addModuleImplementationAndSetResponsible(moduleImplementationDTOFlat, user);
+                return new ResponseEntity<>(moduleImplementation, HttpStatus.CREATED);
+            }
+
         }catch (NotifyException e){
-            e.sendNotification();
-        }catch (InsufficientPermissionsException e){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-
-
-        if(sessionService.getRoleBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))).equals(ROLE.ADMIN)){
-            return new ResponseEntity<>(moduleImplementationService.addModuleImplementation(moduleImplementationDTOFlat), HttpStatus.CREATED);
-        }
-        else{
             UserEntity user = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request)));
             ModuleImplementationDTOFlat moduleImplementation = moduleImplementationService.addModuleImplementationAndSetResponsible(moduleImplementationDTOFlat, user);
+
+            e.setEditedObject(new Object[]{moduleFrameModuleImplementationRepository.findById(moduleImplementation.getId()).orElseThrow()});
+            e.sendNotification();
+
             return new ResponseEntity<>(moduleImplementation, HttpStatus.CREATED);
+        }catch (InsufficientPermissionsException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 

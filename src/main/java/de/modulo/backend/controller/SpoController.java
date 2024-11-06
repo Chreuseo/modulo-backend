@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,17 +60,24 @@ public class SpoController {
     public ResponseEntity<SpoDTOFlat> addSpo(@RequestBody SpoDTOFlat spoDto, HttpServletRequest request) {
         try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+
+            if(sessionService.getRoleBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))) == ROLE.ADMIN){
+                return new ResponseEntity<>(spoService.add(spoDto), HttpStatus.CREATED);
+            }else{
+                SpoDTOFlat spo = spoService.add(spoDto);
+                spoService.addResponsible(spoDto.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
+                return new ResponseEntity<>(spo, HttpStatus.CREATED);
+            }
         }catch (NotifyException e){
-            e.sendNotification();
-        }catch (InsufficientPermissionsException e){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        if(sessionService.getRoleBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))) == ROLE.ADMIN){
-            return new ResponseEntity<>(spoService.add(spoDto), HttpStatus.CREATED);
-        }else{
             SpoDTOFlat spo = spoService.add(spoDto);
             spoService.addResponsible(spoDto.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
+            e.setEditedObject(new Object[] {spoRepository.findById(spo.getId())});
+
+            spoService.addResponsible(spoDto.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
+
             return new ResponseEntity<>(spo, HttpStatus.CREATED);
+        }catch (InsufficientPermissionsException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
