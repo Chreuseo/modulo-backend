@@ -71,7 +71,7 @@ public class SpoController {
         }catch (NotifyException e){
             SpoDTOFlat spo = spoService.add(spoDto);
             spoService.addResponsible(spo.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
-            e.setEditedObject(new Object[] {spoRepository.findById(spo.getId())});
+            e.setEditedObject(new Object[] {spoRepository.findById(spo.getId()).orElseThrow()});
 
             e.sendNotification();
 
