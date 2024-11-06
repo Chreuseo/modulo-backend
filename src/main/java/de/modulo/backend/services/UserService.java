@@ -90,6 +90,9 @@ public class UserService {
     public List<NotificationDTO> getNotifications(UserEntity user, boolean setRead) {
         List<NotificationEntity> unreadNotifications = new ArrayList<>();
         List<NotificationDTO> result = notificationRepository.findByUser(user).stream()
+                .sorted((o1, o2) -> {
+                    return o1.getCreatedAt() != null && o2.getCreatedAt() != null ? o2.getCreatedAt().compareTo(o1.getCreatedAt()) : 0;
+                })
                 .peek(notification -> {
                     if(setRead && notification.isUnread()){
                         unreadNotifications.add(notification);
