@@ -39,7 +39,7 @@ public class NotifyService {
                 return notification.getMessage().
                         replace("[editor]", editor.getFirstName() + " " + editor.getLastName()).
                         replace("[module]", ((ModuleImplementationEntity) editedObject[0]).getName()).
-                        replace("[spo]", ((SpoEntity) editedObject[1]).getName());
+                        replace("[spo]", ((SpoEntity) editedObject[1]).getName() + " " + ((SpoEntity) editedObject[1]).getDegree());
             }default -> {
                 return "";
             }
