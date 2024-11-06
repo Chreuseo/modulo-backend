@@ -45,6 +45,9 @@ public class ModuleImplementationController {
         try{
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
             return new ResponseEntity<>(moduleImplementationService.getAllModuleImplementations(), HttpStatus.OK);
+        }catch (NotifyException e){
+            e.sendNotification();
+            return new ResponseEntity<>(moduleImplementationService.getAllModuleImplementations(), HttpStatus.OK);
         }catch (InsufficientPermissionsException e){
             Long userId = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))).getId();
             return new ResponseEntity<>(moduleImplementationService.getAllAssignedModuleImplementations(userId), HttpStatus.OK);
@@ -53,8 +56,10 @@ public class ModuleImplementationController {
 
     @PostMapping("/new")
     public ResponseEntity<ModuleImplementationDTOFlat> addModuleImplementation(@RequestBody ModuleImplementationDTOFlat moduleImplementationDTOFlat, HttpServletRequest request) {
-        try{
+        try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+        }catch (NotifyException e){
+            e.sendNotification();
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

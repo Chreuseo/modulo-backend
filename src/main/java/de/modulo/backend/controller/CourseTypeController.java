@@ -5,6 +5,7 @@ import de.modulo.backend.dtos.CourseTypeDTO;
 import de.modulo.backend.enums.ENTITY_TYPE;
 import de.modulo.backend.enums.PRIVILEGES;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
+import de.modulo.backend.excpetions.NotifyException;
 import de.modulo.backend.services.CourseTypeService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +34,17 @@ public class CourseTypeController {
     // Get all Course Types
     @GetMapping("/all")
     public ResponseEntity<List<CourseTypeDTO>> getAllCourseTypes(HttpServletRequest request) {
-        try{
+        try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            List<CourseTypeDTO> courseTypes = courseTypeService.getAll();
+            return new ResponseEntity<>(courseTypes, HttpStatus.OK);
+        }catch(NotifyException e){
+            e.sendNotification();
+            List<CourseTypeDTO> courseTypes = courseTypeService.getAll();
+            return new ResponseEntity<>(courseTypes, HttpStatus.OK);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        List<CourseTypeDTO> courseTypes = courseTypeService.getAll();
-        return new ResponseEntity<>(courseTypes, HttpStatus.OK);
     }
 
     // Add a new Course Type
@@ -48,12 +52,15 @@ public class CourseTypeController {
     public ResponseEntity<CourseTypeDTO> addCourseType(@RequestBody CourseTypeDTO courseTypeDTO, HttpServletRequest request) {
         try{
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            CourseTypeDTO createdCourseType = courseTypeService.add(courseTypeDTO);
+            return new ResponseEntity<>(createdCourseType, HttpStatus.CREATED);
+        }catch(NotifyException e){
+            e.sendNotification();
+            CourseTypeDTO createdCourseType = courseTypeService.add(courseTypeDTO);
+            return new ResponseEntity<>(createdCourseType, HttpStatus.CREATED);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        CourseTypeDTO createdCourseType = courseTypeService.add(courseTypeDTO);
-        return new ResponseEntity<>(createdCourseType, HttpStatus.CREATED);
     }
 
     // Delete a Course Type by ID
@@ -61,12 +68,15 @@ public class CourseTypeController {
     public ResponseEntity<Void> deleteCourseType(@PathVariable Long id, HttpServletRequest request) {
         try{
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
+            courseTypeService.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch(NotifyException e){
+            e.sendNotification();
+            courseTypeService.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        courseTypeService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
 
