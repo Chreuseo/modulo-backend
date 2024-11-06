@@ -26,6 +26,7 @@ public class ValidatePrivilegesService {
     private final SpoRepository spoRepository;
 
     private final NotifyService notifyService;
+    private final UserRepository userRepository;
 
     @Autowired
     public ValidatePrivilegesService(SessionService sessionService,
@@ -33,7 +34,8 @@ public class ValidatePrivilegesService {
                                      ModuleImplementationLecturerRepository moduleImplementationLecturerRepository,
                                      SpoResponsibleUserRepository spoResponsibleUserRepository,
                                      SpoRepository spoRepository,
-                                     NotifyService notifyService) {
+                                     NotifyService notifyService,
+                                     UserRepository userRepository) {
         this.sessionService = sessionService;
         this.moduleImplementationRepository = moduleImplementationRepository;
         this.moduleImplementationLecturerRepository = moduleImplementationLecturerRepository;
@@ -41,9 +43,10 @@ public class ValidatePrivilegesService {
         this.spoRepository = spoRepository;
 
         this.notifyService = notifyService;
+        this.userRepository = userRepository;
     }
 
-    public void validateGeneralPrivileges(ENTITY_TYPE entityType, PRIVILEGES privileges, String sessionToken) throws InsufficientPermissionsException{
+    public void validateGeneralPrivileges(ENTITY_TYPE entityType, PRIVILEGES privileges, String sessionToken) throws InsufficientPermissionsException, NotifyException{
         ROLE role = sessionService.getRoleBySessionId(UUID.fromString(sessionToken));
 
         switch(role){
@@ -58,7 +61,14 @@ public class ValidatePrivilegesService {
                     }
                     case SPO_SETTINGS -> {
                         switch(privileges){
-                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPO settings");
+                            case ADD -> {
+                                List<UserEntity> users = userRepository.getUserEntitiesByRole(ROLE.ADMIN);
+                                throw new NotifyException(notifyService,
+                                        sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                        users,
+                                        NOTIFICATION.SPO_CREATED);
+                            }
+                            case UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPO settings");
                         }
                     }
                     case USER -> {
@@ -107,6 +117,13 @@ public class ValidatePrivilegesService {
                     }
                     case MODULE -> {
                         switch (privileges) {
+                            case ADD -> {
+                                List<UserEntity> users = userRepository.getUserEntitiesByRole(ROLE.ADMIN);
+                                throw new NotifyException(notifyService,
+                                        sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                        users,
+                                        NOTIFICATION.MODULE_CREATED);
+                            }
                             case READ, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
                         }
                     }
@@ -142,7 +159,7 @@ public class ValidatePrivilegesService {
                 switch (entityType){
                     case SPO -> {
                         switch (privileges){
-                            case ADD, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
+                            case DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
                             case UPDATE -> {
                                 if (!isResponsible) {
                                     throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
