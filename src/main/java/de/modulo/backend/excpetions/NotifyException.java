@@ -1,35 +1,64 @@
 package de.modulo.backend.excpetions;
 
+import de.modulo.backend.entities.NotificationEntity;
 import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.enums.NOTIFICATION;
+import de.modulo.backend.services.NotifyService;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class NotifyException extends Exception{
     private UserEntity editor;
     private List<UserEntity> userEntities;
+    private final NotifyService notifyService;
+    private NOTIFICATION notification;
+    private Object[] editedObject;
 
-    public NotifyException(String message, UserEntity editor, List<UserEntity> userEntities) {
+    public NotifyException(NotifyService notifyService,
+                           String message,
+                           UserEntity editor,
+                           List<UserEntity> userEntities,
+                           NOTIFICATION notification,
+                           Object ...editedObject) {
         super(message);
+        this.notifyService = notifyService;
         this.editor = editor;
         this.userEntities = userEntities;
+        this.notification = notification;
+        this.editedObject = editedObject;
     }
 
-    public NotifyException(UserEntity editor, List<UserEntity> userEntities) {
+    public NotifyException(NotifyService notifyService,
+                           UserEntity editor,
+                           List<UserEntity> userEntities,
+                           NOTIFICATION notification,
+                           Object ...editedObject) {
+        this.notifyService = notifyService;
         this.editor = editor;
         this.userEntities = userEntities;
+        this.notification = notification;
+        this.editedObject = editedObject;
     }
 
-    public void sendMailNotification(){
+    public void sendMailNotification(NotificationEntity notificationEntity, UserEntity user){
         // TODO
     }
 
     private void sendInAppNotification(){
-        // TODO
+        for(UserEntity user : userEntities){
+            NotificationEntity notificationEntity = notifyService.sendNotification(editor, user, notification, editedObject);
+            if(user.isSendMailNotifications()){
+                sendMailNotification(notificationEntity, user);
+            }
+        }
     }
 
     public void sendNotification(){
-        // TODO
+        sendInAppNotification();
     }
 }

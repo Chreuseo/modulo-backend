@@ -1,15 +1,20 @@
 package de.modulo.backend.services;
 
+import de.modulo.backend.converters.NotificationConverter;
 import de.modulo.backend.converters.UserConverter;
+import de.modulo.backend.dtos.NotificationDTO;
 import de.modulo.backend.dtos.UserDTO;
 import de.modulo.backend.dtos.UserDTOFlat;
+import de.modulo.backend.entities.NotificationEntity;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.ROLE;
+import de.modulo.backend.repositories.NotificationRepository;
 import de.modulo.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,14 +23,20 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserConverter userConverter;
+    private final NotificationRepository notificationRepository;
+    private final NotificationConverter notificationConverter;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public UserService(UserRepository userRepository,
                        UserConverter userConverter,
+                       NotificationRepository notificationRepository,
+                       NotificationConverter notificationConverter,
                        BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.userConverter = userConverter;
+        this.notificationRepository = notificationRepository;
+        this.notificationConverter = notificationConverter;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -37,7 +48,7 @@ public class UserService {
     }
 
     public List<UserDTOFlat> getUsersByRole(ROLE role){
-        return userRepository.getUserEntitiesByRole(role).stream()
+        return userRepository.findAllByRole(role).stream()
                 .map(userConverter::toDtoFlat)
                 .toList();
     }
@@ -73,5 +84,23 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public List<NotificationDTO> getNotifications(UserEntity user, boolean setRead) {
+        List<NotificationEntity> unreadNotifications = new ArrayList<>();
+        List<NotificationDTO> result = notificationRepository.findByUser(user).stream()
+                .sorted((o1, o2) -> {
+                    return o1.getCreatedAt() != null && o2.getCreatedAt() != null ? o2.getCreatedAt().compareTo(o1.getCreatedAt()) : 0;
+                })
+                .peek(notification -> {
+                    if(setRead && notification.isUnread()){
+                        unreadNotifications.add(notification);
+                    }})
+                .map(notificationConverter::toDto).toList();
+        unreadNotifications.forEach(notification -> {
+            notification.setUnread(false);
+        });
+        notificationRepository.saveAll(unreadNotifications);
+        return result;
     }
 }

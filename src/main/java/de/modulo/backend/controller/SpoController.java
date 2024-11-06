@@ -1,12 +1,17 @@
 package de.modulo.backend.controller;
 
+import de.modulo.backend.authentication.SessionService;
 import de.modulo.backend.authentication.SessionTokenHelper;
 import de.modulo.backend.authentication.ValidatePrivilegesService;
 import de.modulo.backend.dtos.SpoDTO;
 import de.modulo.backend.dtos.SpoDTOFlat;
+import de.modulo.backend.entities.SpoEntity;
 import de.modulo.backend.enums.ENTITY_TYPE;
 import de.modulo.backend.enums.PRIVILEGES;
+import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
+import de.modulo.backend.excpetions.NotifyException;
+import de.modulo.backend.repositories.DegreeRepository;
 import de.modulo.backend.repositories.SpoRepository;
 import de.modulo.backend.services.SpoService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/spo")
@@ -26,35 +33,57 @@ public class SpoController {
     private final SpoService spoService;
     private final ValidatePrivilegesService validatePrivilegesService;
     private final SpoRepository spoRepository;
+    private final SessionService sessionService;
+    private final DegreeRepository degreeRepository;
 
     @Autowired
     public SpoController(SpoService spoService,
-                         ValidatePrivilegesService validatePrivilegesService, SpoRepository spoRepository) {
+                         ValidatePrivilegesService validatePrivilegesService, SpoRepository spoRepository, SessionService sessionService, DegreeRepository degreeRepository) {
         this.spoService = spoService;
         this.validatePrivilegesService = validatePrivilegesService;
         this.spoRepository = spoRepository;
+        this.sessionService = sessionService;
+        this.degreeRepository = degreeRepository;
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<SpoDTOFlat>> getAllSpos(HttpServletRequest request) {
-        try{
+        try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            return new ResponseEntity<>(spoService.getAllSpos(), HttpStatus.OK);
+        }catch(NotifyException e){
+            e.sendNotification();
+            return new ResponseEntity<>(spoService.getAllSpos(), HttpStatus.OK);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        return new ResponseEntity<>(spoService.getAllSpos(), HttpStatus.OK);
     }
 
     @PostMapping("/new")
     public ResponseEntity<SpoDTOFlat> addSpo(@RequestBody SpoDTOFlat spoDto, HttpServletRequest request) {
-        try{
+        try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+
+            if(sessionService.getRoleBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))) == ROLE.ADMIN){
+                return new ResponseEntity<>(spoService.add(spoDto), HttpStatus.CREATED);
+            }else{
+                SpoDTOFlat spo = spoService.add(spoDto);
+                spoService.addResponsible(spoDto.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
+                return new ResponseEntity<>(spo, HttpStatus.CREATED);
+            }
+        }catch (NotifyException e){
+            SpoDTOFlat spo = spoService.add(spoDto);
+            spoService.addResponsible(spo.getId(), sessionService.getUserIdBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
+            SpoEntity spoEntity = spoRepository.findById(spo.getId()).orElseThrow();
+            spoEntity.setDegree(degreeRepository.findById(spoDto.getDegree().getId()).orElseThrow());
+            e.setEditedObject(new Object[] {spoEntity});
+
+            e.sendNotification();
+
+            return new ResponseEntity<>(spo, HttpStatus.CREATED);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        return new ResponseEntity<>(spoService.add(spoDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/remove/{id}")

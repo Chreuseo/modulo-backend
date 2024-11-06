@@ -1,15 +1,14 @@
 package de.modulo.backend.authentication;
 
-import de.modulo.backend.entities.ModuleImplementationEntity;
-import de.modulo.backend.entities.ModuleImplementationLecturerEntity;
-import de.modulo.backend.entities.SpoEntity;
-import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.entities.*;
 import de.modulo.backend.enums.ENTITY_TYPE;
+import de.modulo.backend.enums.NOTIFICATION;
 import de.modulo.backend.enums.PRIVILEGES;
 import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
 import de.modulo.backend.excpetions.NotifyException;
 import de.modulo.backend.repositories.*;
+import de.modulo.backend.services.NotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,19 +25,28 @@ public class ValidatePrivilegesService {
     private final SpoResponsibleUserRepository spoResponsibleUserRepository;
     private final SpoRepository spoRepository;
 
+    private final NotifyService notifyService;
+    private final UserRepository userRepository;
+
     @Autowired
     public ValidatePrivilegesService(SessionService sessionService,
                                      ModuleImplementationRepository moduleImplementationRepository,
                                      ModuleImplementationLecturerRepository moduleImplementationLecturerRepository,
-                                     SpoResponsibleUserRepository spoResponsibleUserRepository, SpoRepository spoRepository) {
+                                     SpoResponsibleUserRepository spoResponsibleUserRepository,
+                                     SpoRepository spoRepository,
+                                     NotifyService notifyService,
+                                     UserRepository userRepository) {
         this.sessionService = sessionService;
         this.moduleImplementationRepository = moduleImplementationRepository;
         this.moduleImplementationLecturerRepository = moduleImplementationLecturerRepository;
         this.spoResponsibleUserRepository = spoResponsibleUserRepository;
         this.spoRepository = spoRepository;
+
+        this.notifyService = notifyService;
+        this.userRepository = userRepository;
     }
 
-    public void validateGeneralPrivileges(ENTITY_TYPE entityType, PRIVILEGES privileges, String sessionToken) throws InsufficientPermissionsException{
+    public void validateGeneralPrivileges(ENTITY_TYPE entityType, PRIVILEGES privileges, String sessionToken) throws InsufficientPermissionsException, NotifyException{
         ROLE role = sessionService.getRoleBySessionId(UUID.fromString(sessionToken));
 
         switch(role){
@@ -63,7 +71,14 @@ public class ValidatePrivilegesService {
                     }
                     case SPO -> {
                         switch(privileges){
-                            case ADD, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
+                            case ADD -> {
+                                List<UserEntity> users = userRepository.findAllByRole(ROLE.ADMIN);
+                                throw new NotifyException(notifyService,
+                                        sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                        users,
+                                        NOTIFICATION.SPO_CREATED);
+                            }
+                            case UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
                         }
                     }
                     case MODULE -> {
@@ -102,6 +117,13 @@ public class ValidatePrivilegesService {
                     }
                     case MODULE -> {
                         switch (privileges) {
+                            case ADD -> {
+                                List<UserEntity> users = userRepository.findAllByRole(ROLE.ADMIN);
+                                throw new NotifyException(notifyService,
+                                        sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                        users,
+                                        NOTIFICATION.MODULE_CREATED);
+                            }
                             case READ, UPDATE, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
                         }
                     }
@@ -137,7 +159,7 @@ public class ValidatePrivilegesService {
                 switch (entityType){
                     case SPO -> {
                         switch (privileges){
-                            case ADD, DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
+                            case DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
                             case UPDATE -> {
                                 if (!isResponsible) {
                                     throw new InsufficientPermissionsException("You do not have the required permissions to access SPOs");
@@ -216,7 +238,11 @@ public class ValidatePrivilegesService {
                                 } else if (isLecturer) {
                                     List<UserEntity> notifyUsers = new ArrayList<>();
                                     notifyUsers.add(moduleImplementationEntity.getResponsible());
-                                    throw new NotifyException(sessionService.getUserBySessionId(UUID.fromString(sessionToken)), notifyUsers);
+                                    throw new NotifyException(notifyService,
+                                            sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                            notifyUsers,
+                                            NOTIFICATION.LECTURER_EDITED_MODULE,
+                                            moduleImplementationEntity);
                                 }
                             }
                         }
@@ -277,9 +303,22 @@ public class ValidatePrivilegesService {
                     }
                     case MODULE -> {
                         switch (privileges){
-                            case READ, ADD, UPDATE, DELETE -> {
+                            case READ, ADD, DELETE -> {
                                 if(!isResponsible && !isLecturer){
                                     throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
+                                }
+                            }
+                            case UPDATE -> {
+                                if(!isResponsible && !isLecturer){
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
+                                }else if(!isResponsible){
+                                    List<UserEntity> notifyUsers = new ArrayList<>();
+                                    notifyUsers.add(moduleImplementationEntity.getResponsible());
+                                    throw new NotifyException(notifyService,
+                                            sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                            notifyUsers,
+                                            NOTIFICATION.LECTURER_EDITED_MODULE,
+                                            moduleImplementationEntity);
                                 }
                             }
                         }
@@ -348,12 +387,16 @@ public class ValidatePrivilegesService {
                     case MODULE -> {
                         switch (privileges) {
                             case UPDATE, DELETE -> {
-                                if (!isModuleResponsible) {
+                                if (!isModuleResponsible && !isLecturer) {
                                     throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
-                                } else if (isLecturer) {
+                                } else if (!isModuleResponsible) {
                                     List<UserEntity> notifyUsers = new ArrayList<>();
                                     notifyUsers.add(moduleImplementationEntity.getResponsible());
-                                    throw new NotifyException(sessionService.getUserBySessionId(UUID.fromString(sessionToken)), notifyUsers);
+                                    throw new NotifyException(notifyService,
+                                            sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                            notifyUsers,
+                                            NOTIFICATION.LECTURER_EDITED_MODULE,
+                                            moduleImplementationEntity);
                                 }
                             }
                         }
@@ -373,7 +416,12 @@ public class ValidatePrivilegesService {
                                     } else {
                                         List<UserEntity> notifyUsers = new ArrayList<>();
                                         notifyUsers.add(moduleImplementationEntity.getResponsible());
-                                        throw new NotifyException(sessionService.getUserBySessionId(UUID.fromString(sessionToken)), notifyUsers);
+                                        throw new NotifyException(notifyService,
+                                                sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                                notifyUsers,
+                                                NOTIFICATION.MODULE_ADDED_TO_SPO,
+                                                moduleImplementationEntity,
+                                                spoRepository.findById(spoId).orElseThrow());
                                     }
 
                                 }
@@ -419,14 +467,16 @@ public class ValidatePrivilegesService {
                                 }
                             }
                             case UPDATE -> {
-                                if (!isModuleResponsible) {
-                                    if (isLecturer) {
+                                if (!isModuleResponsible && !isLecturer) {
+                                    throw new InsufficientPermissionsException("You do not have permission to update this resource.");
+                                } else if (!isModuleResponsible) {
                                         List<UserEntity> notifyUsers = new ArrayList<>();
                                         notifyUsers.add(moduleImplementationEntity.getResponsible());
-                                        throw new NotifyException(sessionService.getUserBySessionId(UUID.fromString(sessionToken)), notifyUsers);
-                                    } else {
-                                        throw new InsufficientPermissionsException("You do not have permission to update this resource.");
-                                    }
+                                        throw new NotifyException(notifyService,
+                                                sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                                notifyUsers,
+                                                NOTIFICATION.LECTURER_EDITED_MODULE,
+                                                moduleImplementationEntity);
                                 }
                             }
                             case DELETE -> {
@@ -443,6 +493,14 @@ public class ValidatePrivilegesService {
                             case ADD, UPDATE, DELETE -> {
                                 if (!isModuleResponsible) {
                                     throw new InsufficientPermissionsException("You do not have the required permissions to edit this resource.");
+                                }else {
+                                    List<UserEntity> notifyUsers = spoResponsibleUserRepository.findAllBySpoId(spoId).stream().map(SpoResponsibleUserEntity::getUser).toList();
+                                    throw new NotifyException(notifyService,
+                                            sessionService.getUserBySessionId(UUID.fromString(sessionToken)),
+                                            notifyUsers,
+                                            NOTIFICATION.MODULE_ADDED_TO_SPO,
+                                            moduleImplementationEntity,
+                                            spoRepository.findById(spoId).orElseThrow());
                                 }
                             }
                         }

@@ -6,6 +6,7 @@ import de.modulo.backend.dtos.CycleDTO;
 import de.modulo.backend.enums.ENTITY_TYPE;
 import de.modulo.backend.enums.PRIVILEGES;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
+import de.modulo.backend.excpetions.NotifyException;
 import de.modulo.backend.services.CycleService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,49 +34,61 @@ public class CycleController {
 
     @PostMapping("/add")
     public ResponseEntity<CycleDTO> addCycle(@RequestBody CycleDTO cycleDto, HttpServletRequest request) {
-        try{
+        try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            CycleDTO createdCycle = cycleService.addCycle(cycleDto);
+            return new ResponseEntity<>(createdCycle, HttpStatus.CREATED);
+        }catch (NotifyException e){
+            e.sendNotification();
+            CycleDTO createdCycle = cycleService.addCycle(cycleDto);
+            return new ResponseEntity<>(createdCycle, HttpStatus.CREATED);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        CycleDTO createdCycle = cycleService.addCycle(cycleDto);
-        return new ResponseEntity<>(createdCycle, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
     public ResponseEntity<CycleDTO> updateCycle(@RequestBody CycleDTO cycleDto, HttpServletRequest request) {
-        try{
+        try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request));
+            CycleDTO updatedCycle = cycleService.updateCycle(cycleDto);
+            return new ResponseEntity<>(updatedCycle, HttpStatus.OK);
+        }catch (NotifyException e){
+            e.sendNotification();
+            CycleDTO updatedCycle = cycleService.updateCycle(cycleDto);
+            return new ResponseEntity<>(updatedCycle, HttpStatus.OK);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        CycleDTO updatedCycle = cycleService.updateCycle(cycleDto);
-        return new ResponseEntity<>(updatedCycle, HttpStatus.OK);
     }
 
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> removeCycle(@PathVariable Long id, HttpServletRequest request) {
         try{
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
+            cycleService.removeCycle(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (NotifyException e){
+            e.sendNotification();
+            cycleService.removeCycle(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        cycleService.removeCycle(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<CycleDTO>> getAllCycles(HttpServletRequest request) {
         try{
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            List<CycleDTO> cycles = cycleService.getAllCycles();
+            return new ResponseEntity<>(cycles, HttpStatus.OK);
+        }catch(NotifyException e){
+            e.sendNotification();
+            List<CycleDTO> cycles = cycleService.getAllCycles();
+            return new ResponseEntity<>(cycles, HttpStatus.OK);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        List<CycleDTO> cycles = cycleService.getAllCycles();
-        return new ResponseEntity<>(cycles, HttpStatus.OK);
     }
 }

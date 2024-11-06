@@ -6,6 +6,7 @@ import de.modulo.backend.dtos.DegreeDTO;
 import de.modulo.backend.enums.ENTITY_TYPE;
 import de.modulo.backend.enums.PRIVILEGES;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
+import de.modulo.backend.excpetions.NotifyException;
 import de.modulo.backend.services.DegreeService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,38 +35,48 @@ public class DegreeController {
     // Endpoint to get all degrees
     @GetMapping("/all")
     public ResponseEntity<List<DegreeDTO>> getAllDegrees(HttpServletRequest request) {
-        try{
+        try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
+            List<DegreeDTO> degrees = degreeService.getAll();
+            return new ResponseEntity<>(degrees, HttpStatus.OK);
+        }catch (NotifyException e){
+            e.sendNotification();
+            List<DegreeDTO> degrees = degreeService.getAll();
+            return new ResponseEntity<>(degrees, HttpStatus.OK);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        List<DegreeDTO> degrees = degreeService.getAll();
-        return new ResponseEntity<>(degrees, HttpStatus.OK);
     }
 
     // Endpoint to add a new degree
     @PostMapping("/new")
     public ResponseEntity<DegreeDTO> addDegree(@RequestBody DegreeDTO degreeDTO, HttpServletRequest request) {
-        try{
+        try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            DegreeDTO savedDegree = degreeService.add(degreeDTO);
+            return new ResponseEntity<>(savedDegree, HttpStatus.CREATED);
+        }catch(NotifyException e){
+            e.sendNotification();
+            DegreeDTO savedDegree = degreeService.add(degreeDTO);
+            return new ResponseEntity<>(savedDegree, HttpStatus.CREATED);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        DegreeDTO savedDegree = degreeService.add(degreeDTO);
-        return new ResponseEntity<>(savedDegree, HttpStatus.CREATED);
     }
 
     // Endpoint to delete a degree by ID
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Void> deleteDegree(@PathVariable Long id, HttpServletRequest request) {
-        try{
+        try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.DELETE, SessionTokenHelper.getSessionToken(request));
+            degreeService.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (NotifyException e){
+            e.sendNotification();
+            degreeService.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }catch (InsufficientPermissionsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        degreeService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
