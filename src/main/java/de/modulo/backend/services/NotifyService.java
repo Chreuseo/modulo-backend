@@ -5,23 +5,40 @@ import de.modulo.backend.entities.NotificationEntity;
 import de.modulo.backend.entities.SpoEntity;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.NOTIFICATION;
+import de.modulo.backend.services.mail.MailSenderService;
 import de.modulo.backend.repositories.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class NotifyService {
 
     private final NotificationRepository notificationRepository;
+    private final MailSenderService mailSenderService;
 
     @Autowired
-    public NotifyService(NotificationRepository notificationRepository) {
+    public NotifyService(NotificationRepository notificationRepository,
+                         MailSenderService mailSenderService) {
         this.notificationRepository = notificationRepository;
+        this.mailSenderService = mailSenderService;
     }
 
-    public NotificationEntity sendNotification(UserEntity editor, UserEntity user, NOTIFICATION notification, Object ...editedObject){
-        NotificationEntity notificationEntity = generateNotificationEntity(editor, user, notification, editedObject);
-        return notificationRepository.save(notificationEntity);
+    public List<NotificationEntity> sendNotification(UserEntity editor,
+                                               List<UserEntity> users,
+                                               NOTIFICATION notification,
+                                               Object ...editedObject){
+        List<NotificationEntity> notificationEntities = new ArrayList<>();
+        for(UserEntity user : users){
+            NotificationEntity notificationEntity = generateNotificationEntity(editor, user, notification, editedObject);
+            notificationEntities.add(notificationEntity);
+            if(user.isSendMailNotifications()){
+                mailSenderService.sendMail(notificationEntity);
+            }
+        }
+        return notificationRepository.saveAllAndFlush(notificationEntities);
     }
 
     private String generateNotificationText(UserEntity editor, NOTIFICATION notification, Object ...editedObject){

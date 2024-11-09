@@ -1,4 +1,4 @@
-package de.modulo.backend.services;
+package de.modulo.backend.services.data;
 
 import de.modulo.backend.converters.ModuleFrameModuleImplementationConverter;
 import de.modulo.backend.dtos.ExamTypeDTO;

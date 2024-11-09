@@ -1,4 +1,4 @@
-package de.modulo.backend.services;
+package de.modulo.backend.services.data;
 
 import de.modulo.backend.converters.CourseTypeConverter;
 import de.modulo.backend.dtos.CourseTypeDTO;
@@ -6,7 +6,6 @@ import de.modulo.backend.entities.CourseTypeEntity;
 import de.modulo.backend.repositories.CourseTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;

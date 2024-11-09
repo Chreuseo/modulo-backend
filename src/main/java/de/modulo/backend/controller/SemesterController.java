@@ -7,7 +7,7 @@ import de.modulo.backend.enums.ENTITY_TYPE;
 import de.modulo.backend.enums.PRIVILEGES;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
 import de.modulo.backend.excpetions.NotifyException;
-import de.modulo.backend.services.SemesterService;
+import de.modulo.backend.services.data.SemesterService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,9 +1,8 @@
-package de.modulo.backend.services;
+package de.modulo.backend.services.data;
 
 import de.modulo.backend.converters.SectionConverter;
 import de.modulo.backend.dtos.SectionDTO;
 import de.modulo.backend.entities.SectionEntity;
-import de.modulo.backend.entities.SpoEntity;
 import de.modulo.backend.repositories.SectionRepository;
 import de.modulo.backend.repositories.SpoRepository;
 import org.springframework.beans.factory.annotation.Autowired;

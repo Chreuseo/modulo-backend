@@ -13,14 +13,13 @@ import de.modulo.backend.excpetions.InsufficientPermissionsException;
 import de.modulo.backend.excpetions.NotifyException;
 import de.modulo.backend.repositories.DegreeRepository;
 import de.modulo.backend.repositories.SpoRepository;
-import de.modulo.backend.services.SpoService;
+import de.modulo.backend.services.data.SpoService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

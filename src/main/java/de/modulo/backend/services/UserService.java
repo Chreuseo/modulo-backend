@@ -10,6 +10,7 @@ import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.repositories.NotificationRepository;
 import de.modulo.backend.repositories.UserRepository;
+import de.modulo.backend.services.mail.MailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.text.RandomStringGenerator;
 
 @Service
 public class UserService {
@@ -27,17 +29,21 @@ public class UserService {
     private final NotificationConverter notificationConverter;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private final MailSenderService mailSenderService;
+
     @Autowired
     public UserService(UserRepository userRepository,
                        UserConverter userConverter,
                        NotificationRepository notificationRepository,
                        NotificationConverter notificationConverter,
-                       BCryptPasswordEncoder bCryptPasswordEncoder) {
+                       BCryptPasswordEncoder bCryptPasswordEncoder,
+                       MailSenderService mailSenderService) {
         this.userRepository = userRepository;
         this.userConverter = userConverter;
         this.notificationRepository = notificationRepository;
         this.notificationConverter = notificationConverter;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.mailSenderService = mailSenderService;
     }
 
     public List<UserDTOFlat> getAllUsers() {
@@ -59,9 +65,11 @@ public class UserService {
     }
 
     public UserDTO createUser(UserDTO userDTO) {
+        String password = getRandomPassword();
         UserEntity user = userConverter.toEntity(userDTO);
-        user.setPassword(bCryptPasswordEncoder.encode("password"));
+        user.setPassword(bCryptPasswordEncoder.encode(password));
         UserEntity savedUser = userRepository.save(user);
+        sendWelcomeMail(savedUser, password);
         return userConverter.toDto(savedUser);
     }
 
@@ -102,5 +110,24 @@ public class UserService {
         });
         notificationRepository.saveAll(unreadNotifications);
         return result;
+    }
+
+    private String getRandomPassword() {
+        RandomStringGenerator generator = new RandomStringGenerator.Builder()
+                .withinRange(33, 126) // ASCII printable characters
+                .build();
+
+        return generator.generate(12);
+    }
+
+    private void sendWelcomeMail(UserEntity user, String password) {
+        String subject = "Welcome to Modulo!";
+        String text = "Sehr geehrte/-r " + user.getTitle() + " " + user.getFirstName() + " " + user.getLastName() + ",\n\n" +
+                "Willkommen bei der Modulverwaltungssoftware Modulo. Für sie wurde soeben erfolgreich ein Account erstellt.\n" +
+                "Sie können sich mir ihrer E-Mail Adresse und folgendem Initialpasswort einloggen: " + password + "\n\n" +
+                "Bitte ändern sie nach dem ersten Login ihr Passwort.\n\n" +
+                "Viele Grüße,\n" +
+                "Ihr Modulo-Team";
+        mailSenderService.sendMail(user.getMail(), subject, text);
     }
 }

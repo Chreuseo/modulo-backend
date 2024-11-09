@@ -1,4 +1,4 @@
-package de.modulo.backend.services;
+package de.modulo.backend.services.data;
 import de.modulo.backend.converters.DurationConverter;
 import de.modulo.backend.dtos.DurationDTO;
 import de.modulo.backend.entities.DurationEntity;

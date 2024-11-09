@@ -1,4 +1,4 @@
-package de.modulo.backend.services;
+package de.modulo.backend.services.data;
 
 import de.modulo.backend.converters.CycleConverter;
 import de.modulo.backend.dtos.CycleDTO;

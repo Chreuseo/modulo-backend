@@ -8,7 +8,7 @@ import de.modulo.backend.enums.PRIVILEGES;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
 import de.modulo.backend.repositories.ExamTypeRepository;
 import de.modulo.backend.repositories.ModuleFrameRepository;
-import de.modulo.backend.services.ExamTypeService;
+import de.modulo.backend.services.data.ExamTypeService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

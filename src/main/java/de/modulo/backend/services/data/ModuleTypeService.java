@@ -1,4 +1,4 @@
-package de.modulo.backend.services;
+package de.modulo.backend.services.data;
 
 import de.modulo.backend.converters.ModuleTypeConverter;
 import de.modulo.backend.dtos.ModuleTypeDTO;

@@ -1,4 +1,4 @@
-package de.modulo.backend.pdf.services;
+package de.modulo.backend.services.pdf;
 
 import de.modulo.backend.converters.SemesterConverter;
 import de.modulo.backend.converters.SpoConverter;

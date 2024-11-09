@@ -1,4 +1,4 @@
-package de.modulo.backend.pdf.services;
+package de.modulo.backend.services.pdf;
 
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.kernel.font.PdfFont;
@@ -13,7 +13,7 @@ import de.modulo.backend.dtos.ModuleFrameDTO;
 import de.modulo.backend.dtos.ModuleFrameSetDTO;
 import de.modulo.backend.entities.*;
 import de.modulo.backend.repositories.*;
-import de.modulo.backend.services.ModuleFrameService;
+import de.modulo.backend.services.data.ModuleFrameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

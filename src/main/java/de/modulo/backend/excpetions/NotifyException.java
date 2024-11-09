@@ -4,7 +4,6 @@ import de.modulo.backend.entities.NotificationEntity;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.NOTIFICATION;
 import de.modulo.backend.services.NotifyService;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -49,16 +48,7 @@ public class NotifyException extends Exception{
         // TODO
     }
 
-    private void sendInAppNotification(){
-        for(UserEntity user : userEntities){
-            NotificationEntity notificationEntity = notifyService.sendNotification(editor, user, notification, editedObject);
-            if(user.isSendMailNotifications()){
-                sendMailNotification(notificationEntity, user);
-            }
-        }
-    }
-
     public void sendNotification(){
-        sendInAppNotification();
+        notifyService.sendNotification(editor, userEntities, notification, editedObject);
     }
 }
