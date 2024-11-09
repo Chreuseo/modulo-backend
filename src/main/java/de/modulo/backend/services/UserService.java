@@ -97,17 +97,13 @@ public class UserService {
     public List<NotificationDTO> getNotifications(UserEntity user, boolean setRead) {
         List<NotificationEntity> unreadNotifications = new ArrayList<>();
         List<NotificationDTO> result = notificationRepository.findByUser(user).stream()
-                .sorted((o1, o2) -> {
-                    return o1.getCreatedAt() != null && o2.getCreatedAt() != null ? o2.getCreatedAt().compareTo(o1.getCreatedAt()) : 0;
-                })
+                .sorted((o1, o2) -> o1.getCreatedAt() != null && o2.getCreatedAt() != null ? o2.getCreatedAt().compareTo(o1.getCreatedAt()) : 0)
                 .peek(notification -> {
                     if(setRead && notification.isUnread()){
                         unreadNotifications.add(notification);
                     }})
                 .map(notificationConverter::toDto).toList();
-        unreadNotifications.forEach(notification -> {
-            notification.setUnread(false);
-        });
+        unreadNotifications.forEach(notification -> notification.setUnread(false));
         notificationRepository.saveAll(unreadNotifications);
         return result;
     }
@@ -122,12 +118,13 @@ public class UserService {
 
     private void sendWelcomeMail(UserEntity user, String password) {
         String subject = "Welcome to Modulo!";
-        String text = "Sehr geehrte/-r " + user.getTitle() + " " + user.getFirstName() + " " + user.getLastName() + ",\n\n" +
-                "Willkommen bei der Modulverwaltungssoftware Modulo. Für sie wurde soeben erfolgreich ein Account erstellt.\n" +
-                "Sie können sich mir ihrer E-Mail Adresse und folgendem Initialpasswort einloggen: " + password + "\n\n" +
-                "Bitte ändern sie nach dem ersten Login ihr Passwort.\n\n" +
-                "Viele Grüße,\n" +
-                "Ihr Modulo-Team";
-        mailSenderService.sendMail(user.getMail(), subject, text);
+
+        String htmlText = "<p>Sehr geehrte/-r " + user.getTitle() + " " + user.getFirstName() + " " + user.getLastName() + ",</p>" +
+                "<p>Willkommen bei der Modulverwaltungssoftware Modulo. Für sie wurde soeben erfolgreich ein Account erstellt.</p>" +
+                "<p>Sie können sich mir ihrer E-Mail Adresse und folgendem Initialpasswort einloggen: <strong>" + password + "</strong></p>" +
+                "<p><a href=\"http://modulo.christopheuskirchen.de/login\">Hier einloggen</a></p>" +
+                "<p>Bitte ändern sie nach dem ersten Login ihr Passwort.</p>" +
+                "<p>Viele Grüße,<br>Ihr Modulo-Team</p>";
+        mailSenderService.sendHtmlMail(user.getMail(), subject, htmlText);
     }
 }

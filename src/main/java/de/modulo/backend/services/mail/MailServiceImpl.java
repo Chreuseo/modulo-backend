@@ -25,7 +25,7 @@ public class MailServiceImpl {
     @Value("${spring.mail.username}")
     private String senderAddress;
 
-    public void sendMail(String recipient, String subject, String text, AttachmentType ...attachments) {
+    public void sendMail(String recipient, String subject, String text, boolean isHtml, AttachmentType ...attachments) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         try {
@@ -38,7 +38,7 @@ public class MailServiceImpl {
 
             helper.setSubject(subject);
 
-            helper.setText(text);
+            helper.setText(text, isHtml);
 
             // Anhängen des PDFs, wenn vorhanden
             for (AttachmentType attachment : attachments) {

@@ -15,10 +15,14 @@ public class MailSenderService {
     }
 
     public void sendMail(String recipient, String subject, String text, AttachmentType ...attachments) {
-        mailService.sendMail(recipient, subject, text, attachments);
+        mailService.sendMail(recipient, subject, text, false, attachments);
+    }
+
+    public void sendHtmlMail(String recipient, String subject, String text, AttachmentType ...attachments) {
+        mailService.sendMail(recipient, subject, text, true, attachments);
     }
 
     public void sendMail(NotificationEntity notificationEntity, AttachmentType ...attachments) {
-        mailService.sendMail(notificationEntity.getUser().getMail(), notificationEntity.getTitle(), notificationEntity.getMessage(), attachments);
+        mailService.sendMail(notificationEntity.getUser().getMail(), notificationEntity.getTitle(), notificationEntity.getMessage(), false, attachments);
     }
 }
