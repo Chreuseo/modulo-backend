@@ -8,10 +8,14 @@ import de.modulo.backend.dtos.SpoDocumentsDTO;
 import de.modulo.backend.entities.DocumentEntity;
 import de.modulo.backend.entities.SemesterEntity;
 import de.modulo.backend.entities.SpoEntity;
+import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.DOCUMENT_TYPE;
+import de.modulo.backend.enums.NOTIFICATION;
+import de.modulo.backend.excpetions.NotifyException;
 import de.modulo.backend.repositories.DocumentRepository;
 import de.modulo.backend.repositories.SemesterRepository;
 import de.modulo.backend.repositories.SpoRepository;
+import de.modulo.backend.services.NotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +35,7 @@ public class DocumentService {
     private final SemesterRepository semesterRepository;
     private final SpoConverter spoConverter;
     private final SemesterConverter semesterConverter;
+    private final NotifyService notifyService;
 
     @Autowired
     public DocumentService(ModuleManualService moduleManualService,
@@ -40,7 +45,8 @@ public class DocumentService {
                            SpoRepository spoRepository,
                            SemesterRepository semesterRepository,
                            SpoConverter spoConverter,
-                           SemesterConverter semesterConverter) {
+                           SemesterConverter semesterConverter,
+                           NotifyService notifyService) {
         this.moduleManualService = moduleManualService;
         this.studyGuideService = studyGuideService;
         this.spoPdfService = spoPdfService;
@@ -49,6 +55,7 @@ public class DocumentService {
         this.semesterRepository = semesterRepository;
         this.spoConverter = spoConverter;
         this.semesterConverter = semesterConverter;
+        this.notifyService = notifyService;
     }
 
     public void generateDocument(Long spoId, Long semesterId, DOCUMENT_TYPE documentType) {
@@ -139,7 +146,7 @@ public class DocumentService {
         return spoDocumentsDTOs;
     }
 
-    public void generateBulkDocuments(DocumentGenerationBulkDTO bulkDTO) {
+    public void generateBulkDocuments(DocumentGenerationBulkDTO bulkDTO, UserEntity user) throws NotifyException {
         for(SpoDTOFlat spoDTOFlat : bulkDTO.getSpoDTOFlatList()) {
             if(bulkDTO.isSpo()) {
                 generateDocument(spoDTOFlat.getId(), bulkDTO.getSemesterDTO().getId(), DOCUMENT_TYPE.SPO);
@@ -151,5 +158,8 @@ public class DocumentService {
                 generateDocument(spoDTOFlat.getId(), bulkDTO.getSemesterDTO().getId(), DOCUMENT_TYPE.STUDY_GUIDE);
             }
         }
+        List<UserEntity> users = new ArrayList<>();
+        users.add(user);
+        throw new NotifyException(notifyService, user, users, NOTIFICATION.DOCUMENTS_GENERATED);
     }
 }

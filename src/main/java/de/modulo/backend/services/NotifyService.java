@@ -64,6 +64,9 @@ public class NotifyService {
                         replace("[editor]", editor.getFirstName() + " " + editor.getLastName()).
                         replace("[module]", ((ModuleImplementationEntity) editedObject[0]).getName());
             }
+            case DOCUMENTS_GENERATED -> {
+                return notification.getMessage();
+            }
             default -> {
                 return "";
             }

@@ -1,5 +1,6 @@
 package de.modulo.backend.controller;
 
+import de.modulo.backend.authentication.SessionService;
 import de.modulo.backend.authentication.SessionTokenHelper;
 import de.modulo.backend.authentication.ValidatePrivilegesService;
 import de.modulo.backend.dtos.DocumentGenerationBulkDTO;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/document")
@@ -28,12 +30,14 @@ public class DocumentController {
     private final ValidatePrivilegesService validatePrivilegesService;
 
     private final ENTITY_TYPE CURRENT_ENTITY_TYPE = ENTITY_TYPE.DOCUMENT;
+    private final SessionService sessionService;
 
 
     @Autowired
-    public DocumentController(DocumentService documentService, ValidatePrivilegesService validatePrivilegesService) {
+    public DocumentController(DocumentService documentService, ValidatePrivilegesService validatePrivilegesService, SessionService sessionService) {
         this.documentService = documentService;
         this.validatePrivilegesService = validatePrivilegesService;
+        this.sessionService = sessionService;
     }
 
     @GetMapping("get/{spoId}/{semesterId}/{documentType}")
@@ -80,11 +84,10 @@ public class DocumentController {
     public ResponseEntity<Void> generateBulkDocuments(@RequestBody DocumentGenerationBulkDTO bulkDTO, HttpServletRequest request) {
         try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
-            documentService.generateBulkDocuments(bulkDTO);
+            documentService.generateBulkDocuments(bulkDTO, sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request))));
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (NotifyException e) {
             e.sendNotification();
-            documentService.generateBulkDocuments(bulkDTO);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (InsufficientPermissionsException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
