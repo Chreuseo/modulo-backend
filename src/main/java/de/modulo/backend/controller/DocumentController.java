@@ -68,7 +68,7 @@ public class DocumentController {
     }
 
     @PostMapping("upload")
-    public ResponseEntity<Void> uploadDocument(@RequestParam("file") MultipartFile file, @RequestParam("spoId") Long spoId, @RequestParam("semesterId") Long semesterId, @RequestParam("documentType") String documentType, HttpServletRequest request) {
+    public ResponseEntity<Void> uploadDocument(@RequestParam("file") MultipartFile file, @RequestParam("spoId") Long spoId, @RequestParam(value = "semesterId", required = false) Long semesterId, @RequestParam("documentType") String documentType, HttpServletRequest request) {
         try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
             documentService.uploadDocument(file.getBytes(), spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
