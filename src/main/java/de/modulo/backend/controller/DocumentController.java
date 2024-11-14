@@ -67,24 +67,8 @@ public class DocumentController {
         }
     }
 
-    @GetMapping("upload/{spoId}/{documentType}")
-    public ResponseEntity<Void> uploadDocument(@RequestParam("document") MultipartFile file, @PathVariable Long spoId, @PathVariable String documentType, HttpServletRequest request) {
-        try {
-            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
-            documentService.uploadDocument(file.getBytes(), spoId, null, DOCUMENT_TYPE.valueOf(documentType));
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }catch (NotifyException e) {
-            e.sendNotification();
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (InsufficientPermissionsException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        } catch (IOException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PostMapping("upload/{spoId}/{documentType}/{semesterId}")
-    public ResponseEntity<Void> uploadDocument(@RequestParam("document") MultipartFile file, @PathVariable Long spoId, @PathVariable Long semesterId, @PathVariable String documentType, HttpServletRequest request) {
+    @PostMapping("upload")
+    public ResponseEntity<Void> uploadDocument(@RequestParam("file") MultipartFile file, @RequestParam("spoId") Long spoId, @RequestParam("semesterId") Long semesterId, @RequestParam("documentType") String documentType, HttpServletRequest request) {
         try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
             documentService.uploadDocument(file.getBytes(), spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
