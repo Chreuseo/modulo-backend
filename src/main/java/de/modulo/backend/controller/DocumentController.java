@@ -3,6 +3,7 @@ package de.modulo.backend.controller;
 import de.modulo.backend.authentication.SessionService;
 import de.modulo.backend.authentication.SessionTokenHelper;
 import de.modulo.backend.authentication.ValidatePrivilegesService;
+import de.modulo.backend.dtos.DocumentDTO;
 import de.modulo.backend.dtos.DocumentGenerationBulkDTO;
 import de.modulo.backend.dtos.SpoDocumentsDTO;
 import de.modulo.backend.enums.DOCUMENT_TYPE;
@@ -36,7 +37,9 @@ public class DocumentController {
 
 
     @Autowired
-    public DocumentController(DocumentService documentService, ValidatePrivilegesService validatePrivilegesService, SessionService sessionService) {
+    public DocumentController(DocumentService documentService,
+                              ValidatePrivilegesService validatePrivilegesService,
+                              SessionService sessionService) {
         this.documentService = documentService;
         this.validatePrivilegesService = validatePrivilegesService;
         this.sessionService = sessionService;
@@ -46,22 +49,22 @@ public class DocumentController {
     public ResponseEntity<byte[]> getDocument(@PathVariable Long spoId, @PathVariable Long semesterId, @PathVariable String documentType, HttpServletRequest request) {
         try {
             validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.READ, SessionTokenHelper.getSessionToken(request));
-            byte[] document = documentService.getDocument(spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
+            DocumentDTO document = documentService.getDocument(spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("filename", documentType + ".pdf");
-            headers.setContentLength(document.length);
+            headers.setContentDispositionFormData("filename", document.getName() + ".pdf");
+            headers.setContentLength(document.getContent().length);
 
-            return new ResponseEntity<>(document, headers, HttpStatus.OK);
+            return new ResponseEntity<>(document.getContent(), headers, HttpStatus.OK);
         }catch (NotifyException e) {
             e.sendNotification();
-            byte[] document = documentService.getDocument(spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
+            DocumentDTO document = documentService.getDocument(spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("filename", documentType + ".pdf");
-            headers.setContentLength(document.length);
+            headers.setContentDispositionFormData("filename", document.getName() + ".pdf");
+            headers.setContentLength(document.getContent().length);
 
-            return new ResponseEntity<>(document, headers, HttpStatus.OK);
+            return new ResponseEntity<>(document.getContent(), headers, HttpStatus.OK);
         } catch (InsufficientPermissionsException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

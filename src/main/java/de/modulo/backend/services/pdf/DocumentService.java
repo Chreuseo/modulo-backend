@@ -2,6 +2,7 @@ package de.modulo.backend.services.pdf;
 
 import de.modulo.backend.converters.SemesterConverter;
 import de.modulo.backend.converters.SpoConverter;
+import de.modulo.backend.dtos.DocumentDTO;
 import de.modulo.backend.dtos.DocumentGenerationBulkDTO;
 import de.modulo.backend.dtos.SpoDTOFlat;
 import de.modulo.backend.dtos.SpoDocumentsDTO;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -90,10 +92,25 @@ public class DocumentService {
         }
     }
 
-    public byte[] getDocument(Long spoId, Long semesterId, DOCUMENT_TYPE documentType) {
+    public DocumentDTO getDocument(Long spoId, Long semesterId, DOCUMENT_TYPE documentType) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+        SpoEntity spoEntity = spoRepository.findById(spoId).orElseThrow();
+        DocumentEntity documentEntity = documentRepository.findBySpoIdAndSemesterIdAndType(spoId, semesterId, documentType).orElseThrow();
         return switch (documentType) {
-            case MODULE_MANUAL, STUDY_GUIDE -> documentRepository.findBySpoIdAndSemesterIdAndType(spoId, semesterId, documentType).orElseThrow().getData();
-            case SPO -> documentRepository.findBySpoIdAndType(spoId, documentType).orElseThrow().getData();
+            case MODULE_MANUAL, STUDY_GUIDE -> {
+                SemesterEntity semesterEntity = semesterRepository.findById(semesterId).orElseThrow();
+                yield new DocumentDTO(documentType + "_"
+                        + spoEntity.getName() + "_" + spoEntity.getDegree().getName().replace(" ", "-") + "_"
+                        + semesterEntity.getAbbreviation() + "-" + semesterEntity.getYear().replace("/", "-")  + "_"
+                        + documentEntity.getGeneratedAt().format(formatter)
+                        + ".pdf",
+                        documentEntity.getData());
+            }
+            case SPO -> new DocumentDTO(documentType + "_"
+                            + spoEntity.getName() + "_" + spoEntity.getDegree().getName().replace(" ", "-") + "_"
+                            + documentEntity.getGeneratedAt().format(formatter)
+                            + ".pdf",
+                            documentEntity.getData());
             default -> null;
         };
     }
