@@ -95,10 +95,10 @@ public class DocumentService {
     public DocumentDTO getDocument(Long spoId, Long semesterId, DOCUMENT_TYPE documentType) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
         SpoEntity spoEntity = spoRepository.findById(spoId).orElseThrow();
-        DocumentEntity documentEntity = documentRepository.findBySpoIdAndSemesterIdAndType(spoId, semesterId, documentType).orElseThrow();
         return switch (documentType) {
             case MODULE_MANUAL, STUDY_GUIDE -> {
                 SemesterEntity semesterEntity = semesterRepository.findById(semesterId).orElseThrow();
+                DocumentEntity documentEntity = documentRepository.findBySpoIdAndSemesterIdAndType(spoId, semesterId, documentType).orElseThrow();
                 yield new DocumentDTO(documentType + "_"
                         + spoEntity.getName() + "_" + spoEntity.getDegree().getName().replace(" ", "-") + "_"
                         + semesterEntity.getAbbreviation() + "-" + semesterEntity.getYear().replace("/", "-")  + "_"
@@ -106,11 +106,14 @@ public class DocumentService {
                         + ".pdf",
                         documentEntity.getData());
             }
-            case SPO -> new DocumentDTO(documentType + "_"
+            case SPO -> {
+                DocumentEntity documentEntity = documentRepository.findBySpoIdAndSemesterIdAndType(spoId, null, documentType).orElseThrow();
+                yield new DocumentDTO(documentType + "_"
                             + spoEntity.getName() + "_" + spoEntity.getDegree().getName().replace(" ", "-") + "_"
                             + documentEntity.getGeneratedAt().format(formatter)
                             + ".pdf",
                             documentEntity.getData());
+            }
             default -> null;
         };
     }
