@@ -167,8 +167,10 @@ public class DocumentService {
         SpoEntity spoEntity = spoRepository.findById(spoId).orElseThrow();
         SemesterEntity semesterEntity = semesterId != null ? semesterRepository.findById(semesterId).orElseThrow() : null;
 
-        DocumentEntity documentEntity = new DocumentEntity(spoEntity, semesterEntity, documentType, LocalDateTime.now());
+        DocumentEntity documentEntity = documentRepository.findBySpoIdAndSemesterIdAndType(spoId, semesterId, documentType)
+                .orElse(new DocumentEntity(spoEntity, semesterEntity, documentType, null));
         documentEntity.setData(document);
+        documentEntity.setGeneratedAt(LocalDateTime.now());
         documentRepository.save(documentEntity);
     }
 }
