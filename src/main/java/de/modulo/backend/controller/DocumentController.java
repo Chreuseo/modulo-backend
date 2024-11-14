@@ -52,7 +52,7 @@ public class DocumentController {
             DocumentDTO document = documentService.getDocument(spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("filename", document.getName() + ".pdf");
+            headers.setContentDispositionFormData("filename", document.getName());
             headers.setContentLength(document.getContent().length);
 
             return new ResponseEntity<>(document.getContent(), headers, HttpStatus.OK);
@@ -61,7 +61,7 @@ public class DocumentController {
             DocumentDTO document = documentService.getDocument(spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("filename", document.getName() + ".pdf");
+            headers.setContentDispositionFormData("filename", document.getName());
             headers.setContentLength(document.getContent().length);
 
             return new ResponseEntity<>(document.getContent(), headers, HttpStatus.OK);
