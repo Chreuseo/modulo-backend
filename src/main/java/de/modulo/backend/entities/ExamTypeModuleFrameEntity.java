@@ -49,4 +49,9 @@ public class ExamTypeModuleFrameEntity {
         if (!(o instanceof ExamTypeModuleFrameEntity that)) return false;
         return id.equals(that.id);
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode() + examType.hashCode() + moduleFrame.hashCode();
+    }
 }

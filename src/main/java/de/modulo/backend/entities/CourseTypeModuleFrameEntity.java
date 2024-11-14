@@ -45,4 +45,9 @@ public class CourseTypeModuleFrameEntity {
         if (!(o instanceof CourseTypeModuleFrameEntity that)) return false;
         return id.equals(that.id);
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode() + courseType.hashCode() + moduleFrame.hashCode();
+    }
 }

@@ -27,4 +27,9 @@ public class SectionEntity {
         if (!(o instanceof SectionEntity that)) return false;
         return id.equals(that.id);
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode() + spo.hashCode() + name.hashCode() + orderNumber;
+    }
 }

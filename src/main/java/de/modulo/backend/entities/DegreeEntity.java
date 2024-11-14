@@ -29,4 +29,9 @@ public class DegreeEntity {
         if (!(o instanceof DegreeEntity that)) return false;
         return id.equals(that.id);
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode() + name.hashCode();
+    }
 }

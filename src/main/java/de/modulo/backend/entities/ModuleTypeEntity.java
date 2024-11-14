@@ -26,4 +26,9 @@ public class ModuleTypeEntity {
         if (!(o instanceof ModuleTypeEntity that)) return false;
         return id == that.id;
     }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id) + spo.hashCode() + name.hashCode() + orderNumber;
+    }
 }

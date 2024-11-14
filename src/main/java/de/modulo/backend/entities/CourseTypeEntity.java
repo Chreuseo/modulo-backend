@@ -22,4 +22,9 @@ public class CourseTypeEntity {
         if (!(o instanceof CourseTypeEntity that)) return false;
         return id.equals(that.id);
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode() + name.hashCode() + abbreviation.hashCode();
+    }
 }

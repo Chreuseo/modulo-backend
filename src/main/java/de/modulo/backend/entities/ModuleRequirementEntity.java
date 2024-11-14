@@ -26,4 +26,9 @@ public class ModuleRequirementEntity {
         if (!(o instanceof ModuleRequirementEntity that)) return false;
         return id == that.id;
     }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id) + spo.hashCode() + name.hashCode();
+    }
 }

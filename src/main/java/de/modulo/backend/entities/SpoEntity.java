@@ -42,4 +42,9 @@ public class SpoEntity {
 
     private String moduleManualIntroduction;
     private String studyPlanAppendix;
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id) + header.hashCode() + footer.hashCode() + name.hashCode() + publication.hashCode() + validFrom.hashCode() + validUntil.hashCode() + degree.hashCode() + moduleManualIntroduction.hashCode() + studyPlanAppendix.hashCode();
+    }
 }

@@ -38,4 +38,9 @@ public class ModuleFrameEntity {
         if (!(o instanceof ModuleFrameEntity that)) return false;
         return id == that.id;
     }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id) + spo.hashCode() + section.hashCode() + moduleType.hashCode() + quantity + name.hashCode() + sws + weight + credits;
+    }
 }

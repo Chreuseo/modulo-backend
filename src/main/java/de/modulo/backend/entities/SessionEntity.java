@@ -1,11 +1,7 @@
 package de.modulo.backend.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.util.UUID;
 
 @Entity
@@ -33,5 +29,10 @@ public class SessionEntity {
         if (this == o) return true;
         if (!(o instanceof SessionEntity that)) return false;
         return token.equals(that.token);
+    }
+
+    @Override
+    public int hashCode() {
+        return token.hashCode() + user.hashCode() + Long.hashCode(expirationDate) + Long.hashCode(creationDate) + Long.hashCode(lastAccessDate) + ip.hashCode();
     }
 }

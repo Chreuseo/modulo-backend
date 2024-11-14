@@ -63,5 +63,10 @@ public class UserEntity{
     public String toString() {
         return title + " " + firstName + " " + lastName;
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode() + mail.hashCode() + title.hashCode() + firstName.hashCode() + lastName.hashCode() + code.hashCode() + password.hashCode() + role.hashCode();
+    }
 }
 

@@ -27,4 +27,9 @@ public class ParagraphEntity {
         if (!(o instanceof ParagraphEntity that)) return false;
         return id.equals(that.id);
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode() + spo.hashCode() + title.hashCode() + text.hashCode();
+    }
 }

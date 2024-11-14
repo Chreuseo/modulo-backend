@@ -30,4 +30,9 @@ public class ExamTypeEntity {
         if (!(o instanceof ExamTypeEntity that)) return false;
         return id == that.id;
     }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id) + spo.hashCode() + name.hashCode() + abbreviation.hashCode() + length.hashCode();
+    }
 }
