@@ -96,23 +96,39 @@ public class DocumentService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
         SpoEntity spoEntity = spoRepository.findById(spoId).orElseThrow();
         return switch (documentType) {
-            case MODULE_MANUAL, STUDY_GUIDE -> {
+            case MODULE_MANUAL -> {
                 SemesterEntity semesterEntity = semesterRepository.findById(semesterId).orElseThrow();
                 DocumentEntity documentEntity = documentRepository.findBySpoIdAndSemesterIdAndType(spoId, semesterId, documentType).orElseThrow();
-                yield new DocumentDTO(documentType + "_"
+                DocumentDTO result = new DocumentDTO();
+                result.setName("Modulhandbuch_"
                         + spoEntity.getName() + "_" + spoEntity.getDegree().getName().replace(" ", "-") + "_"
                         + semesterEntity.getAbbreviation() + "-" + semesterEntity.getYear().replace("/", "-")  + "_"
                         + documentEntity.getGeneratedAt().format(formatter)
-                        + ".pdf",
-                        documentEntity.getData());
+                        + ".pdf");
+                result.setContent(documentEntity.getData());
+                yield result;
+            }
+            case STUDY_GUIDE -> {
+                SemesterEntity semesterEntity = semesterRepository.findById(semesterId).orElseThrow();
+                DocumentEntity documentEntity = documentRepository.findBySpoIdAndSemesterIdAndType(spoId, semesterId, documentType).orElseThrow();
+                DocumentDTO result = new DocumentDTO();
+                result.setName("Studienplan_"
+                        + spoEntity.getName() + "_" + spoEntity.getDegree().getName().replace(" ", "-") + "_"
+                        + semesterEntity.getAbbreviation() + "-" + semesterEntity.getYear().replace("/", "-")  + "_"
+                        + documentEntity.getGeneratedAt().format(formatter)
+                        + ".pdf");
+                result.setContent(documentEntity.getData());
+                yield result;
             }
             case SPO -> {
                 DocumentEntity documentEntity = documentRepository.findBySpoIdAndSemesterIdAndType(spoId, null, documentType).orElseThrow();
-                yield new DocumentDTO(documentType + "_"
+                DocumentDTO result = new DocumentDTO();
+                result.setName("SPO_"
                             + spoEntity.getName() + "_" + spoEntity.getDegree().getName().replace(" ", "-") + "_"
                             + documentEntity.getGeneratedAt().format(formatter)
-                            + ".pdf",
-                            documentEntity.getData());
+                            + ".pdf");
+                result.setContent(documentEntity.getData());
+                yield result;
             }
             default -> null;
         };
