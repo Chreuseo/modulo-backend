@@ -162,4 +162,13 @@ public class DocumentService {
         users.add(user);
         throw new NotifyException(notifyService, user, users, NOTIFICATION.DOCUMENTS_GENERATED);
     }
+
+    public void uploadDocument(byte[] document, Long spoId, Long semesterId, DOCUMENT_TYPE documentType) {
+        SpoEntity spoEntity = spoRepository.findById(spoId).orElseThrow();
+        SemesterEntity semesterEntity = semesterId != null ? semesterRepository.findById(semesterId).orElseThrow() : null;
+
+        DocumentEntity documentEntity = new DocumentEntity(spoEntity, semesterEntity, documentType, LocalDateTime.now());
+        documentEntity.setData(document);
+        documentRepository.save(documentEntity);
+    }
 }

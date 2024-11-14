@@ -65,6 +65,34 @@ public class DocumentController {
         }
     }
 
+    @GetMapping("upload/{spoId}/{documentType}")
+    public ResponseEntity<Void> uploadDocument(@RequestBody byte[] document, @PathVariable Long spoId, @PathVariable String documentType, HttpServletRequest request) {
+        try {
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            documentService.uploadDocument(document, spoId, null, DOCUMENT_TYPE.valueOf(documentType));
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }catch (NotifyException e) {
+            e.sendNotification();
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (InsufficientPermissionsException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @PostMapping("upload/{spoId}/{documentType}/{semesterId}")
+    public ResponseEntity<Void> uploadDocument(@RequestBody byte[] document, @PathVariable Long spoId, @PathVariable Long semesterId, @PathVariable String documentType, HttpServletRequest request) {
+        try {
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.ADD, SessionTokenHelper.getSessionToken(request));
+            documentService.uploadDocument(document, spoId, semesterId, DOCUMENT_TYPE.valueOf(documentType));
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }catch (NotifyException e) {
+            e.sendNotification();
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (InsufficientPermissionsException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
     @PostMapping("generate/{spoId}/{semesterId}/{documentType}")
     public ResponseEntity<Void> generateDocument(@PathVariable Long spoId, @PathVariable Long semesterId, @PathVariable String documentType, HttpServletRequest request) {
         try {
