@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.3'
 	id 'io.spring.dependency-management' version '1.1.6'
+	id 'jacoco'
 }
 
 group = 'de.modulo'
@@ -60,5 +61,25 @@ bootJar {
 
 	tasks.named('processResources') {
 		duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	}
+}
+
+jacoco {
+	toolVersion = "0.8.8" // Specify the JaCoCo version you want to use
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+	finalizedBy 'jacocoTestReport' // Generate report after tests
+}
+
+
+// Configure JaCoCo test report task
+jacocoTestReport {
+	dependsOn test // Ensure the test task runs before the report is generated
+
+	reports {
+		xml.required.set(true)     // Set the XML report to true
+		html.required.set(true)    // Set the HTML report to true
 	}
 }

@@ -29,6 +29,14 @@ pipeline {
             }
         }
 
+        stage('Test') {
+            steps {
+                // Run tests and generate coverage report
+                sh 'gradle test jacocoTestReport'
+            }
+        }
+
+
         stage('Move Jar') {
             steps {
                 script {
