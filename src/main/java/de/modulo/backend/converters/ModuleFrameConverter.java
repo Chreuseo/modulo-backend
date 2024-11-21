@@ -10,9 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
 public class ModuleFrameConverter {
@@ -86,30 +83,22 @@ public class ModuleFrameConverter {
                 .map(CourseTypeModuleFrameEntity::getCourseType)
                 .toList();
 
-        courseTypeRepository.findAll().forEach(courseTypeEntity -> {
-            CourseTypeDTO courseTypeDTO = courseTypeConverter.toDto(courseTypeEntity);
-            courseTypeDTO.setEnabled(usedCourseTypes.contains(courseTypeEntity));
+        courseTypeModuleFrameRepository.findCourseTypeModuleFrameEntitiesByModuleFrameId(entity.getId()).forEach(courseTypeModuleFrameEntity -> {
+            CourseTypeDTO courseTypeDTO = courseTypeConverter.toDto(courseTypeModuleFrameEntity.getCourseType());
+            courseTypeDTO.setEnabled(true);
             courseTypeDTOs.add(courseTypeDTO);
         });
 
         dto.setCourseTypes(courseTypeDTOs);
 
-        List<ExamTypeDTO> examTypeDTOs = new ArrayList<>();
-        List<ExamTypeModuleFrameEntity> usedExamTypes = examTypeModuleFrameRepository
+        List<ExamTypeDTO> usedExamTypeDTOs = examTypeModuleFrameRepository
                 .getExamTypeModuleFrameEntitiesByModuleFrameId(entity.getId()).stream()
+                .map(examTypeModuleFrameEntity -> examTypeConverter.toDto(examTypeModuleFrameEntity.getExamType()))
+                .peek(examTypeDTO -> examTypeDTO.setEnabled(true))
                 .toList();
 
-        Map<Long, ExamTypeModuleFrameEntity> usedExamTypeMap = usedExamTypes.stream()
-                .collect(Collectors.toMap(examTypeModuleFrameEntity -> examTypeModuleFrameEntity.getExamType().getId(), Function.identity()));
 
-        examTypeRepository.findBySpoId(entity.getSpo().getId()).forEach(examTypeEntity -> {
-            ExamTypeDTO examTypeDTO = examTypeConverter.toDto(examTypeEntity);
-            examTypeDTO.setEnabled(usedExamTypeMap.containsKey(examTypeEntity.getId()));
-            examTypeDTO.setMandatory(usedExamTypeMap.containsKey(examTypeEntity.getId()) && usedExamTypeMap.get(examTypeEntity.getId()).isMandatory());
-            examTypeDTOs.add(examTypeDTO);
-        });
-
-        dto.setExamTypes(examTypeDTOs);
+        dto.setExamTypes(usedExamTypeDTOs);
 
 
         return dto;
