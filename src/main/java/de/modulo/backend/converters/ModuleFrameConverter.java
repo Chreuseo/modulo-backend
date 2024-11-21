@@ -78,10 +78,6 @@ public class ModuleFrameConverter {
         }
 
         List<CourseTypeDTO> courseTypeDTOs = new ArrayList<>();
-        List<CourseTypeEntity> usedCourseTypes = courseTypeModuleFrameRepository
-                .findCourseTypeModuleFrameEntitiesByModuleFrameId(entity.getId()).stream()
-                .map(CourseTypeModuleFrameEntity::getCourseType)
-                .toList();
 
         courseTypeModuleFrameRepository.findCourseTypeModuleFrameEntitiesByModuleFrameId(entity.getId()).forEach(courseTypeModuleFrameEntity -> {
             CourseTypeDTO courseTypeDTO = courseTypeConverter.toDto(courseTypeModuleFrameEntity.getCourseType());
@@ -93,8 +89,12 @@ public class ModuleFrameConverter {
 
         List<ExamTypeDTO> usedExamTypeDTOs = examTypeModuleFrameRepository
                 .getExamTypeModuleFrameEntitiesByModuleFrameId(entity.getId()).stream()
-                .map(examTypeModuleFrameEntity -> examTypeConverter.toDto(examTypeModuleFrameEntity.getExamType()))
-                .peek(examTypeDTO -> examTypeDTO.setEnabled(true))
+                .map(examTypeModuleFrameEntity -> {
+                    ExamTypeDTO examTypeDTO = examTypeConverter.toDto(examTypeModuleFrameEntity.getExamType());
+                    examTypeDTO.setEnabled(true);
+                    examTypeDTO.setMandatory(examTypeModuleFrameEntity.isMandatory());
+                    return examTypeDTO;
+                })
                 .toList();
 
 
