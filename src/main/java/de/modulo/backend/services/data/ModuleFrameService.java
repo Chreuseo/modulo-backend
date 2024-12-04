@@ -158,6 +158,7 @@ public class ModuleFrameService {
         if (!moduleFrameRepository.existsById(id)) {
             throw new IllegalArgumentException("ModuleFrame not found with id: " + id);
         }
+        examTypeModuleFrameRepository.deleteExamTypeModuleFrameEntitiesByModuleFrameId(id);
         moduleFrameRepository.deleteById(id);
     }
 
