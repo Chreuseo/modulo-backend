@@ -104,6 +104,7 @@ public class UserService {
             moduleImplementationRepository.save(moduleImplementationEntity);
         });
         spoResponsibleUserRepository.deleteSpoResponsibleUserEntitiesByUserId(id);
+        notificationRepository.deleteNotificationEntitiesByUserId(id);
         userRepository.deleteById(id);
     }
 
