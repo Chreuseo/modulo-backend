@@ -113,4 +113,18 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
+
+    @PutMapping("/password-reset/{id}")
+    public ResponseEntity<Void> resetPassword(@PathVariable Long id, HttpServletRequest request) {
+        try{
+            validatePrivilegesService.validateGeneralPrivileges(CURRENT_ENTITY_TYPE, PRIVILEGES.UPDATE, SessionTokenHelper.getSessionToken(request));
+            userService.resetPassword(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch(NotifyException e){
+            e.sendNotification();
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (InsufficientPermissionsException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
 }

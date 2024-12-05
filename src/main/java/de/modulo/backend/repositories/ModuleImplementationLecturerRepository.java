@@ -8,4 +8,5 @@ import java.util.List;
 public interface ModuleImplementationLecturerRepository extends JpaRepository<ModuleImplementationLecturerEntity, ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId> {
     List<ModuleImplementationLecturerEntity> getModuleImplementationLecturerEntitiesByModuleImplementationId(Long moduleImplementationId);
     List<ModuleImplementationLecturerEntity> getModuleImplementationLecturerEntitiesByLecturerId(Long lecturerId);
+    void deleteModuleImplementationLecturerEntitiesByLecturerId(Long lecturerId);
 }

@@ -8,9 +8,12 @@ import de.modulo.backend.dtos.UserDTOFlat;
 import de.modulo.backend.entities.NotificationEntity;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.ROLE;
+import de.modulo.backend.repositories.ModuleImplementationLecturerRepository;
+import de.modulo.backend.repositories.ModuleImplementationRepository;
 import de.modulo.backend.repositories.NotificationRepository;
 import de.modulo.backend.repositories.UserRepository;
 import de.modulo.backend.services.mail.MailSenderService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,8 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final MailSenderService mailSenderService;
+    private final ModuleImplementationLecturerRepository moduleImplementationLecturerRepository;
+    private final ModuleImplementationRepository moduleImplementationRepository;
 
     @Autowired
     public UserService(UserRepository userRepository,
@@ -37,13 +42,15 @@ public class UserService {
                        NotificationRepository notificationRepository,
                        NotificationConverter notificationConverter,
                        BCryptPasswordEncoder bCryptPasswordEncoder,
-                       MailSenderService mailSenderService) {
+                       MailSenderService mailSenderService, ModuleImplementationLecturerRepository moduleImplementationLecturerRepository, ModuleImplementationRepository moduleImplementationRepository) {
         this.userRepository = userRepository;
         this.userConverter = userConverter;
         this.notificationRepository = notificationRepository;
         this.notificationConverter = notificationConverter;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.mailSenderService = mailSenderService;
+        this.moduleImplementationLecturerRepository = moduleImplementationLecturerRepository;
+        this.moduleImplementationRepository = moduleImplementationRepository;
     }
 
     public List<UserDTOFlat> getAllUsers() {
@@ -90,7 +97,13 @@ public class UserService {
         return userConverter.toDto(savedUser);
     }
 
+    @Transactional
     public void deleteUser(Long id) {
+        moduleImplementationLecturerRepository.deleteModuleImplementationLecturerEntitiesByLecturerId(id);
+        moduleImplementationRepository.getModuleImplementationEntitiesByResponsibleId(id).forEach(moduleImplementationEntity -> {
+            moduleImplementationEntity.setResponsible(null);
+            moduleImplementationRepository.save(moduleImplementationEntity);
+        });
         userRepository.deleteById(id);
     }
 
@@ -122,6 +135,24 @@ public class UserService {
         String htmlText = "<p>Sehr geehrte/-r " + user.getTitle() + " " + user.getFirstName() + " " + user.getLastName() + ",</p>" +
                 "<p>Willkommen bei der Modulverwaltungssoftware Modulo. Für sie wurde soeben erfolgreich ein Account erstellt.</p>" +
                 "<p>Sie können sich mir ihrer E-Mail Adresse und folgendem Initialpasswort einloggen: <strong>" + password + "</strong></p>" +
+                "<p><a href=\"http://modulo.christopheuskirchen.de/login\">Hier einloggen</a></p>" +
+                "<p>Bitte ändern sie nach dem ersten Login ihr Passwort.</p>" +
+                "<p>Viele Grüße,<br>Ihr Modulo-Team</p>";
+        mailSenderService.sendHtmlMail(user.getMail(), subject, htmlText);
+    }
+
+    public void resetPassword(Long id) {
+        UserEntity user = userRepository.findById(id).orElseThrow();
+        String password = getRandomPassword();
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        userRepository.save(user);
+        sendPasswordResetMail(user, password);
+    }
+
+    private void sendPasswordResetMail(UserEntity user, String password){
+        String subject = "Password zurückgesetzt!";
+        String htmlText = "<p>Sehr geehrte/-r " + user.getTitle() + " " + user.getFirstName() + " " + user.getLastName() + ",</p>" +
+                "<p>Ihr Passwort wurde zurückgesetzt. Ihr neues Passwort lautet: <strong>" + password + "</strong></p>" +
                 "<p><a href=\"http://modulo.christopheuskirchen.de/login\">Hier einloggen</a></p>" +
                 "<p>Bitte ändern sie nach dem ersten Login ihr Passwort.</p>" +
                 "<p>Viele Grüße,<br>Ihr Modulo-Team</p>";
