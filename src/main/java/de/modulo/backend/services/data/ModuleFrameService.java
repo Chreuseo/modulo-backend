@@ -7,6 +7,7 @@ import de.modulo.backend.dtos.ModuleFrameDTO;
 import de.modulo.backend.dtos.ModuleFrameSetDTO;
 import de.modulo.backend.entities.*;
 import de.modulo.backend.repositories.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -154,6 +155,7 @@ public class ModuleFrameService {
         }
     }
 
+    @Transactional
     public void deleteModuleFrame(Long id) {
         if (!moduleFrameRepository.existsById(id)) {
             throw new IllegalArgumentException("ModuleFrame not found with id: " + id);

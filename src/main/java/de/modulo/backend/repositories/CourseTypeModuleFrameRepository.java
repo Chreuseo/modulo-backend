@@ -9,6 +9,5 @@ import java.util.List;
 public interface CourseTypeModuleFrameRepository extends JpaRepository<CourseTypeModuleFrameEntity, CourseTypeModuleFrameEntity.CourseTypeModuleFrameId> {
     List<CourseTypeModuleFrameEntity> findCourseTypeModuleFrameEntitiesByModuleFrameId(Long moduleFrameId);
 
-    @Transactional
     void deleteCourseTypeModuleFrameEntitiesByModuleFrameId(Long moduleFrameId);
 }

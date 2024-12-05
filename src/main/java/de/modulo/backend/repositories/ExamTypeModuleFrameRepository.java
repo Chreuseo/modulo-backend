@@ -9,6 +9,5 @@ import java.util.List;
 public interface ExamTypeModuleFrameRepository extends JpaRepository<ExamTypeModuleFrameEntity, ExamTypeModuleFrameEntity.ExamTypeModuleFrameId> {
     List<ExamTypeModuleFrameEntity> getExamTypeModuleFrameEntitiesByModuleFrameId(Long moduleFrameId);
 
-    @Transactional
     void deleteExamTypeModuleFrameEntitiesByModuleFrameId(Long moduleFrameId);
 }
