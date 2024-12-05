@@ -8,9 +8,8 @@ import de.modulo.backend.entities.ModuleImplementationLecturerEntity;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
-import de.modulo.backend.repositories.ModuleImplementationLecturerRepository;
-import de.modulo.backend.repositories.ModuleImplementationRepository;
-import de.modulo.backend.repositories.UserRepository;
+import de.modulo.backend.repositories.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,16 +23,20 @@ public class ModuleImplementationService {
     private final ModuleImplementationConverter moduleImplementationConverter;
     private final ModuleImplementationLecturerRepository moduleImplementationLecturerRepository;
     private final UserRepository userRepository;
+    private final ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository;
+    private final ExamTypeModuleImplementationRepository examTypeModuleImplementationRepository;
 
     @Autowired
     public ModuleImplementationService(ModuleImplementationRepository moduleImplementationRepository,
                                        ModuleImplementationConverter moduleImplementationConverter,
                                        ModuleImplementationLecturerRepository moduleImplementationLecturerRepository,
-                                       UserRepository userRepository) {
+                                       UserRepository userRepository, ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository, ExamTypeModuleImplementationRepository examTypeModuleImplementationRepository) {
         this.moduleImplementationRepository = moduleImplementationRepository;
         this.moduleImplementationConverter = moduleImplementationConverter;
         this.moduleImplementationLecturerRepository = moduleImplementationLecturerRepository;
         this.userRepository = userRepository;
+        this.moduleFrameModuleImplementationRepository = moduleFrameModuleImplementationRepository;
+        this.examTypeModuleImplementationRepository = examTypeModuleImplementationRepository;
     }
 
     public List<ModuleImplementationDTOFlat> getAllModuleImplementations() {
@@ -66,7 +69,11 @@ public class ModuleImplementationService {
         return moduleImplementationConverter.toDtoFlat(savedEntity);
     }
 
+    @Transactional
     public void deleteModuleImplementation(Long id) {
+        moduleFrameModuleImplementationRepository.deleteModuleFrameModuleImplementationEntitiesByModuleImplementationId(id);
+        moduleImplementationLecturerRepository.deleteModuleImplementationLecturerEntitiesByModuleImplementationId(id);
+        examTypeModuleImplementationRepository.deleteExamTypeModuleImplementationEntitiesByModuleImplementationId(id);
         moduleImplementationRepository.deleteById(id);
     }
 

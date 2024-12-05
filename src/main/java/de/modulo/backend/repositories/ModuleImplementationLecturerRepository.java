@@ -9,4 +9,5 @@ public interface ModuleImplementationLecturerRepository extends JpaRepository<Mo
     List<ModuleImplementationLecturerEntity> getModuleImplementationLecturerEntitiesByModuleImplementationId(Long moduleImplementationId);
     List<ModuleImplementationLecturerEntity> getModuleImplementationLecturerEntitiesByLecturerId(Long lecturerId);
     void deleteModuleImplementationLecturerEntitiesByLecturerId(Long lecturerId);
+    void deleteModuleImplementationLecturerEntitiesByModuleImplementationId(Long moduleImplementationId);
 }

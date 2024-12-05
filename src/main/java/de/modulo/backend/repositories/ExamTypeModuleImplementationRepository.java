@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ExamTypeModuleImplementationRepository extends JpaRepository<ExamTypeModuleImplementationEntity, ExamTypeModuleImplementationEntity.ExamTypeModuleImplementationId> {
     List<ExamTypeModuleImplementationEntity> findExamTypeModuleImplementationEntitiesByModuleImplementationId(Long moduleImplementationId);
+    void deleteExamTypeModuleImplementationEntitiesByModuleImplementationId(Long moduleImplementationId);
 }
