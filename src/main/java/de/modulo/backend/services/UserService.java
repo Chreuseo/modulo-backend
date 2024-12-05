@@ -8,10 +8,7 @@ import de.modulo.backend.dtos.UserDTOFlat;
 import de.modulo.backend.entities.NotificationEntity;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.ROLE;
-import de.modulo.backend.repositories.ModuleImplementationLecturerRepository;
-import de.modulo.backend.repositories.ModuleImplementationRepository;
-import de.modulo.backend.repositories.NotificationRepository;
-import de.modulo.backend.repositories.UserRepository;
+import de.modulo.backend.repositories.*;
 import de.modulo.backend.services.mail.MailSenderService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +32,7 @@ public class UserService {
     private final MailSenderService mailSenderService;
     private final ModuleImplementationLecturerRepository moduleImplementationLecturerRepository;
     private final ModuleImplementationRepository moduleImplementationRepository;
+    private final SpoResponsibleUserRepository spoResponsibleUserRepository;
 
     @Autowired
     public UserService(UserRepository userRepository,
@@ -42,7 +40,7 @@ public class UserService {
                        NotificationRepository notificationRepository,
                        NotificationConverter notificationConverter,
                        BCryptPasswordEncoder bCryptPasswordEncoder,
-                       MailSenderService mailSenderService, ModuleImplementationLecturerRepository moduleImplementationLecturerRepository, ModuleImplementationRepository moduleImplementationRepository) {
+                       MailSenderService mailSenderService, ModuleImplementationLecturerRepository moduleImplementationLecturerRepository, ModuleImplementationRepository moduleImplementationRepository, SpoResponsibleUserRepository spoResponsibleUserRepository) {
         this.userRepository = userRepository;
         this.userConverter = userConverter;
         this.notificationRepository = notificationRepository;
@@ -51,6 +49,7 @@ public class UserService {
         this.mailSenderService = mailSenderService;
         this.moduleImplementationLecturerRepository = moduleImplementationLecturerRepository;
         this.moduleImplementationRepository = moduleImplementationRepository;
+        this.spoResponsibleUserRepository = spoResponsibleUserRepository;
     }
 
     public List<UserDTOFlat> getAllUsers() {
@@ -104,6 +103,7 @@ public class UserService {
             moduleImplementationEntity.setResponsible(null);
             moduleImplementationRepository.save(moduleImplementationEntity);
         });
+        spoResponsibleUserRepository.deleteSpoResponsibleUserEntitiesByUserId(id);
         userRepository.deleteById(id);
     }
 

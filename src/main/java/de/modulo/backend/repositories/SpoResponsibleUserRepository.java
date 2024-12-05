@@ -8,4 +8,5 @@ import java.util.List;
 public interface SpoResponsibleUserRepository extends JpaRepository<SpoResponsibleUserEntity, SpoResponsibleUserEntity.SpoResponsibleUserId> {
     List<SpoResponsibleUserEntity> findAllBySpoId(Long spoId);
     boolean existsBySpoIdAndUserId(Long spoId, Long userId);
+    void deleteSpoResponsibleUserEntitiesByUserId(Long userId);
 }
