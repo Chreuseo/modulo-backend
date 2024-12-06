@@ -16,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -67,7 +66,7 @@ public class MyController {
     public ResponseEntity<UserDTO> updatePassword(@RequestBody PasswordDTO passwordDTO, HttpServletRequest request){
         UserEntity user = sessionService.getUserBySessionId(UUID.fromString(SessionTokenHelper.getSessionToken(request)));
 
-        if(!bCryptPasswordEncoder.encode(passwordDTO.getPassword()).equals(user.getPassword())){
+        if(!bCryptPasswordEncoder.matches(passwordDTO.getPassword(), user.getPassword())){
             return ResponseEntity.badRequest().build();
         }
 
