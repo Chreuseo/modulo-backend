@@ -82,4 +82,21 @@ jacocoTestReport {
 		xml.required.set(true)     // Set the XML report to true
 		html.required.set(true)    // Set the HTML report to true
 	}
+
+	executionData fileTree(dir: project.buildDir, includes: [
+			'jacoco/test.exec',
+			'jacoco/testCoverage.exec'
+
+	]) // Include the JaCoCo execution data
+
+	sourceSets sourceSets.main // Include the main source set
+
+	afterEvaluate {
+		classDirectories.setFrom(files(sourceSets.main.output.asFileTree.map {
+			fileTree(dir: it,
+					include: '**/*.class',
+					exclude: ['**/generated/**/*', '**/SomeExcludedClass.class'] // Exclude any generated or unnecessary classes
+			)
+		}))
+	}
 }
