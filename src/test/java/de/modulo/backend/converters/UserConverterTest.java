@@ -43,6 +43,15 @@ public class UserConverterTest {
     }
 
     @Test
+    void testToDto_nullEntity(){
+        // Act
+        UserDTO userDto = userConverter.toDto(null);
+
+        // Assert
+        assertNull(userDto);
+    }
+
+    @Test
     void testToDtoFlat() {
         // Arrange
         UserEntity userEntity = new UserEntity();
