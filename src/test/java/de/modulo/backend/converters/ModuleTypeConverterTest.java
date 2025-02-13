@@ -45,6 +45,23 @@ public class ModuleTypeConverterTest {
     }
 
     @Test
+    void testToDto_NullSpo() {
+        // Arrange
+        ModuleTypeEntity moduleTypeEntity = new ModuleTypeEntity();
+        moduleTypeEntity.setId(1L);
+        moduleTypeEntity.setName("Pflichtmodul");
+
+        // Act
+        ModuleTypeDTO moduleTypeDto = moduleTypeConverter.toDto(moduleTypeEntity);
+
+        // Assert
+        assertNotNull(moduleTypeDto);
+        assertEquals(moduleTypeEntity.getId(), moduleTypeDto.getId());
+        assertEquals(moduleTypeEntity.getName(), moduleTypeDto.getName());
+        assertNull(moduleTypeDto.getSpoId());
+    }
+
+    @Test
     void testToDto_NullEntity() {
         // Act
         ModuleTypeDTO moduleTypeDto = moduleTypeConverter.toDto(null);
@@ -76,6 +93,23 @@ public class ModuleTypeConverterTest {
         assertEquals(moduleTypeDto.getId(), moduleTypeEntity.getId());
         assertEquals(moduleTypeDto.getName(), moduleTypeEntity.getName());
         assertEquals(moduleTypeDto.getSpoId(), moduleTypeEntity.getSpo().getId());
+    }
+
+    @Test
+    void testToEntity_NullSpo() {
+        // Arrange
+        ModuleTypeDTO moduleTypeDto = new ModuleTypeDTO();
+        moduleTypeDto.setId(1L);
+        moduleTypeDto.setName("Pflichtmodul");
+
+        // Act
+        ModuleTypeEntity moduleTypeEntity = moduleTypeConverter.toEntity(moduleTypeDto);
+
+        // Assert
+        assertNotNull(moduleTypeEntity);
+        assertEquals(moduleTypeDto.getId(), moduleTypeEntity.getId());
+        assertEquals(moduleTypeDto.getName(), moduleTypeEntity.getName());
+        assertNull(moduleTypeEntity.getSpo());
     }
 
     @Test

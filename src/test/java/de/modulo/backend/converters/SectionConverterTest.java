@@ -46,6 +46,24 @@ public class SectionConverterTest {
     }
 
     @Test
+    void testToDto_nullSpo() {
+        // Arrange
+        SectionEntity sectionEntity = new SectionEntity();
+        sectionEntity.setId(1L);
+        sectionEntity.setName("Section");
+        sectionEntity.setOrderNumber(1);
+
+        // Act
+        SectionDTO sectionDto = sectionConverter.toDto(sectionEntity);
+
+        // Assert
+        assertNotNull(sectionDto);
+        assertEquals(sectionEntity.getId(), sectionDto.getId());
+        assertEquals(sectionEntity.getName(), sectionDto.getName());
+        assertNull(sectionDto.getSpoId());
+    }
+
+    @Test
     void testToDto_NullEntity() {
         // Act
         SectionDTO sectionDto = sectionConverter.toDto(null);
@@ -76,6 +94,23 @@ public class SectionConverterTest {
         assertEquals(sectionDto.getId(), sectionEntity.getId());
         assertEquals(sectionDto.getName(), sectionEntity.getName());
         assertEquals(sectionDto.getSpoId(), sectionEntity.getSpo().getId());
+    }
+
+    @Test
+    void testToEntity_nullSpo() {
+        // Arrange
+        SectionDTO sectionDto = new SectionDTO();
+        sectionDto.setId(1L);
+        sectionDto.setName("Section");
+
+        // Act
+        SectionEntity sectionEntity = sectionConverter.toEntity(sectionDto);
+
+        // Assert
+        assertNotNull(sectionEntity);
+        assertEquals(sectionDto.getId(), sectionEntity.getId());
+        assertEquals(sectionDto.getName(), sectionEntity.getName());
+        assertNull(sectionEntity.getSpo());
     }
 
     @Test
