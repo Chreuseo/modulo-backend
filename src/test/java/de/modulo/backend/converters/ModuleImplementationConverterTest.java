@@ -150,13 +150,15 @@ public class ModuleImplementationConverterTest {
     @Test
     void testToEntity_fromDTOFlat() {
         // Act
-        ModuleImplementationEntity entity = moduleImplementationConverter.toEntity(moduleImplementationDTO);
+        ModuleImplementationDTOFlat moduleImplementationDTOFlat = new ModuleImplementationDTOFlat();
+        moduleImplementationDTOFlat.setName("Test Module");
+        moduleImplementationDTOFlat.setAbbreviation("TM");
+        ModuleImplementationEntity entity = moduleImplementationConverter.toEntity(moduleImplementationDTOFlat);
 
         // Assert
         assertNotNull(entity);
-        assertEquals(moduleImplementationDTO.getId(), entity.getId());
-        assertEquals(moduleImplementationDTO.getName(), entity.getName());
-        assertEquals(moduleImplementationDTO.getAbbreviation(), entity.getAbbreviation());
+        assertEquals(moduleImplementationDTOFlat.getName(), entity.getName());
+        assertEquals(moduleImplementationDTOFlat.getAbbreviation(), entity.getAbbreviation());
         assertNull(entity.getFirstExaminant());
         assertNull(entity.getSecondExaminant());
         assertNull(entity.getResponsible());
