@@ -85,22 +85,27 @@ public class SpoService {
         }
 
         SpoEntity savedEntity = spoRepository.save(spoConverter.toEntity(spoDto));
-        spoDto.getSectionDTOs().forEach(sectionDTO -> {
-            SectionEntity sectionEntity = sectionConverter.toEntity(sectionDTO);
-            sectionEntity.setSpo(savedEntity);
-            sectionRepository.save(sectionEntity);
-        });
-        spoDto.getModuleTypeDTOs().forEach(moduleTypeDTO -> {
-            ModuleTypeEntity moduleTypeEntity = moduleTypeConverter.toEntity(moduleTypeDTO);
-            moduleTypeEntity.setSpo(savedEntity);
-            moduleTypeRepository.save(moduleTypeEntity);
-        });
-
-        spoDto.getModuleRequirementDTOs().forEach(moduleRequirementDTO -> {
-            ModuleRequirementEntity moduleRequirementEntity = moduleRequirementConverter.toEntity(moduleRequirementDTO);
-            moduleRequirementEntity.setSpo(savedEntity);
-            moduleRequirementRepository.save(moduleRequirementEntity);
-        });
+        if(spoDto.getSectionDTOs() != null) {
+            spoDto.getSectionDTOs().forEach(sectionDTO -> {
+                SectionEntity sectionEntity = sectionConverter.toEntity(sectionDTO);
+                sectionEntity.setSpo(savedEntity);
+                sectionRepository.save(sectionEntity);
+            });
+        }
+        if(spoDto.getModuleTypeDTOs() != null) {
+            spoDto.getModuleTypeDTOs().forEach(moduleTypeDTO -> {
+                ModuleTypeEntity moduleTypeEntity = moduleTypeConverter.toEntity(moduleTypeDTO);
+                moduleTypeEntity.setSpo(savedEntity);
+                moduleTypeRepository.save(moduleTypeEntity);
+            });
+        }
+        if(spoDto.getModuleRequirementDTOs() != null) {
+            spoDto.getModuleRequirementDTOs().forEach(moduleRequirementDTO -> {
+                ModuleRequirementEntity moduleRequirementEntity = moduleRequirementConverter.toEntity(moduleRequirementDTO);
+                moduleRequirementEntity.setSpo(savedEntity);
+                moduleRequirementRepository.save(moduleRequirementEntity);
+            });
+        }
 
         return spoConverter.toDto(savedEntity);
     }
