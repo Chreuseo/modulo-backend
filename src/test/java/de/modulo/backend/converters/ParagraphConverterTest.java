@@ -3,14 +3,22 @@ package de.modulo.backend.converters;
 import de.modulo.backend.dtos.ParagraphDTO;
 import de.modulo.backend.entities.ParagraphEntity;
 import de.modulo.backend.entities.SpoEntity;
+import de.modulo.backend.repositories.SpoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
 
 public class ParagraphConverterTest {
 
+    @Mock
+    private SpoRepository spoRepository;
+
+    @InjectMocks
     private ParagraphConverter paragraphConverter;
 
     @BeforeEach
@@ -49,6 +57,16 @@ public class ParagraphConverterTest {
         paragraphDto.setId(1L);
         paragraphDto.setTitle("Title");
         paragraphDto.setText("Text");
+        paragraphDto.setSpoId(2L);
+
+        // Create a mock SpoEntity that we expect to receive from the repository
+        SpoEntity mockSpoEntity = new SpoEntity();
+        mockSpoEntity.setId(2L);
+        mockSpoEntity.setName("SPO 2020");
+
+        // Mock the behavior of spoRepository.findById for the specific SPO ID
+        when(spoRepository.findById(2L)).thenReturn(java.util.Optional.of(mockSpoEntity));
+
 
         // Act
         ParagraphEntity paragraphEntity = paragraphConverter.toEntity(paragraphDto);
@@ -58,5 +76,7 @@ public class ParagraphConverterTest {
         assertEquals(paragraphDto.getId(), paragraphEntity.getId());
         assertEquals(paragraphDto.getTitle(), paragraphEntity.getTitle());
         assertEquals(paragraphDto.getText(), paragraphEntity.getText());
+        assertEquals(paragraphDto.getSpoId(), paragraphEntity.getSpo().getId());
+        assertEquals(mockSpoEntity.getName(), paragraphEntity.getSpo().getName());
     }
 }

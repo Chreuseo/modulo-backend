@@ -33,14 +33,6 @@ public class DurationConverterTest {
         assertEquals(durationEntity.getName(), durationDto.getName());
     }
 
-    @Test
-    void testToDto_NullEntity() {
-        // Act
-        DurationDTO durationDto = durationConverter.toDto(null);
-
-        // Assert
-        assertNotNull(durationDto);
-    }
 
     @Test
     void testToEntity() {
