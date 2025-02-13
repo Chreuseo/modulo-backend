@@ -252,8 +252,8 @@ class ModuleFrameServiceTest {
         examTypeEntity.setName("Exam Type 1");
         examTypeEntity.setAbbreviation("ET1");
         when(examTypeConverter.toEntity(examTypeDTO)).thenReturn(examTypeEntity);
-        when(courseTypeModuleFrameRepository.existsById(any())).thenReturn(false);
-        when(examTypeModuleFrameRepository.existsById(any())).thenReturn(false);
+        when(courseTypeModuleFrameRepository.existsById(any())).thenReturn(true);
+        when(examTypeModuleFrameRepository.existsById(any())).thenReturn(true);
 
         moduleFrameDTO.setCourseTypes(courseTypeDTOList);
         moduleFrameDTO.setExamTypes(examTypeDTOList);
