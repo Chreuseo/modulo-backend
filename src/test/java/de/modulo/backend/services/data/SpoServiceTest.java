@@ -13,7 +13,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -121,11 +123,50 @@ public class SpoServiceTest {
     }
 
     @Test
-    public void testUpdate_Success() {
+    public void testUpdate_Success1() {
         when(spoRepository.existsById(1L)).thenReturn(true);
         when(spoConverter.toEntity(mockSpoDTO)).thenReturn(mockSpoEntity);
         when(spoRepository.save(mockSpoEntity)).thenReturn(mockSpoEntity);
         when(spoConverter.toDto(mockSpoEntity)).thenReturn(mockSpoDTO);
+
+        SpoDTO result = service.update(mockSpoDTO);
+        assertEquals(mockSpoDTO.getId(), result.getId());
+    }
+
+    @Test
+    public void testUpdate_Success2() {
+        when(spoRepository.existsById(1L)).thenReturn(true);
+        when(spoConverter.toEntity(mockSpoDTO)).thenReturn(mockSpoEntity);
+        when(spoRepository.save(mockSpoEntity)).thenReturn(mockSpoEntity);
+        when(spoConverter.toDto(mockSpoEntity)).thenReturn(mockSpoDTO);
+
+        List<SectionDTO> sectionDTOs = new ArrayList<>();
+        SectionDTO sectionDTO = new SectionDTO();
+        sectionDTO.setId(1L);
+        sectionDTO.setName("Section");
+        sectionDTO.setIndex(1);
+        sectionDTOs.add(sectionDTO);
+
+        List<ModuleTypeDTO> moduleTypeDTOs = new ArrayList<>();
+        ModuleTypeDTO moduleTypeDTO = new ModuleTypeDTO();
+        moduleTypeDTO.setId(1L);
+        moduleTypeDTO.setName("ModuleType");
+        moduleTypeDTO.setIndex(1);
+        moduleTypeDTOs.add(moduleTypeDTO);
+
+        List<ModuleRequirementDTO> moduleRequirementDTOs = new ArrayList<>();
+        ModuleRequirementDTO moduleRequirementDTO = new ModuleRequirementDTO();
+        moduleRequirementDTO.setId(1L);
+        moduleRequirementDTO.setName("ModuleRequirement");
+        moduleRequirementDTOs.add(moduleRequirementDTO);
+
+        mockSpoDTO.setSectionDTOs(sectionDTOs);
+        mockSpoDTO.setModuleTypeDTOs(moduleTypeDTOs);
+        mockSpoDTO.setModuleRequirementDTOs(moduleRequirementDTOs);
+
+        when(sectionConverter.toEntity(sectionDTO)).thenReturn(new SectionEntity());
+        when(moduleTypeConverter.toEntity(moduleTypeDTO)).thenReturn(new ModuleTypeEntity());
+        when(moduleRequirementConverter.toEntity(moduleRequirementDTO)).thenReturn(new ModuleRequirementEntity());
 
         SpoDTO result = service.update(mockSpoDTO);
         assertEquals(mockSpoDTO.getId(), result.getId());
