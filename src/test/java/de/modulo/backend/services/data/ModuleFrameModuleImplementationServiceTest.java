@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,7 +93,7 @@ public class ModuleFrameModuleImplementationServiceTest {
     }
 
     @Test
-    public void save_ShouldReturnSavedDto() {
+    public void save_ShouldReturnSavedDto1() {
         // Arrange
         ModuleFrameModuleImplementationDTO dtoToSave = new ModuleFrameModuleImplementationDTO();
         ModuleFrameModuleImplementationEntity savedEntity = new ModuleFrameModuleImplementationEntity();
@@ -109,6 +110,37 @@ public class ModuleFrameModuleImplementationServiceTest {
         assertThat(result).isEqualTo(savedDto);
         verify(moduleFrameModuleImplementationRepository).save(savedEntity);
     }
+
+    @Test
+    public void save_ShouldReturnSavedDto2() {
+        // Arrange
+        ModuleFrameModuleImplementationDTO dtoToSave = new ModuleFrameModuleImplementationDTO();
+        List<ExamTypeDTO> examTypeDTOs = new ArrayList<>();
+        ExamTypeDTO examTypeDTO = new ExamTypeDTO();
+        examTypeDTO.setMandatory(true);
+        examTypeDTO.setId(1L);
+        examTypeDTO.setSpoId(1L);
+        examTypeDTO.setName("ExamType");
+        examTypeDTO.setAbbreviation("ET");
+        examTypeDTO.setDescription("Description");
+        examTypeDTO.setLength("90 minutes");
+        examTypeDTO.setEnabled(true);
+        examTypeDTOs.add(examTypeDTO);
+        ModuleFrameModuleImplementationEntity savedEntity = new ModuleFrameModuleImplementationEntity();
+        ModuleFrameModuleImplementationDTO savedDto = new ModuleFrameModuleImplementationDTO();
+
+        when(moduleFrameModuleImplementationConverter.toEntity(dtoToSave)).thenReturn(savedEntity);
+        when(moduleFrameModuleImplementationRepository.save(savedEntity)).thenReturn(savedEntity);
+        when(moduleFrameModuleImplementationConverter.toDto(savedEntity)).thenReturn(savedDto);
+
+        // Act
+        ModuleFrameModuleImplementationDTO result = moduleFrameModuleImplementationService.save(dtoToSave);
+
+        // Assert
+        assertThat(result).isEqualTo(savedDto);
+        verify(moduleFrameModuleImplementationRepository).save(savedEntity);
+    }
+
 
     @Test
     public void delete_ShouldInvokeDeleteOnRepository() {
