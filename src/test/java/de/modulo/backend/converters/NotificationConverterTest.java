@@ -89,7 +89,7 @@ public class NotificationConverterTest {
         assertEquals(notificationDto.getMessage(), notificationEntity.getMessage());
         assertEquals(notificationDto.isUnread(), notificationEntity.isUnread());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        assertEquals(LocalDateTime.parse(notificationDto.getCreatedAt(), formatter), notificationEntity.getCreatedAt());
+        assertEquals(notificationDto.getCreatedAt(), notificationEntity.getCreatedAt().format(formatter));
         assertEquals(notificationDto.getUserId(), notificationEntity.getUser().getId());
         assertEquals(mockUserEntity.getFirstName(), notificationEntity.getUser().getFirstName());
         assertEquals(mockUserEntity.getLastName(), notificationEntity.getUser().getLastName());
