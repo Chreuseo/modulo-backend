@@ -65,6 +65,22 @@ public class ModuleFrameModuleImplementationConverterTest {
         moduleRequirementEntity.setName("Module Requirement");
         moduleFrameModuleImplementationEntity.setModuleRequirement(moduleRequirementEntity);
 
+        // Arrange mocks
+        ModuleFrameDTO mockModuleFrameDTO = new ModuleFrameDTO();
+        mockModuleFrameDTO.setId(1L);
+        mockModuleFrameDTO.setName("Module Frame");
+        when(moduleFrameConverter.toDto(moduleFrameEntity)).thenReturn(mockModuleFrameDTO);
+
+        ModuleImplementationDTOFlat mockModuleImplementationDTOFlat = new ModuleImplementationDTOFlat();
+        mockModuleImplementationDTOFlat.setId(1L);
+        mockModuleImplementationDTOFlat.setName("Module Implementation");
+        when(moduleImplementationConverter.toDtoFlat(moduleImplementationEntity)).thenReturn(mockModuleImplementationDTOFlat);
+
+        ModuleRequirementDTO mockModuleRequirementDTO = new ModuleRequirementDTO();
+        mockModuleRequirementDTO.setId(1L);
+        mockModuleRequirementDTO.setName("Module Requirement");
+        when(moduleRequirementConverter.toDto(moduleRequirementEntity)).thenReturn(mockModuleRequirementDTO);
+
         // Act
         ModuleFrameModuleImplementationDTO moduleFrameModuleImplementationDto = moduleFrameModuleImplementationConverter.toDto(moduleFrameModuleImplementationEntity);
 
@@ -94,6 +110,19 @@ public class ModuleFrameModuleImplementationConverterTest {
         moduleImplementationEntity.setId(1L);
         moduleImplementationEntity.setName("Module Implementation");
         moduleFrameModuleImplementationEntity.setModuleImplementation(moduleImplementationEntity);
+
+        // Arrange mocks
+        ModuleFrameDTO mockModuleFrameDTO = new ModuleFrameDTO();
+        mockModuleFrameDTO.setId(1L);
+        mockModuleFrameDTO.setName("Module Frame");
+        when(moduleFrameConverter.toDto(moduleFrameEntity)).thenReturn(mockModuleFrameDTO);
+
+        ModuleImplementationDTOFlat mockModuleImplementationDTOFlat = new ModuleImplementationDTOFlat();
+        mockModuleImplementationDTOFlat.setId(1L);
+        mockModuleImplementationDTOFlat.setName("Module Implementation");
+        when(moduleImplementationConverter.toDtoFlat(moduleImplementationEntity)).thenReturn(mockModuleImplementationDTOFlat);
+
+        ModuleRequirementDTO mockModuleRequirementDTO = new ModuleRequirementDTO();
 
         // Act
         ModuleFrameModuleImplementationDTO moduleFrameModuleImplementationDto = moduleFrameModuleImplementationConverter.toDto(moduleFrameModuleImplementationEntity);

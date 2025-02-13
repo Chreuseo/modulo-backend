@@ -21,8 +21,6 @@ public class ModuleFrameConverter {
     private final SpoRepository spoRepository;
     private final SectionRepository sectionRepository;
     private final ModuleTypeRepository moduleTypeRepository;
-    private final CourseTypeRepository courseTypeRepository;
-    private final ExamTypeRepository examTypeRepository;
     private final CourseTypeModuleFrameRepository courseTypeModuleFrameRepository;
     private final ExamTypeModuleFrameRepository examTypeModuleFrameRepository;
     private final ExamTypeConverter examTypeConverter;
@@ -34,9 +32,7 @@ public class ModuleFrameConverter {
                                 SpoRepository spoRepository,
                                 SectionRepository sectionRepository,
                                 ModuleTypeRepository moduleTypeRepository,
-                                CourseTypeRepository courseTypeRepository,
                                 CourseTypeConverter courseTypeConverter,
-                                ExamTypeRepository examTypeRepository,
                                 CourseTypeModuleFrameRepository courseTypeModuleFrameRepository,
                                 ExamTypeModuleFrameRepository examTypeModuleFrameRepository, ExamTypeConverter examTypeConverter, SpoConverter spoConverter) {
         this.sectionConverter = sectionConverter;
@@ -46,8 +42,6 @@ public class ModuleFrameConverter {
         this.spoRepository = spoRepository;
         this.sectionRepository = sectionRepository;
         this.moduleTypeRepository = moduleTypeRepository;
-        this.courseTypeRepository = courseTypeRepository;
-        this.examTypeRepository = examTypeRepository;
         this.courseTypeModuleFrameRepository = courseTypeModuleFrameRepository;
         this.examTypeModuleFrameRepository = examTypeModuleFrameRepository;
         this.examTypeConverter = examTypeConverter;

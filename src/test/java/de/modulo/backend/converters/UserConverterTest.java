@@ -2,6 +2,7 @@ package de.modulo.backend.converters;
 
 import de.modulo.backend.dtos.UserDTO;
 import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.enums.ROLE;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,6 +26,7 @@ public class UserConverterTest {
         userEntity.setLastName("Mustermann");
         userEntity.setCode("123456");
         userEntity.setMail("test@mail.de");
+        userEntity.setRole(ROLE.USER);
 
         // Act
         UserDTO userDto = userConverter.toDto(userEntity);
@@ -36,6 +38,7 @@ public class UserConverterTest {
         assertEquals(userEntity.getLastName(), userDto.getLastName());
         assertEquals(userEntity.getCode(), userDto.getCode());
         assertEquals(userEntity.getMail(), userDto.getMail());
+        assertEquals(userEntity.getRole().name(), userDto.getRole());
     }
 
     @Test
@@ -47,6 +50,7 @@ public class UserConverterTest {
         userDto.setLastName("Mustermann");
         userDto.setCode("123456");
         userDto.setMail("test@test.de");
+        userDto.setRole(ROLE.USER.name());
 
         // Act
         UserEntity userEntity = userConverter.toEntity(userDto);
@@ -58,5 +62,6 @@ public class UserConverterTest {
         assertEquals(userDto.getLastName(), userEntity.getLastName());
         assertEquals(userDto.getCode(), userEntity.getCode());
         assertEquals(userDto.getMail(), userEntity.getMail());
+        assertEquals(userDto.getRole(), userEntity.getRole().name());
     }
 }
