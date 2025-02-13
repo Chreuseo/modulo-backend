@@ -148,6 +148,23 @@ public class ModuleImplementationConverterTest {
     }
 
     @Test
+    void testToEntity_fromDTOFlat() {
+        // Act
+        ModuleImplementationEntity entity = moduleImplementationConverter.toEntity(moduleImplementationDTO);
+
+        // Assert
+        assertNotNull(entity);
+        assertEquals(moduleImplementationDTO.getId(), entity.getId());
+        assertEquals(moduleImplementationDTO.getName(), entity.getName());
+        assertEquals(moduleImplementationDTO.getAbbreviation(), entity.getAbbreviation());
+        assertNull(entity.getFirstExaminant());
+        assertNull(entity.getSecondExaminant());
+        assertNull(entity.getResponsible());
+
+        // You can add more property assertions here
+    }
+
+    @Test
     void testToEntity_nullValues() {
         // Act
         ModuleImplementationEntity entity = moduleImplementationConverter.toEntity(moduleImplementationDTO);
