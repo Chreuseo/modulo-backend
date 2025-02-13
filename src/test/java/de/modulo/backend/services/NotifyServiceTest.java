@@ -1,8 +1,6 @@
 package de.modulo.backend.services;
 
-import de.modulo.backend.entities.ModuleImplementationEntity;
-import de.modulo.backend.entities.NotificationEntity;
-import de.modulo.backend.entities.UserEntity;
+import de.modulo.backend.entities.*;
 import de.modulo.backend.enums.NOTIFICATION;
 import de.modulo.backend.repositories.NotificationRepository;
 import de.modulo.backend.services.mail.MailSenderService;
@@ -38,6 +36,7 @@ public class NotifyServiceTest {
     private List<UserEntity> users;
     private NOTIFICATION notification;
     private ModuleImplementationEntity module;
+    private SpoEntity spo;
 
     @BeforeEach
     public void setup() {
@@ -53,14 +52,19 @@ public class NotifyServiceTest {
         users = new ArrayList<>();
         users.add(user);
 
-        notification = NOTIFICATION.LECTURER_EDITED_MODULE;
-
         module = new ModuleImplementationEntity();
         module.setName("Calculus");
+
+        spo = new SpoEntity();
+        spo.setName("SPO");
+        spo.setDegree(new DegreeEntity());
+        spo.getDegree().setName("Bachelor");
     }
 
     @Test
-    public void testSendNotification_SendsEmailsAndSavesNotifications() {
+    public void testSendNotification_SendsEmailsAndSavesNotifications1() {
+        notification = NOTIFICATION.LECTURER_EDITED_MODULE;
+
         List<NotificationEntity> savedNotifications = new ArrayList<>();
         when(notificationRepository.saveAllAndFlush(any())).thenReturn(savedNotifications);
 
@@ -79,7 +83,94 @@ public class NotifyServiceTest {
     }
 
     @Test
+    public void testSendNotification_SendsEmailsAndSavesNotifications2() {
+        notification = NOTIFICATION.MODULE_ADDED_TO_SPO;
+
+        List<NotificationEntity> savedNotifications = new ArrayList<>();
+        when(notificationRepository.saveAllAndFlush(any())).thenReturn(savedNotifications);
+
+        List<NotificationEntity> result = notifyService.sendNotification(editor, users, notification, module, spo);
+
+        // Verify email sending
+        ArgumentCaptor<NotificationEntity> notificationCaptor = ArgumentCaptor.forClass(NotificationEntity.class);
+        verify(mailSenderService, times(1)).sendMail(notificationCaptor.capture());
+
+        NotificationEntity sentNotification = notificationCaptor.getValue();
+        assertEquals("Der Dozent John Doe hat das Modul Calculus zum Studiengang SPO Bachelor hinzugefügt.", sentNotification.getMessage());
+        assertEquals(user, sentNotification.getUser());
+
+        // Verify notifications are saved
+        verify(notificationRepository, times(1)).saveAllAndFlush(any());
+    }
+
+    @Test
+    public void testSendNotification_SendsEmailsAndSavesNotifications3() {
+        notification = NOTIFICATION.SPO_CREATED;
+
+        List<NotificationEntity> savedNotifications = new ArrayList<>();
+        when(notificationRepository.saveAllAndFlush(any())).thenReturn(savedNotifications);
+
+        List<NotificationEntity> result = notifyService.sendNotification(editor, users, notification, spo);
+
+        // Verify email sending
+        ArgumentCaptor<NotificationEntity> notificationCaptor = ArgumentCaptor.forClass(NotificationEntity.class);
+        verify(mailSenderService, times(1)).sendMail(notificationCaptor.capture());
+
+        NotificationEntity sentNotification = notificationCaptor.getValue();
+        assertEquals("Der Dozent John Doe hat den Studiengang SPO Bachelor erstellt.", sentNotification.getMessage());
+        assertEquals(user, sentNotification.getUser());
+
+        // Verify notifications are saved
+        verify(notificationRepository, times(1)).saveAllAndFlush(any());
+    }
+
+    @Test
+    public void testSendNotification_SendsEmailsAndSavesNotifications4() {
+        notification = NOTIFICATION.MODULE_CREATED;
+
+        List<NotificationEntity> savedNotifications = new ArrayList<>();
+        when(notificationRepository.saveAllAndFlush(any())).thenReturn(savedNotifications);
+
+        List<NotificationEntity> result = notifyService.sendNotification(editor, users, notification, module);
+
+        // Verify email sending
+        ArgumentCaptor<NotificationEntity> notificationCaptor = ArgumentCaptor.forClass(NotificationEntity.class);
+        verify(mailSenderService, times(1)).sendMail(notificationCaptor.capture());
+
+        NotificationEntity sentNotification = notificationCaptor.getValue();
+        assertEquals("Der Dozent John Doe hat das Modul Calculus erstellt.", sentNotification.getMessage());
+        assertEquals(user, sentNotification.getUser());
+
+        // Verify notifications are saved
+        verify(notificationRepository, times(1)).saveAllAndFlush(any());
+    }
+
+    @Test
+    public void testSendNotification_SendsEmailsAndSavesNotifications5() {
+        notification = NOTIFICATION.DOCUMENTS_GENERATED;
+
+        List<NotificationEntity> savedNotifications = new ArrayList<>();
+        when(notificationRepository.saveAllAndFlush(any())).thenReturn(savedNotifications);
+
+        List<NotificationEntity> result = notifyService.sendNotification(editor, users, notification);
+
+        // Verify email sending
+        ArgumentCaptor<NotificationEntity> notificationCaptor = ArgumentCaptor.forClass(NotificationEntity.class);
+        verify(mailSenderService, times(1)).sendMail(notificationCaptor.capture());
+
+        NotificationEntity sentNotification = notificationCaptor.getValue();
+        assertEquals("Die angeforderten Dokumente wurden generiert.", sentNotification.getMessage());
+        assertEquals(user, sentNotification.getUser());
+
+        // Verify notifications are saved
+        verify(notificationRepository, times(1)).saveAllAndFlush(any());
+    }
+
+
+    @Test
     public void testSendNotification_UserDoesNotReceiveEmail() {
+        notification = NOTIFICATION.LECTURER_EDITED_MODULE;
+
         UserEntity userWithoutEmail = new UserEntity();
         userWithoutEmail.setSendMailNotifications(false);
         users.add(userWithoutEmail);
@@ -95,6 +186,8 @@ public class NotifyServiceTest {
 
     @Test
     public void testSendNotification_NoUsers() {
+        notification = NOTIFICATION.LECTURER_EDITED_MODULE;
+
         List<NotificationEntity> result = notifyService.sendNotification(editor, new ArrayList<>(), notification, module);
 
         // Verify that no notifications were sent or saved
