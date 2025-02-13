@@ -94,19 +94,72 @@ public class ModuleImplementationConverterTest {
     }
 
     @Test
+    void testToDto_nullEntity(){
+        assertNull(moduleImplementationConverter.toDto(null));
+    }
+
+    @Test
+    void testToEntity_nullDTO(){
+        assertNull(moduleImplementationConverter.toEntity((ModuleImplementationDTO) null));
+    }
+
+    @Test
+    void testToEntity_nullDTOFlat(){
+        assertNull(moduleImplementationConverter.toEntity((ModuleImplementationDTOFlat) null));
+    }
+
+    @Test
+    void testToDtoFlat_nullEntity(){
+        assertNull(moduleImplementationConverter.toDtoFlat(null));
+    }
+
+    @Test
     void testToEntity() {
+        // Arrange
         UserEntity userEntity = new UserEntity(); // Prepare a mock user entity as return value
         when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity)); // Mocking user lookup
 
         moduleImplementationDTO.setFirstExaminant(new UserDTOFlat());
         moduleImplementationDTO.getFirstExaminant().setId(1L);
 
+        moduleImplementationDTO.setSecondExaminant(new UserDTOFlat());
+        moduleImplementationDTO.getSecondExaminant().setId(2L);
+
+        moduleImplementationDTO.setResponsible(new UserDTOFlat());
+        moduleImplementationDTO.getResponsible().setId(3L);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(userEntity));
+        when(userRepository.findById(3L)).thenReturn(Optional.of(userEntity));
+
+        // Act
         ModuleImplementationEntity entity = moduleImplementationConverter.toEntity(moduleImplementationDTO);
 
+        // Assert
         assertNotNull(entity);
         assertEquals(moduleImplementationDTO.getId(), entity.getId());
         assertEquals(moduleImplementationDTO.getName(), entity.getName());
         assertEquals(moduleImplementationDTO.getAbbreviation(), entity.getAbbreviation());
+        assertNotNull(entity.getFirstExaminant());
+        assertNotNull(entity.getSecondExaminant());
+        assertNotNull(entity.getResponsible());
+
+        // You can add more property assertions here
+    }
+
+    @Test
+    void testToEntity_nullValues() {
+        // Act
+        ModuleImplementationEntity entity = moduleImplementationConverter.toEntity(moduleImplementationDTO);
+
+        // Assert
+        assertNotNull(entity);
+        assertEquals(moduleImplementationDTO.getId(), entity.getId());
+        assertEquals(moduleImplementationDTO.getName(), entity.getName());
+        assertEquals(moduleImplementationDTO.getAbbreviation(), entity.getAbbreviation());
+        assertNull(entity.getFirstExaminant());
+        assertNull(entity.getSecondExaminant());
+        assertNull(entity.getResponsible());
 
         // You can add more property assertions here
     }
