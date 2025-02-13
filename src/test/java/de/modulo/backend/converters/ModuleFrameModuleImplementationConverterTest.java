@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ModuleFrameModuleImplementationTest {
+public class ModuleFrameModuleImplementationConverterTest {
 
     @Mock
     ModuleFrameRepository moduleFrameRepository;
@@ -31,6 +31,15 @@ public class ModuleFrameModuleImplementationTest {
 
     @Mock
     ModuleRequirementRepository moduleRequirementRepository;
+
+    @Mock
+    ModuleImplementationConverter moduleImplementationConverter;
+
+    @Mock
+    ModuleRequirementConverter moduleRequirementConverter;
+
+    @Mock
+    ModuleFrameConverter moduleFrameConverter;
 
     @InjectMocks
     private ModuleFrameModuleImplementationConverter moduleFrameModuleImplementationConverter;
