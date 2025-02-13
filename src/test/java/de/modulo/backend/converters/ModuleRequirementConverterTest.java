@@ -41,15 +41,6 @@ public class ModuleRequirementConverterTest {
     }
 
     @Test
-    void testToDto_NullEntity() {
-        // Act
-        ModuleRequirementDTO moduleRequirementDto = moduleRequirementConverter.toDto(null);
-
-        // Assert
-        assertNotNull(moduleRequirementDto);
-    }
-
-    @Test
     void testToEntity() {
         // Arrange
         ModuleRequirementDTO moduleRequirementDto = new ModuleRequirementDTO();

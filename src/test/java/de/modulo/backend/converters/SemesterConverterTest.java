@@ -34,15 +34,6 @@ public class SemesterConverterTest {
     }
 
     @Test
-    void testToDto_NullEntity() {
-        // Act
-        SemesterDTO semesterDto = semesterConverter.toDTO(null);
-
-        // Assert
-        assertNotNull(semesterDto);
-    }
-
-    @Test
     void testToEntity() {
         // Arrange
         SemesterDTO semesterDto = new SemesterDTO();

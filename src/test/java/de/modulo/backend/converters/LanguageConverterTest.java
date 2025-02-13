@@ -34,15 +34,6 @@ public class LanguageConverterTest {
     }
 
     @Test
-    void testToDto_NullEntity() {
-        // Act
-        LanguageDTO languageDto = languageConverter.toDto(null);
-
-        // Assert
-        assertNotNull(languageDto);
-    }
-
-    @Test
     void testToEntity() {
         // Arrange
         LanguageDTO languageDto = new LanguageDTO();

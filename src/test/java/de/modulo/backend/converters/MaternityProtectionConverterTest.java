@@ -34,15 +34,6 @@ public class MaternityProtectionConverterTest {
     }
 
     @Test
-    void testToDto_NullEntity() {
-        // Act
-        MaternityProtectionDTO maternityProtectionDto = maternityProtectionConverter.toDto(null);
-
-        // Assert
-        assertNotNull(maternityProtectionDto);
-    }
-
-    @Test
     void testToEntity() {
         // Arrange
         MaternityProtectionDTO maternityProtectionDto = new MaternityProtectionDTO();

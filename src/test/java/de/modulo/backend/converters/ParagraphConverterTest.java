@@ -41,4 +41,22 @@ public class ParagraphConverterTest {
         assertEquals(paragraphEntity.getText(), paragraphDto.getText());
         assertEquals(paragraphEntity.getSpo().getId(), paragraphDto.getSpoId());
     }
+
+    @Test
+    void testToEntity() {
+        // Arrange
+        ParagraphDTO paragraphDto = new ParagraphDTO();
+        paragraphDto.setId(1L);
+        paragraphDto.setTitle("Title");
+        paragraphDto.setText("Text");
+
+        // Act
+        ParagraphEntity paragraphEntity = paragraphConverter.toEntity(paragraphDto);
+
+        // Assert
+        assertNotNull(paragraphEntity);
+        assertEquals(paragraphDto.getId(), paragraphEntity.getId());
+        assertEquals(paragraphDto.getTitle(), paragraphEntity.getTitle());
+        assertEquals(paragraphDto.getText(), paragraphEntity.getText());
+    }
 }
