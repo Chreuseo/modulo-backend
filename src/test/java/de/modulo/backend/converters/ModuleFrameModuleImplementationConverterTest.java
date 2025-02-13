@@ -79,6 +79,7 @@ public class ModuleFrameModuleImplementationConverterTest {
         assertEquals(moduleFrameModuleImplementationEntity.getModuleRequirement().getName(), moduleFrameModuleImplementationDto.getModuleRequirementDTO().getName());
     }
 
+    @Test
     void testToDto_nullModuleRequirement(){
         // Arrange
         ModuleFrameModuleImplementationEntity moduleFrameModuleImplementationEntity = new ModuleFrameModuleImplementationEntity();
