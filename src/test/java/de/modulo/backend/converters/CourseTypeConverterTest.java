@@ -4,17 +4,17 @@ import de.modulo.backend.dtos.CourseTypeDTO;
 import de.modulo.backend.entities.CourseTypeEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class CourseTypeConverterTest {
 
+    @InjectMocks
     private CourseTypeConverter converter;
-
-    @BeforeEach
-    void setUp() {
-        converter = new CourseTypeConverter();
-    }
 
     @Test
     void testToDto() {

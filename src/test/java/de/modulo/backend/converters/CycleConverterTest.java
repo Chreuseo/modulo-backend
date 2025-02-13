@@ -4,17 +4,17 @@ import de.modulo.backend.dtos.CycleDTO;
 import de.modulo.backend.entities.CycleEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class CycleConverterTest {
 
+    @InjectMocks
     private CycleConverter cycleConverter;
-
-    @BeforeEach
-    void setUp() {
-        cycleConverter = new CycleConverter();
-    }
 
     @Test
     void testToDto() {

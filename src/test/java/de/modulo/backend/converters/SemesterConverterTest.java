@@ -4,18 +4,18 @@ import de.modulo.backend.dtos.SemesterDTO;
 import de.modulo.backend.entities.SemesterEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@ExtendWith(MockitoExtension.class)
 public class SemesterConverterTest {
 
+    @InjectMocks
     private SemesterConverter semesterConverter;
-
-    @BeforeEach
-    void setUp() {
-        semesterConverter = new SemesterConverter();
-    }
 
     @Test
     void testToDto() {
