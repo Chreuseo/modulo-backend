@@ -4,6 +4,7 @@ import de.modulo.backend.converters.ModuleImplementationConverter;
 import de.modulo.backend.dtos.ModuleImplementationDTO;
 import de.modulo.backend.dtos.ModuleImplementationDTOFlat;
 import de.modulo.backend.entities.ModuleImplementationEntity;
+import de.modulo.backend.entities.ModuleImplementationLecturerEntity;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.excpetions.InsufficientPermissionsException;
@@ -150,5 +151,128 @@ public class ModuleImplementationServiceTest {
         verify(moduleImplementationLecturerRepository, times(1)).deleteModuleImplementationLecturerEntitiesByModuleImplementationId(moduleId);
         verify(examTypeModuleImplementationRepository, times(1)).deleteExamTypeModuleImplementationEntitiesByModuleImplementationId(moduleId);
         verify(moduleImplementationRepository, times(1)).deleteById(moduleId);
+    }
+
+    @Test
+    public void testGetAllAssignedModuleImplementations() {
+        // Given
+        Long userId = 1L;
+        ModuleImplementationEntity entity = new ModuleImplementationEntity();
+        ModuleImplementationDTOFlat dtoFlat = new ModuleImplementationDTOFlat();
+
+        when(moduleImplementationRepository.getModuleImplementationEntitiesByResponsibleId(userId)).thenReturn(Collections.singletonList(entity));
+        when(moduleImplementationLecturerRepository.getModuleImplementationLecturerEntitiesByLecturerId(userId)).thenReturn(Collections.emptyList());
+        when(moduleImplementationConverter.toDtoFlat(entity)).thenReturn(dtoFlat);
+
+        // When
+        List<ModuleImplementationDTOFlat> result = service.getAllAssignedModuleImplementations(userId);
+
+        // Then
+        assertEquals(1, result.size());
+        assertEquals(dtoFlat, result.get(0));
+
+        verify(moduleImplementationRepository, times(1)).getModuleImplementationEntitiesByResponsibleId(userId);
+        verify(moduleImplementationLecturerRepository, times(1)).getModuleImplementationLecturerEntitiesByLecturerId(userId);
+        verify(moduleImplementationConverter, times(1)).toDtoFlat(entity);
+    }
+
+    @Test
+    public void testAddModuleImplementationAndSetResponsible() {
+        // Given
+        ModuleImplementationDTOFlat dtoFlat = new ModuleImplementationDTOFlat();
+        UserEntity user = new UserEntity();
+        ModuleImplementationEntity entity = new ModuleImplementationEntity();
+
+        when(moduleImplementationConverter.toEntity(dtoFlat)).thenReturn(entity);
+        when(moduleImplementationRepository.save(entity)).thenReturn(entity);
+        when(moduleImplementationConverter.toDtoFlat(entity)).thenReturn(dtoFlat);
+
+        // When
+        ModuleImplementationDTOFlat result = service.addModuleImplementationAndSetResponsible(dtoFlat, user);
+
+        // Then
+        assertEquals(dtoFlat, result);
+        assertEquals(user, entity.getResponsible());
+
+        verify(moduleImplementationConverter, times(1)).toEntity(dtoFlat);
+        verify(moduleImplementationRepository, times(1)).save(entity);
+        verify(moduleImplementationConverter, times(1)).toDtoFlat(entity);
+    }
+
+    @Test
+    public void testGetModuleImplementationFlatById() {
+        // Given
+        Long moduleId = 1L;
+        ModuleImplementationEntity entity = new ModuleImplementationEntity();
+        ModuleImplementationDTOFlat dtoFlat = new ModuleImplementationDTOFlat();
+
+        when(moduleImplementationRepository.findById(moduleId)).thenReturn(Optional.of(entity));
+        when(moduleImplementationConverter.toDtoFlat(entity)).thenReturn(dtoFlat);
+
+        // When
+        ModuleImplementationDTOFlat result = service.getModuleImplementationFlatById(moduleId);
+
+        // Then
+        assertEquals(dtoFlat, result);
+
+        verify(moduleImplementationRepository, times(1)).findById(moduleId);
+        verify(moduleImplementationConverter, times(1)).toDtoFlat(entity);
+    }
+
+    @Test
+    public void testGetModuleImplementationFlatByIdNotFound() {
+        // Given
+        Long moduleId = 1L;
+
+        when(moduleImplementationRepository.findById(moduleId)).thenReturn(Optional.empty());
+
+        // When & Then
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            service.getModuleImplementationFlatById(moduleId);
+        });
+        assertEquals("Module Implementation not found with id: " + moduleId, exception.getMessage());
+
+        verify(moduleImplementationRepository, times(1)).findById(moduleId);
+    }
+
+    @Test
+    public void testAddLecturerToModuleImplementation() {
+        // Given
+        Long moduleImplementationId = 1L;
+        Long lecturerId = 2L;
+        ModuleImplementationEntity moduleImplementationEntity = new ModuleImplementationEntity();
+        UserEntity lecturer = new UserEntity();
+        ModuleImplementationDTO dto = new ModuleImplementationDTO();
+
+        when(moduleImplementationRepository.findById(moduleImplementationId)).thenReturn(Optional.of(moduleImplementationEntity));
+        when(userRepository.findById(lecturerId)).thenReturn(Optional.of(lecturer));
+        when(moduleImplementationConverter.toDto(moduleImplementationEntity)).thenReturn(dto);
+
+        // When
+        ModuleImplementationDTO result = service.addLecturerToModuleImplementation(moduleImplementationId, lecturerId);
+
+        // Then
+        assertEquals(dto, result);
+
+        verify(moduleImplementationRepository, times(1)).findById(moduleImplementationId);
+        verify(userRepository, times(1)).findById(lecturerId);
+        verify(moduleImplementationLecturerRepository, times(1)).save(any(ModuleImplementationLecturerEntity.class));
+    }
+
+    @Test
+    public void testRemoveLecturerFromModuleImplementation() {
+        // Given
+        Long moduleImplementationId = 1L;
+        Long lecturerId = 2L;
+
+        // When
+        service.removeLecturerFromModuleImplementation(moduleImplementationId, lecturerId);
+
+        // Then
+        ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId id = new ModuleImplementationLecturerEntity.ModuleImplementationLecturerEntityId();
+        id.setModuleImplementation(moduleImplementationId);
+        id.setLecturer(lecturerId);
+
+        verify(moduleImplementationLecturerRepository, times(1)).deleteById(id);
     }
 }
