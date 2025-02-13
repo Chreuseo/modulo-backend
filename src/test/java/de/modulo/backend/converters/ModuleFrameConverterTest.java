@@ -93,6 +93,37 @@ public class ModuleFrameConverterTest {
     }
 
     @Test
+    public void testToDto_ValidEntity_nullValues() {
+        // Arrange
+        ModuleFrameEntity entity = new ModuleFrameEntity();
+        entity.setId(1L);
+        entity.setQuantity(3);
+        entity.setName("ModuleFrame");
+        entity.setSws(4);
+        entity.setWeight(5);
+        entity.setCredits(6);
+
+        SpoEntity spoEntity = new SpoEntity();
+        spoEntity.setId(1L);
+        spoEntity.setName("SPO Name");
+        entity.setSpo(spoEntity);
+
+
+        when(spoConverter.toDtoFlat(spoEntity)).thenReturn(new SpoDTOFlat());
+
+        // Act
+        ModuleFrameDTO dto = moduleFrameConverter.toDto(entity);
+
+        // Assert
+        assertEquals(entity.getId(), dto.getId());
+        assertEquals(entity.getQuantity(), dto.getQuantity());
+        assertEquals(entity.getName(), dto.getName());
+        assertEquals(entity.getSws(), dto.getSws());
+        assertEquals(entity.getWeight(), dto.getWeight());
+        assertEquals(entity.getCredits(), dto.getCredits());
+    }
+
+    @Test
     public void testToEntity_NullDto() {
         ModuleFrameEntity entity = moduleFrameConverter.toEntity(null);
         assertNull(entity);
@@ -124,6 +155,35 @@ public class ModuleFrameConverterTest {
         when(spoRepository.findById(spoDTOFlat.getId())).thenReturn(Optional.of(new SpoEntity()));
         when(sectionRepository.findById(sectionDTO.getId())).thenReturn(Optional.of(new SectionEntity()));
         when(moduleTypeRepository.findById(moduleTypeDTO.getId())).thenReturn(Optional.of(new ModuleTypeEntity()));
+
+        // Act
+        ModuleFrameEntity entity = moduleFrameConverter.toEntity(dto);
+
+        // Assert
+        assertEquals(dto.getId(), entity.getId());
+        assertEquals(dto.getQuantity(), entity.getQuantity());
+        assertEquals(dto.getName(), entity.getName());
+        assertEquals(dto.getSws(), entity.getSws());
+        assertEquals(dto.getWeight(), entity.getWeight());
+        assertEquals(dto.getCredits(), entity.getCredits());
+    }
+
+    @Test
+    public void testToEntity_ValidDto_nullValues() {
+        // Arrange
+        ModuleFrameDTO dto = new ModuleFrameDTO();
+        dto.setId(1L);
+        dto.setQuantity(3);
+        dto.setName("ModuleFrame");
+        dto.setSws(4);
+        dto.setWeight(5);
+        dto.setCredits(6);
+
+        SpoDTOFlat spoDTOFlat = new SpoDTOFlat();
+        spoDTOFlat.setId(1L);
+        dto.setSpoDTOFlat(spoDTOFlat);
+
+        when(spoRepository.findById(spoDTOFlat.getId())).thenReturn(Optional.of(new SpoEntity()));
 
         // Act
         ModuleFrameEntity entity = moduleFrameConverter.toEntity(dto);
