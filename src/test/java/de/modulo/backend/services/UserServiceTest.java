@@ -2,8 +2,11 @@ package de.modulo.backend.services;
 
 import de.modulo.backend.converters.NotificationConverter;
 import de.modulo.backend.converters.UserConverter;
+import de.modulo.backend.dtos.NotificationDTO;
 import de.modulo.backend.dtos.UserDTO;
 import de.modulo.backend.dtos.UserDTOFlat;
+import de.modulo.backend.entities.ModuleImplementationEntity;
+import de.modulo.backend.entities.NotificationEntity;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.ROLE;
 import de.modulo.backend.repositories.*;
@@ -14,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -163,6 +168,11 @@ class UserServiceTest {
         when(moduleImplementationRepository.getModuleImplementationEntitiesByResponsibleId(userId)).thenReturn(Collections.emptyList());
         doNothing().when(userRepository).deleteById(userId);
 
+        ModuleImplementationEntity moduleImplementationEntity = new ModuleImplementationEntity();
+        moduleImplementationEntity.setResponsible(new UserEntity());
+        when(moduleImplementationRepository.getModuleImplementationEntitiesByResponsibleId(any()))
+                .thenReturn(List.of(moduleImplementationEntity));
+
         userService.deleteUser(userId);
 
         verify(userRepository, times(1)).deleteById(userId); // Verify the userRepository method
@@ -184,6 +194,50 @@ class UserServiceTest {
 
         verify(userRepository, times(1)).save(userEntity);
         verify(mailSenderService, times(1)).sendHtmlMail(any(), any(), any());
+    }
+
+    @Test
+    void whenGetNotifications_thenReturnSortedNotificationDTOs() {
+        UserEntity user = new UserEntity();
+        user.setId(1L);
+
+        NotificationEntity notificationEntity = new NotificationEntity();
+        notificationEntity.setId(1L);
+        notificationEntity.setUser(user);
+        notificationEntity.setUnread(true);
+        notificationEntity.setCreatedAt(LocalDateTime.now());
+
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setId(1L);
+        notificationDTO.setUserId(user.getId());
+        notificationDTO.setUnread(true);
+
+        when(notificationRepository.findByUser(user)).thenReturn(Collections.singletonList(notificationEntity));
+        when(notificationConverter.toDto(notificationEntity)).thenReturn(notificationDTO);
+
+        List<NotificationDTO> notifications = userService.getNotifications(user, true);
+
+        assertEquals(1, notifications.size());
+        assertTrue(notifications.get(0).isUnread());
+        verify(notificationRepository, times(1)).saveAll(any()); // Verify saveAll is called
+    }
+
+    @Test
+    void whenChangePassword_thenReturnUpdatedUserDTO() {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(1L);
+        userEntity.setPassword("oldPassword");
+
+        UserDTO updatedUserDTO = new UserDTO();
+        updatedUserDTO.setId(1L);
+
+        when(userRepository.save(userEntity)).thenReturn(userEntity);
+        when(userConverter.toDto(userEntity)).thenReturn(updatedUserDTO);
+
+        UserDTO result = userService.changePassword(userEntity, "newPassword");
+
+        assertEquals(userEntity.getId(), result.getId());
+        verify(userRepository, times(1)).save(userEntity); // Ensure userRepository.save is called
     }
 
     @AfterEach
