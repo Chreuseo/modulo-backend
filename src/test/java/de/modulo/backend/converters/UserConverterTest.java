@@ -47,6 +47,7 @@ public class UserConverterTest {
         // Arrange
         UserEntity userEntity = new UserEntity();
         userEntity.setId(1L);
+        userEntity.setTitle("Prof.");
         userEntity.setFirstName("Max");
         userEntity.setLastName("Mustermann");
         userEntity.setCode("123456");
@@ -58,7 +59,28 @@ public class UserConverterTest {
         // Assert
         assertNotNull(userDTOFlat);
         assertEquals(userEntity.getId(), userDTOFlat.getId());
-        assertEquals(userEntity.getFirstName() + userEntity.getLastName(), userDTOFlat.getName());
+        assertEquals(userEntity.getTitle() + " " + userEntity.getFirstName() + " " + userEntity.getLastName(), userDTOFlat.getName());
+        assertEquals(userEntity.getCode(), userDTOFlat.getCode());
+        assertEquals(userEntity.getMail(), userDTOFlat.getMail());
+    }
+
+    @Test
+    void testToDtoFlat_noTitle(){
+        // Arrange
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(1L);
+        userEntity.setFirstName("Max");
+        userEntity.setLastName("Mustermann");
+        userEntity.setCode("123456");
+        userEntity.setMail("test@test.de");
+
+        // Act
+        UserDTOFlat userDTOFlat = userConverter.toDtoFlat(userEntity);
+
+        // Assert
+        assertNotNull(userDTOFlat);
+        assertEquals(userEntity.getId(), userDTOFlat.getId());
+        assertEquals(userEntity.getFirstName() + " " + userEntity.getLastName(), userDTOFlat.getName());
         assertEquals(userEntity.getCode(), userDTOFlat.getCode());
         assertEquals(userEntity.getMail(), userDTOFlat.getMail());
     }
