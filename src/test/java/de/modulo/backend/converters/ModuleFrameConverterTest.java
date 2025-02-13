@@ -24,6 +24,10 @@ public class ModuleFrameConverterTest {
     @Mock
     ModuleTypeConverter moduleTypeConverter;
     @Mock
+    CourseTypeConverter courseTypeConverter;
+    @Mock
+    ExamTypeConverter examTypeConverter;
+    @Mock
     SpoConverter spoConverter;
 
     @Mock
@@ -32,6 +36,10 @@ public class ModuleFrameConverterTest {
     SectionRepository sectionRepository;
     @Mock
     ModuleTypeRepository moduleTypeRepository;
+    @Mock
+    CourseTypeModuleFrameRepository courseTypeModuleFrameRepository;
+    @Mock
+    ExamTypeModuleFrameRepository examTypeModuleFrameRepository;
 
     @InjectMocks
     ModuleFrameConverter moduleFrameConverter;
