@@ -1,11 +1,13 @@
 package de.modulo.backend.services.data;
 
+import de.modulo.backend.converters.CourseTypeConverter;
+import de.modulo.backend.converters.ExamTypeConverter;
 import de.modulo.backend.converters.ModuleFrameConverter;
+import de.modulo.backend.dtos.CourseTypeDTO;
+import de.modulo.backend.dtos.ExamTypeDTO;
 import de.modulo.backend.dtos.ModuleFrameDTO;
 import de.modulo.backend.dtos.ModuleFrameSetDTO;
-import de.modulo.backend.entities.ModuleFrameEntity;
-import de.modulo.backend.entities.SectionEntity;
-import de.modulo.backend.entities.ModuleTypeEntity;
+import de.modulo.backend.entities.*;
 import de.modulo.backend.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +15,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,6 +45,12 @@ class ModuleFrameServiceTest {
 
     @Mock
     private CourseTypeModuleFrameRepository courseTypeModuleFrameRepository;
+
+    @Mock
+    private CourseTypeConverter courseTypeConverter;
+
+    @Mock
+    private ExamTypeConverter examTypeConverter;
 
     @BeforeEach
     void setUp() {
@@ -124,13 +134,70 @@ class ModuleFrameServiceTest {
     }
 
     @Test
-    void testUpdateModuleFrame() {
+    void testUpdateModuleFrame1() {
         ModuleFrameDTO moduleFrameDTO = new ModuleFrameDTO();
         moduleFrameDTO.setId(1L);
         moduleFrameDTO.setName("Module Frame Updated");
 
         ModuleFrameEntity existingEntity = new ModuleFrameEntity();
         existingEntity.setId(1L);
+
+        when(moduleFrameRepository.existsById(moduleFrameDTO.getId())).thenReturn(true);
+        when(moduleFrameConverter.toEntity(moduleFrameDTO)).thenReturn(existingEntity);
+        when(moduleFrameRepository.save(existingEntity)).thenReturn(existingEntity);
+        when(moduleFrameConverter.toDto(existingEntity)).thenReturn(moduleFrameDTO);
+
+        ModuleFrameDTO result = service.updateModuleFrame(moduleFrameDTO);
+
+        assertNotNull(result);
+        assertEquals("Module Frame Updated", result.getName());
+        verify(moduleFrameRepository, times(1)).save(existingEntity);
+    }
+
+    @Test
+    void testUpdateModuleFrame2() {
+        ModuleFrameDTO moduleFrameDTO = new ModuleFrameDTO();
+        moduleFrameDTO.setId(1L);
+        moduleFrameDTO.setName("Module Frame Updated");
+
+        ModuleFrameEntity existingEntity = new ModuleFrameEntity();
+        existingEntity.setId(1L);
+
+        when(moduleFrameRepository.existsById(moduleFrameDTO.getId())).thenReturn(true);
+        when(moduleFrameConverter.toEntity(moduleFrameDTO)).thenReturn(existingEntity);
+        when(moduleFrameRepository.save(existingEntity)).thenReturn(existingEntity);
+        when(moduleFrameConverter.toDto(existingEntity)).thenReturn(moduleFrameDTO);
+
+        List<CourseTypeDTO> courseTypeDTOList = new ArrayList<>();
+        CourseTypeDTO courseTypeDTO = new CourseTypeDTO();
+        courseTypeDTO.setId(1L);
+        courseTypeDTO.setEnabled(true);
+        courseTypeDTO.setName("Course Type 1");
+        courseTypeDTO.setAbbreviation("CT1");
+        courseTypeDTOList.add(courseTypeDTO);
+
+        CourseTypeEntity courseTypeEntity = new CourseTypeEntity();
+        courseTypeEntity.setId(1L);
+        courseTypeEntity.setName("Course Type 1");
+        courseTypeEntity.setAbbreviation("CT1");
+        when(courseTypeConverter.toEntity(courseTypeDTO)).thenReturn(courseTypeEntity);
+
+        List<ExamTypeDTO> examTypeDTOList = new ArrayList<>();
+        ExamTypeDTO examTypeDTO = new ExamTypeDTO();
+        examTypeDTO.setId(1L);
+        examTypeDTO.setEnabled(true);
+        examTypeDTO.setName("Exam Type 1");
+        examTypeDTO.setAbbreviation("ET1");
+        examTypeDTOList.add(examTypeDTO);
+
+        ExamTypeEntity examTypeEntity = new ExamTypeEntity();
+        examTypeEntity.setId(1L);
+        examTypeEntity.setName("Exam Type 1");
+        examTypeEntity.setAbbreviation("ET1");
+        when(examTypeConverter.toEntity(examTypeDTO)).thenReturn(examTypeEntity);
+
+        moduleFrameDTO.setCourseTypes(courseTypeDTOList);
+        moduleFrameDTO.setExamTypes(examTypeDTOList);
 
         when(moduleFrameRepository.existsById(moduleFrameDTO.getId())).thenReturn(true);
         when(moduleFrameConverter.toEntity(moduleFrameDTO)).thenReturn(existingEntity);
