@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,7 +44,8 @@ public class NotificationConverterTest {
         assertEquals(notificationEntity.getTitle(), notificationDto.getTitle());
         assertEquals(notificationEntity.getMessage(), notificationDto.getMessage());
         assertEquals(notificationEntity.isUnread(), notificationDto.isUnread());
-        assertEquals(notificationEntity.getCreatedAt().toString(), notificationDto.getCreatedAt());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        assertEquals(notificationEntity.getCreatedAt().format(formatter), notificationDto.getCreatedAt());
         assertEquals(notificationEntity.getUser().getId(), notificationDto.getUserId());
     }
 }
