@@ -11,8 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +46,15 @@ public class ModuleRequirementConverterTest {
     }
 
     @Test
+    void testToDto_NullEntity() {
+        // Act
+        ModuleRequirementDTO moduleRequirementDto = moduleRequirementConverter.toDto(null);
+
+        // Assert
+        assertNull(moduleRequirementDto);
+    }
+
+    @Test
     void testToEntity() {
         // Arrange
         ModuleRequirementDTO moduleRequirementDto = new ModuleRequirementDTO();
@@ -72,5 +80,14 @@ public class ModuleRequirementConverterTest {
         assertEquals(moduleRequirementDto.getName(), moduleRequirementEntity.getName());
         assertEquals(moduleRequirementDto.getSpoId(), moduleRequirementEntity.getSpo().getId());
         assertEquals(mockSpoEntity.getName(), moduleRequirementEntity.getSpo().getName());
+    }
+
+    @Test
+    void testToEntity_NullDto() {
+        // Act
+        ModuleRequirementEntity moduleRequirementEntity = moduleRequirementConverter.toEntity(null);
+
+        // Assert
+        assertNull(moduleRequirementEntity);
     }
 }

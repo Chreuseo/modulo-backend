@@ -11,8 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,6 +48,15 @@ public class ParagraphConverterTest {
     }
 
     @Test
+    void testToDto_NullEntity() {
+        // Act
+        ParagraphDTO paragraphDto = paragraphConverter.toDto(null);
+
+        // Assert
+        assertNull(paragraphDto);
+    }
+
+    @Test
     void testToEntity() {
         // Arrange
         ParagraphDTO paragraphDto = new ParagraphDTO();
@@ -76,5 +84,14 @@ public class ParagraphConverterTest {
         assertEquals(paragraphDto.getText(), paragraphEntity.getText());
         assertEquals(paragraphDto.getSpoId(), paragraphEntity.getSpo().getId());
         assertEquals(mockSpoEntity.getName(), paragraphEntity.getSpo().getName());
+    }
+
+    @Test
+    void testToEntity_NullDto() {
+        // Act
+        ParagraphEntity paragraphEntity = paragraphConverter.toEntity(null);
+
+        // Assert
+        assertNull(paragraphEntity);
     }
 }

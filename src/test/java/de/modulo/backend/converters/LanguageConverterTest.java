@@ -8,8 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class LanguageConverterTest {
@@ -34,6 +33,15 @@ public class LanguageConverterTest {
     }
 
     @Test
+    void testToDto_NullEntity() {
+        // Act
+        LanguageDTO languageDto = languageConverter.toDto(null);
+
+        // Assert
+        assertNull(languageDto);
+    }
+
+    @Test
     void testToEntity() {
         // Arrange
         LanguageDTO languageDto = new LanguageDTO();
@@ -47,5 +55,14 @@ public class LanguageConverterTest {
         assertNotNull(languageEntity);
         assertEquals(languageDto.getId(), languageEntity.getId());
         assertEquals(languageDto.getName(), languageEntity.getName());
+    }
+
+    @Test
+    void testToEntity_NullDto() {
+        // Act
+        LanguageEntity languageEntity = languageConverter.toEntity(null);
+
+        // Assert
+        assertNull(languageEntity);
     }
 }

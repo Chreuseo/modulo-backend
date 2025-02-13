@@ -8,8 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class DurationConverterTest {
@@ -33,6 +32,15 @@ public class DurationConverterTest {
         assertEquals(durationEntity.getName(), durationDto.getName());
     }
 
+    @Test
+    void testToDto_NullEntity() {
+        // Act
+        DurationDTO durationDto = durationConverter.toDto(null);
+
+        // Assert
+        assertNull(durationDto);
+    }
+
 
     @Test
     void testToEntity() {
@@ -48,5 +56,14 @@ public class DurationConverterTest {
         assertNotNull(durationEntity);
         assertEquals(durationDto.getId(), durationEntity.getId());
         assertEquals(durationDto.getName(), durationEntity.getName());
+    }
+
+    @Test
+    void testToEntity_NullDto() {
+        // Act
+        DurationEntity durationEntity = durationConverter.toEntity(null);
+
+        // Assert
+        assertNull(durationEntity);
     }
 }
