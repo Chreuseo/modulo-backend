@@ -43,10 +43,6 @@ public class ModuleTypeControllerTest {
     @Mock
     ModuleTypeService moduleTypeService;
 
-    @BeforeEach
-    void setUp() throws InsufficientPermissionsException, NotifyException {
-    }
-
     @Test
     void testCreateModuleType() throws InsufficientPermissionsException {
         // Arrange
