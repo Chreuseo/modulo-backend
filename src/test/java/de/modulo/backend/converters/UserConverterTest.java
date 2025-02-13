@@ -1,6 +1,8 @@
 package de.modulo.backend.converters;
 
 import de.modulo.backend.dtos.UserDTO;
+import de.modulo.backend.dtos.UserDTOAuth;
+import de.modulo.backend.dtos.UserDTOFlat;
 import de.modulo.backend.entities.UserEntity;
 import de.modulo.backend.enums.ROLE;
 import org.junit.jupiter.api.Test;
@@ -8,8 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserConverterTest {
@@ -42,6 +43,36 @@ public class UserConverterTest {
     }
 
     @Test
+    void testToDtoFlat() {
+        // Arrange
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(1L);
+        userEntity.setFirstName("Max");
+        userEntity.setLastName("Mustermann");
+        userEntity.setCode("123456");
+        userEntity.setMail("tes@test.de");
+
+        // Act
+        UserDTOFlat userDTOFlat = userConverter.toDtoFlat(userEntity);
+
+        // Assert
+        assertNotNull(userDTOFlat);
+        assertEquals(userEntity.getId(), userDTOFlat.getId());
+        assertEquals(userEntity.getFirstName() + userEntity.getLastName(), userDTOFlat.getName());
+        assertEquals(userEntity.getCode(), userDTOFlat.getCode());
+        assertEquals(userEntity.getMail(), userDTOFlat.getMail());
+    }
+
+    @Test
+    void testToDtoFlat_nullEntity(){
+        // Act
+        UserDTOFlat userDTOFlat = userConverter.toDtoFlat(null);
+
+        // Assert
+        assertNull(userDTOFlat);
+    }
+
+    @Test
     void testToEntity() {
         // Arrange
         UserDTO userDto = new UserDTO();
@@ -63,5 +94,39 @@ public class UserConverterTest {
         assertEquals(userDto.getCode(), userEntity.getCode());
         assertEquals(userDto.getMail(), userEntity.getMail());
         assertEquals(userDto.getRole(), userEntity.getRole().name());
+    }
+
+    @Test
+    void testToEntity_fromUserDtoAuth(){
+        // Arrange
+        UserDTOAuth userDTOAuth = new UserDTOAuth();
+        userDTOAuth.setMail("test@test.de");
+        userDTOAuth.setPassword("password");
+
+        // Act
+        UserEntity userEntity = userConverter.toEntity(userDTOAuth);
+
+        // Assert
+        assertNotNull(userEntity);
+        assertEquals(userDTOAuth.getMail(), userEntity.getMail());
+        assertEquals(userDTOAuth.getPassword(), userEntity.getPassword());
+    }
+
+    @Test
+    void testToEntity_NullDto() {
+        // Act
+        UserEntity userEntity = userConverter.toEntity((UserDTO) null);
+
+        // Assert
+        assertNull(userEntity);
+    }
+
+    @Test
+    void testToEntity_NullDtoAuth() {
+        // Act
+        UserEntity userEntity = userConverter.toEntity((UserDTOAuth) null);
+
+        // Assert
+        assertNull(userEntity);
     }
 }

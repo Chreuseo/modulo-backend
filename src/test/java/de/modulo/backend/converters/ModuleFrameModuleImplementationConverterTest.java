@@ -122,8 +122,6 @@ public class ModuleFrameModuleImplementationConverterTest {
         mockModuleImplementationDTOFlat.setName("Module Implementation");
         when(moduleImplementationConverter.toDtoFlat(moduleImplementationEntity)).thenReturn(mockModuleImplementationDTOFlat);
 
-        ModuleRequirementDTO mockModuleRequirementDTO = new ModuleRequirementDTO();
-
         // Act
         ModuleFrameModuleImplementationDTO moduleFrameModuleImplementationDto = moduleFrameModuleImplementationConverter.toDto(moduleFrameModuleImplementationEntity);
 
@@ -241,6 +239,15 @@ public class ModuleFrameModuleImplementationConverterTest {
         assertEquals(moduleFrameModuleImplementationDTO.getModuleImplementationDTOFlat().getId(), moduleFrameModuleImplementationEntity.getModuleImplementation().getId());
         assertEquals(moduleFrameModuleImplementationDTO.getModuleImplementationDTOFlat().getName(), moduleFrameModuleImplementationEntity.getModuleImplementation().getName());
         assertNull(moduleFrameModuleImplementationEntity.getModuleRequirement());
+    }
+
+    @Test
+    void testToEntity_NullDto() {
+        // Act
+        ModuleFrameModuleImplementationEntity moduleFrameModuleImplementationEntity = moduleFrameModuleImplementationConverter.toEntity(null);
+
+        // Assert
+        assertNull(moduleFrameModuleImplementationEntity);
     }
 }
 
