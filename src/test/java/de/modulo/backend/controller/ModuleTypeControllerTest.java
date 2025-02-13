@@ -45,16 +45,14 @@ public class ModuleTypeControllerTest {
 
     @BeforeEach
     void setUp() throws InsufficientPermissionsException, NotifyException {
-        // Mocking the ValidatePrivilegesService methods
-        //doNothing().when(validatePrivilegesService).validateGeneralPrivileges(any(), any(), any());
-        doNothing().when(validatePrivilegesService).validateSpoSpecificPrivileges(any(), any(), any(), any());
-        //doNothing().when(validatePrivilegesService).validateModuleSpecificPrivileges(any(), any(), any(), any());
-        //doNothing().when(validatePrivilegesService).validateSpoOrModuleSpecificPrivileges(any(), any(), any(), any(), any());
     }
 
     @Test
-    void testCreateModuleType() {
+    void testCreateModuleType() throws InsufficientPermissionsException {
         // Arrange
+
+        doNothing().when(validatePrivilegesService).validateSpoSpecificPrivileges(any(), any(), any(), any());
+
         ModuleTypeDTO moduleTypeDTO = new ModuleTypeDTO();
         moduleTypeDTO.setId(1L);
         moduleTypeDTO.setIndex(1);
@@ -69,8 +67,11 @@ public class ModuleTypeControllerTest {
     }
 
     @Test
-    void testDeleteModuleType() {
+    void testDeleteModuleType() throws InsufficientPermissionsException {
         // Arrange
+
+        doNothing().when(validatePrivilegesService).validateSpoSpecificPrivileges(any(), any(), any(), any());
+
         Long id = 1L;
         ModuleTypeEntity mockModuleTypeEntity = new ModuleTypeEntity();
         mockModuleTypeEntity.setId(id);
@@ -83,5 +84,44 @@ public class ModuleTypeControllerTest {
         // Assert
         verify(moduleTypeService).delete(any());
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void testCreateModuleType_insufficientPermission() throws InsufficientPermissionsException {
+        // Arrange
+        doThrow(new InsufficientPermissionsException("")).when(validatePrivilegesService).validateSpoSpecificPrivileges(any(), any(), any(), any());
+
+        ModuleTypeDTO moduleTypeDTO = new ModuleTypeDTO();
+        moduleTypeDTO.setId(1L);
+        moduleTypeDTO.setIndex(1);
+        moduleTypeDTO.setName("Test");
+        moduleTypeDTO.setSpoId(1L);
+
+        // Act
+        ResponseEntity<ModuleTypeDTO> response = moduleTypeController.createModuleType(moduleTypeDTO, mockRequest);
+
+        // Assert
+        verify(moduleTypeService, never()).add(any());
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void testDeleteModuleType_insufficientPermission() throws InsufficientPermissionsException {
+        // Arrange
+        doThrow(new InsufficientPermissionsException("")).when(validatePrivilegesService).validateSpoSpecificPrivileges(any(), any(), any(), any());
+
+        Long id = 1L;
+        ModuleTypeEntity mockModuleTypeEntity = new ModuleTypeEntity();
+        mockModuleTypeEntity.setId(id);
+        mockModuleTypeEntity.setSpo(new SpoEntity());
+        mockModuleTypeEntity.getSpo().setId(1L);
+        when(moduleTypeRepository.findById(id)).thenReturn(Optional.of(mockModuleTypeEntity));
+
+        // Act
+        ResponseEntity<Void> response = moduleTypeController.deleteModuleType(id, mockRequest);
+
+        // Assert
+        verify(moduleTypeService, never()).delete(any());
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
 }
