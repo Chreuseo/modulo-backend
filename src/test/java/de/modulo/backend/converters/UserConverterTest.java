@@ -50,7 +50,7 @@ public class UserConverterTest {
         userEntity.setFirstName("Max");
         userEntity.setLastName("Mustermann");
         userEntity.setCode("123456");
-        userEntity.setMail("tes@test.de");
+        userEntity.setMail("test@test.de");
 
         // Act
         UserDTOFlat userDTOFlat = userConverter.toDtoFlat(userEntity);

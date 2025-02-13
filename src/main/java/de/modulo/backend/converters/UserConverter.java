@@ -52,7 +52,7 @@ public class UserConverter {
         }
         UserDTOFlat userDTOFlat = new UserDTOFlat();
         userDTOFlat.setId(userEntity.getId());
-        userDTOFlat.setName(userEntity.getTitle() + " " + userEntity.getFirstName() + " " + userEntity.getLastName());
+        userDTOFlat.setName(userEntity.getTitle() != null ? userEntity.getTitle() + " " : " " + userEntity.getFirstName() + " " + userEntity.getLastName());
         userDTOFlat.setMail(userEntity.getMail());
         userDTOFlat.setCode(userEntity.getCode());
         return userDTOFlat;
