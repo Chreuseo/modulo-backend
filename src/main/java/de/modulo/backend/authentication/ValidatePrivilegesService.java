@@ -289,9 +289,9 @@ public class ValidatePrivilegesService {
                         switch (privileges){
                             case DELETE -> throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
                             case UPDATE -> {
-                                if (!isResponsible) {
+                                if (!isResponsible && !isLecturer) {
                                     throw new InsufficientPermissionsException("You do not have the required permissions to access modules");
-                                } else if (isLecturer) {
+                                } else if (!isResponsible && isLecturer) {
                                     List<UserEntity> notifyUsers = new ArrayList<>();
                                     notifyUsers.add(moduleImplementationEntity.getResponsible());
                                     throw new NotifyException(notifyService,
