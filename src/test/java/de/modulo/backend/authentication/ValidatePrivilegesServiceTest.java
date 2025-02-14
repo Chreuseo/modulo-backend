@@ -1314,4 +1314,113 @@ public class ValidatePrivilegesServiceTest {
         assertDoesNotThrow(() -> validatePrivilegesService.validateModuleSpecificPrivileges(ENTITY_TYPE.MODULE_FRAME_MODULE_IMPLEMENTATION, PRIVILEGES.READ, sessionToken, 1L));
 
     }
+
+    @Test
+    void testValidateSpoOrModuleSpecificPrivileges_SpoAdmin_ModuleFrameModuleImplementation_InsufficientPermissions(){
+        // Arrange
+        String sessionToken = UUID.randomUUID().toString();
+        when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.SPO_ADMIN);
+        when(moduleImplementationRepository.findById(1L)).thenReturn(Optional.of(new ModuleImplementationEntity()));
+
+        // Act and Assert
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.MODULE_FRAME_MODULE_IMPLEMENTATION, PRIVILEGES.DELETE, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.MODULE_FRAME_MODULE_IMPLEMENTATION, PRIVILEGES.UPDATE, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.MODULE_FRAME_MODULE_IMPLEMENTATION, PRIVILEGES.ADD, sessionToken, 1L, 1L));
+    }
+
+    @Test
+    void testValidateSpoOrModuleSpecificPrivileges_SpoAdmin_ModuleFrameModuleImplementation_ModuleImplementationResponsible(){
+        // Arrange
+        // Arrange
+        String sessionToken = UUID.randomUUID().toString();
+        when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.SPO_ADMIN);
+        when(sessionService.getUserIdBySessionId(UUID.fromString(sessionToken))).thenReturn(1L);
+        ModuleImplementationEntity module = new ModuleImplementationEntity();
+        module.setResponsible(new UserEntity());
+        module.getResponsible().setId(1L);
+        when(moduleImplementationRepository.findById(1L)).thenReturn(Optional.of(module));
+
+        // Act and Assert
+        assertDoesNotThrow(() -> validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.MODULE_FRAME_MODULE_IMPLEMENTATION, PRIVILEGES.DELETE, sessionToken, 1L, 1L));
+        assertDoesNotThrow(() -> validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.MODULE_FRAME_MODULE_IMPLEMENTATION, PRIVILEGES.UPDATE, sessionToken, 1L, 1L));
+        assertDoesNotThrow(() -> validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.MODULE_FRAME_MODULE_IMPLEMENTATION, PRIVILEGES.ADD, sessionToken, 1L, 1L));
+
+    }
+
+    @Test
+    void testValidateSpoOrModuleSpecificPrivileges_SpoAdmin_Documents_InsufficientPermissions(){
+        // Arrange
+        String sessionToken = UUID.randomUUID().toString();
+        when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.SPO_ADMIN);
+        when(moduleImplementationRepository.findById(1L)).thenReturn(Optional.of(new ModuleImplementationEntity()));
+
+        // Act and Assert
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.DOCUMENT, PRIVILEGES.DELETE, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.DOCUMENT, PRIVILEGES.UPDATE, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.DOCUMENT, PRIVILEGES.ADD, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.DOCUMENT, PRIVILEGES.READ, sessionToken, 1L, 1L));
+    }
+
+    @Test
+    void testValidateSpoOrModuleSpecificPrivileges_SpoAdmin_User_InsufficientPermissions(){
+        // Arrange
+        String sessionToken = UUID.randomUUID().toString();
+        when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.SPO_ADMIN);
+        when(moduleImplementationRepository.findById(1L)).thenReturn(Optional.of(new ModuleImplementationEntity()));
+
+        // Act and Assert
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.USER, PRIVILEGES.DELETE, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.USER, PRIVILEGES.UPDATE, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.USER, PRIVILEGES.ADD, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.USER, PRIVILEGES.READ_DETAILS, sessionToken, 1L, 1L));
+        assertDoesNotThrow(() -> validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.USER, PRIVILEGES.READ, sessionToken, 1L, 1L));
+    }
+
+    @Test
+    void testValidateSpoOrModuleSpecificPrivileges_User_Documents_InsufficientPermissions(){
+        // Arrange
+        String sessionToken = UUID.randomUUID().toString();
+        when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.USER);
+        when(moduleImplementationRepository.findById(1L)).thenReturn(Optional.of(new ModuleImplementationEntity()));
+
+        // Act and Assert
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.DOCUMENT, PRIVILEGES.DELETE, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.DOCUMENT, PRIVILEGES.UPDATE, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.DOCUMENT, PRIVILEGES.ADD, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.DOCUMENT, PRIVILEGES.READ, sessionToken, 1L, 1L));
+    }
+
+    @Test
+    void testValidateSpoOrModuleSpecificPrivileges_User_User_InsufficientPermissions(){
+        // Arrange
+        String sessionToken = UUID.randomUUID().toString();
+        when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.USER);
+        when(moduleImplementationRepository.findById(1L)).thenReturn(Optional.of(new ModuleImplementationEntity()));
+
+        // Act and Assert
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.USER, PRIVILEGES.DELETE, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.USER, PRIVILEGES.UPDATE, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.USER, PRIVILEGES.ADD, sessionToken, 1L, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.USER, PRIVILEGES.READ_DETAILS, sessionToken, 1L, 1L));
+        assertDoesNotThrow(() -> validatePrivilegesService.validateSpoOrModuleSpecificPrivileges(ENTITY_TYPE.USER, PRIVILEGES.READ, sessionToken, 1L, 1L));
+    }
 }
