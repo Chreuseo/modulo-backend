@@ -794,7 +794,6 @@ public class ValidatePrivilegesServiceTest {
     @Test
     void testValidateSpoSpecificPrivileges_SpoAdmin_Document_InsufficientPermissions(){
         // Arrange
-        // Arrange
         String sessionToken = UUID.randomUUID().toString();
         when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.SPO_ADMIN);
         when(spoRepository.findById(any())).thenReturn(Optional.of(new SpoEntity()));
@@ -813,7 +812,6 @@ public class ValidatePrivilegesServiceTest {
     @Test
     void testValidateSpoSpecificPrivileges_SpoAdmin_ModuleFrameModuleImplementation_InsufficientPermissions(){
         // Arrange
-        // Arrange
         String sessionToken = UUID.randomUUID().toString();
         when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.SPO_ADMIN);
         when(spoRepository.findById(any())).thenReturn(Optional.of(new SpoEntity()));
@@ -830,7 +828,6 @@ public class ValidatePrivilegesServiceTest {
     @Test
     void testValidateSpoSpecificPrivileges_SpoAdmin_ModuleFrameModuleImplementation_ShouldPass() throws InsufficientPermissionsException {
         // Arrange
-        // Arrange
         String sessionToken = UUID.randomUUID().toString();
         when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.SPO_ADMIN);
         when(spoRepository.findById(any())).thenReturn(Optional.of(new SpoEntity()));
@@ -845,7 +842,6 @@ public class ValidatePrivilegesServiceTest {
     @Test
     void testValidateSpoSpecificPrivileges_SpoAdmin_User_InsufficientPermissions(){
         // Arrange
-        // Arrange
         String sessionToken = UUID.randomUUID().toString();
         when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.SPO_ADMIN);
         when(spoRepository.findById(any())).thenReturn(Optional.of(new SpoEntity()));
@@ -857,5 +853,81 @@ public class ValidatePrivilegesServiceTest {
                 validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.USER, PRIVILEGES.UPDATE, sessionToken, 1L));
         assertThrows(InsufficientPermissionsException.class, () ->
                 validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.USER, PRIVILEGES.ADD, sessionToken, 1L));
+    }
+
+    @Test
+    void testValidateSpoSpecificPrivileges_SpoAdmin_SpoSettings_InsufficientPermissions(){
+        // Arrange
+        String sessionToken = UUID.randomUUID().toString();
+        when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.SPO_ADMIN);
+        when(spoRepository.findById(any())).thenReturn(Optional.of(new SpoEntity()));
+
+        // Act and Assert
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.SPO_SETTINGS, PRIVILEGES.DELETE, sessionToken, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.SPO_SETTINGS, PRIVILEGES.UPDATE, sessionToken, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.SPO_SETTINGS, PRIVILEGES.ADD, sessionToken, 1L));
+    }
+
+    @Test
+    void testValidateSpoSpecificPrivileges_SpoAdmin_SpoSettings_ShouldPass() throws InsufficientPermissionsException {
+        // Arrange
+        String sessionToken = UUID.randomUUID().toString();
+        when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.SPO_ADMIN);
+        when(spoRepository.findById(any())).thenReturn(Optional.of(new SpoEntity()));
+        when(spoResponsibleUserRepository.existsBySpoIdAndUserId(any(), any())).thenReturn(true);
+
+        // Act and Assert
+        validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.SPO_SETTINGS, PRIVILEGES.DELETE, sessionToken, 1L);
+        validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.SPO_SETTINGS, PRIVILEGES.UPDATE, sessionToken, 1L);
+        validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.SPO_SETTINGS, PRIVILEGES.ADD, sessionToken, 1L);
+        validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.SPO_SETTINGS, PRIVILEGES.READ, sessionToken, 1L);
+    }
+
+    @Test
+    void testValidateSpoSpecificPrivileges_SpoAdmin_GeneralSettings_InsufficientPermissions(){
+        // Arrange
+        String sessionToken = UUID.randomUUID().toString();
+        when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.SPO_ADMIN);
+        when(spoRepository.findById(any())).thenReturn(Optional.of(new SpoEntity()));
+
+        // Act and Assert
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.GENERAL_SETTINGS, PRIVILEGES.DELETE, sessionToken, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.GENERAL_SETTINGS, PRIVILEGES.UPDATE, sessionToken, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.GENERAL_SETTINGS, PRIVILEGES.ADD, sessionToken, 1L));
+    }
+
+    @Test
+    void testValidateSpoSpecificPrivileges_User_Module_InsufficientPermissions(){
+        // Arrange
+        String sessionToken = UUID.randomUUID().toString();
+        when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.USER);
+        when(spoRepository.findById(any())).thenReturn(Optional.of(new SpoEntity()));
+
+        // Act and Assert
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.MODULE, PRIVILEGES.DELETE, sessionToken, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.MODULE, PRIVILEGES.UPDATE, sessionToken, 1L));
+        assertThrows(InsufficientPermissionsException.class, () ->
+                validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.MODULE, PRIVILEGES.ADD, sessionToken, 1L));
+    }
+
+    @Test
+    void testValidateSpoSpecificPrivileges_User_Module_ShouldPass() throws InsufficientPermissionsException {
+        // Arrange
+        String sessionToken = UUID.randomUUID().toString();
+        when(sessionService.getRoleBySessionId(UUID.fromString(sessionToken))).thenReturn(ROLE.USER);
+        when(spoRepository.findById(any())).thenReturn(Optional.of(new SpoEntity()));
+        when(spoResponsibleUserRepository.existsBySpoIdAndUserId(any(), any())).thenReturn(true);
+
+        // Act and Assert
+        validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.MODULE, PRIVILEGES.UPDATE, sessionToken, 1L);
+        validatePrivilegesService.validateSpoSpecificPrivileges(ENTITY_TYPE.MODULE, PRIVILEGES.READ, sessionToken, 1L);
     }
 }
