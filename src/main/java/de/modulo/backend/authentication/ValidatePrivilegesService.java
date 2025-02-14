@@ -468,10 +468,8 @@ public class ValidatePrivilegesService {
                     case MODULE_FRAME_MODULE_IMPLEMENTATION -> {
                         switch (privileges) {
                             case ADD, UPDATE, DELETE -> {
-                                if (!isModuleResponsible) {
+                                if (isModuleResponsible) {
                                     if (!isSpoResponsible) {
-                                        throw new InsufficientPermissionsException("You do not have the required permissions to access module frame module implementations");
-                                    } else {
                                         List<UserEntity> notifyUsers = new ArrayList<>();
                                         notifyUsers.add(moduleImplementationEntity.getResponsible());
                                         throw new NotifyException(notifyService,
@@ -481,7 +479,8 @@ public class ValidatePrivilegesService {
                                                 moduleImplementationEntity,
                                                 spoRepository.findById(spoId).orElseThrow());
                                     }
-
+                                } else {
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to access module frame module implementations");
                                 }
                             }
                         }
