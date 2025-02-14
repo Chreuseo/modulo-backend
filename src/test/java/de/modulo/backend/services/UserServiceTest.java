@@ -217,13 +217,25 @@ class UserServiceTest {
         notificationEntity3.setUnread(false);
         notificationEntity3.setCreatedAt(LocalDateTime.now().minusDays(1));
 
-        NotificationDTO notificationDTO = new NotificationDTO();
-        notificationDTO.setId(1L);
-        notificationDTO.setUserId(user.getId());
-        notificationDTO.setUnread(true);
+        NotificationDTO notificationDTO1 = new NotificationDTO();
+        notificationDTO1.setId(1L);
+        notificationDTO1.setUserId(user.getId());
+        notificationDTO1.setUnread(true);
+
+        NotificationDTO notificationDTO2 = new NotificationDTO();
+        notificationDTO2.setId(2L);
+        notificationDTO2.setUserId(user.getId());
+        notificationDTO2.setUnread(true);
+
+        NotificationDTO notificationDTO3 = new NotificationDTO();
+        notificationDTO3.setId(3L);
+        notificationDTO3.setUserId(user.getId());
+        notificationDTO3.setUnread(false);
 
         when(notificationRepository.findByUser(user)).thenReturn(List.of(notificationEntity1, notificationEntity2, notificationEntity3));
-        when(notificationConverter.toDto(notificationEntity1)).thenReturn(notificationDTO);
+        when(notificationConverter.toDto(notificationEntity1)).thenReturn(notificationDTO1);
+        when(notificationConverter.toDto(notificationEntity2)).thenReturn(notificationDTO2);
+        when(notificationConverter.toDto(notificationEntity3)).thenReturn(notificationDTO3);
 
         List<NotificationDTO> notifications = userService.getNotifications(user, true);
 
