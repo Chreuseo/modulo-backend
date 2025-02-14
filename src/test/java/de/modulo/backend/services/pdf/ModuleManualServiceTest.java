@@ -65,6 +65,16 @@ public class ModuleManualServiceTest {
     public void testGenerateModuleManual() {
         // Mock repository responses
         when(spoRepository.findById(1L)).thenReturn(Optional.of(spoEntity));
+        ModuleFrameModuleImplementationEntity moduleFrameModuleImplementationEntity = new ModuleFrameModuleImplementationEntity();
+        moduleFrameModuleImplementationEntity.setId(1L);
+        moduleFrameModuleImplementationEntity.setModuleFrame(new ModuleFrameEntity());
+        moduleFrameModuleImplementationEntity.getModuleFrame().setId(1L);
+        moduleFrameModuleImplementationEntity.getModuleFrame().setName("Module Frame 1");
+        moduleFrameModuleImplementationEntity.setModuleImplementation(new ModuleImplementationEntity());
+        moduleFrameModuleImplementationEntity.getModuleImplementation().setId(1L);
+        moduleFrameModuleImplementationEntity.getModuleImplementation().setName("Module Implementation 1");
+        when(moduleFrameModuleImplementationRepository.findModuleFrameModuleImplementationEntitiesByModuleFrameId(1L))
+                .thenReturn(List.of(moduleFrameModuleImplementationEntity));
 
         SemesterEntity semesterEntity = new SemesterEntity();
         semesterEntity.setId(1L);
