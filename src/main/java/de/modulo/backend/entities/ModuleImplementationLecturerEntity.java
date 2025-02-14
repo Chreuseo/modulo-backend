@@ -1,10 +1,7 @@
 package de.modulo.backend.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -28,6 +25,8 @@ public class ModuleImplementationLecturerEntity {
 
     @Embeddable
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class ModuleImplementationLecturerEntityId implements Serializable {
         private Long moduleImplementation;
         private Long lecturer;
