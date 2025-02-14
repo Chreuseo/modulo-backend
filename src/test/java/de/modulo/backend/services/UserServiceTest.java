@@ -210,7 +210,6 @@ class UserServiceTest {
         notificationEntity2.setId(2L);
         notificationEntity2.setUser(user);
         notificationEntity2.setUnread(true);
-        notificationEntity2.setCreatedAt(LocalDateTime.now().minusDays(2));
 
         NotificationEntity notificationEntity3 = new NotificationEntity();
         notificationEntity3.setId(3L);
