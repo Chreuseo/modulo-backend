@@ -214,7 +214,7 @@ class UserServiceTest {
         NotificationEntity notificationEntity3 = new NotificationEntity();
         notificationEntity3.setId(3L);
         notificationEntity3.setUser(user);
-        notificationEntity3.setUnread(true);
+        notificationEntity3.setUnread(false);
         notificationEntity3.setCreatedAt(LocalDateTime.now().minusDays(1));
 
         NotificationDTO notificationDTO = new NotificationDTO();
