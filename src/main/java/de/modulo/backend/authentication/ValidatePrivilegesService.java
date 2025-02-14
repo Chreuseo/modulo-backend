@@ -207,6 +207,62 @@ public class ValidatePrivilegesService {
                     }
                 }
             }
+            case USER -> {
+                switch (entityType) {
+                    case SPO, SPO_SETTINGS -> {
+                        switch (privileges) {
+                            case ADD, UPDATE, DELETE ->
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to edit SPO settings");
+                        }
+                    }
+                    case MODULE -> {
+                        switch (privileges) {
+                            case READ -> {
+                                if (!isResponsible) {
+                                    throw new InsufficientPermissionsException("You do not have the required permissions.");
+                                }
+                            }
+                            case UPDATE -> {
+                                if (!isResponsible) {
+                                    throw new InsufficientPermissionsException("You do not have permission to update this resource.");
+                                }
+                            }
+                            case DELETE -> {
+                                throw new InsufficientPermissionsException("You do not have the required permissions to remove this module.");
+                            }
+                            default ->
+                                    throw new InsufficientPermissionsException("You do not have the required perissions");
+                        }
+                    }
+                    case MODULE_FRAME_MODULE_IMPLEMENTATION -> {
+                        switch (privileges) {
+                            case ADD, UPDATE, DELETE -> {
+                                if (!isResponsible) {
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to edit this resource.");
+                                }
+                            }
+                        }
+                    }
+                    case USER -> {
+                        switch (privileges) {
+                            case ADD, UPDATE, DELETE, READ_DETAILS ->
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to access users");
+                        }
+                    }
+                    case GENERAL_SETTINGS -> {
+                        switch (privileges) {
+                            case ADD, UPDATE, DELETE ->
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to access general settings");
+                        }
+                    }
+                    case DOCUMENT -> {
+                        switch (privileges) {
+                            case READ, ADD, UPDATE, DELETE ->
+                                    throw new InsufficientPermissionsException("You do not have the required permissions to access documents");
+                        }
+                    }
+                }
+            }
         }
     }
 
