@@ -18,7 +18,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -201,23 +200,35 @@ class UserServiceTest {
         UserEntity user = new UserEntity();
         user.setId(1L);
 
-        NotificationEntity notificationEntity = new NotificationEntity();
-        notificationEntity.setId(1L);
-        notificationEntity.setUser(user);
-        notificationEntity.setUnread(true);
-        notificationEntity.setCreatedAt(LocalDateTime.now());
+        NotificationEntity notificationEntity1 = new NotificationEntity();
+        notificationEntity1.setId(1L);
+        notificationEntity1.setUser(user);
+        notificationEntity1.setUnread(true);
+        notificationEntity1.setCreatedAt(LocalDateTime.now());
+
+        NotificationEntity notificationEntity2 = new NotificationEntity();
+        notificationEntity2.setId(2L);
+        notificationEntity2.setUser(user);
+        notificationEntity2.setUnread(true);
+        notificationEntity2.setCreatedAt(LocalDateTime.now().minusDays(2));
+
+        NotificationEntity notificationEntity3 = new NotificationEntity();
+        notificationEntity3.setId(3L);
+        notificationEntity3.setUser(user);
+        notificationEntity3.setUnread(true);
+        notificationEntity3.setCreatedAt(LocalDateTime.now().minusDays(1));
 
         NotificationDTO notificationDTO = new NotificationDTO();
         notificationDTO.setId(1L);
         notificationDTO.setUserId(user.getId());
         notificationDTO.setUnread(true);
 
-        when(notificationRepository.findByUser(user)).thenReturn(Collections.singletonList(notificationEntity));
-        when(notificationConverter.toDto(notificationEntity)).thenReturn(notificationDTO);
+        when(notificationRepository.findByUser(user)).thenReturn(List.of(notificationEntity1, notificationEntity2, notificationEntity3));
+        when(notificationConverter.toDto(notificationEntity1)).thenReturn(notificationDTO);
 
         List<NotificationDTO> notifications = userService.getNotifications(user, true);
 
-        assertEquals(1, notifications.size());
+        assertEquals(3, notifications.size());
         assertTrue(notifications.get(0).isUnread());
         verify(notificationRepository, times(1)).saveAll(any()); // Verify saveAll is called
     }
@@ -239,6 +250,25 @@ class UserServiceTest {
         assertEquals(userEntity.getId(), result.getId());
         verify(userRepository, times(1)).save(userEntity); // Ensure userRepository.save is called
     }
+
+    @Test
+    void testUpdateUser_UserNotFound_ThrowsException() {
+        // Arrange
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(999L); // setting a non-existing user ID
+
+        when(userRepository.existsById(userDTO.getId())).thenReturn(false);
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            userService.updateUser(userDTO);
+        });
+
+        assertEquals("User not found", exception.getMessage());
+        verify(userRepository, times(1)).existsById(userDTO.getId());
+        verify(userRepository, never()).findById(any()); // Ensure findById is not called
+    }
+
 
     @AfterEach
     public void tearDown() {
