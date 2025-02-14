@@ -73,7 +73,7 @@ public class ModuleManualServiceTest {
         moduleFrameModuleImplementationEntity.setModuleImplementation(new ModuleImplementationEntity());
         moduleFrameModuleImplementationEntity.getModuleImplementation().setId(1L);
         moduleFrameModuleImplementationEntity.getModuleImplementation().setName("Module Implementation 1");
-        when(moduleFrameModuleImplementationRepository.findModuleFrameModuleImplementationEntitiesByModuleFrameId(1L))
+        when(moduleFrameModuleImplementationRepository.findModuleFrameModuleImplementationEntitiesByModuleFrameId(any()))
                 .thenReturn(List.of(moduleFrameModuleImplementationEntity));
 
         SemesterEntity semesterEntity = new SemesterEntity();
