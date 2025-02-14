@@ -24,7 +24,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -175,6 +177,76 @@ public class DocumentServiceTest {
         });
     }
 
-    // Continue to implement additional tests...
+    @Test
+    public void testGetDocument_StudyGuide() {
+        when(spoRepository.findById(1L)).thenReturn(Optional.of(spoEntity));
+        when(semesterRepository.findById(1L)).thenReturn(Optional.of(semesterEntity));
+
+        // Creating a mock DocumentEntity for a Study Guide
+        DocumentEntity documentEntity = new DocumentEntity();
+        documentEntity.setData(new byte[]{4, 5, 6});
+        documentEntity.setGeneratedAt(LocalDateTime.now());
+
+        when(documentRepository.findBySpoIdAndSemesterIdAndType(1L, 1L, DOCUMENT_TYPE.STUDY_GUIDE))
+                .thenReturn(Optional.of(documentEntity));
+
+        // Calling the method to test
+        DocumentDTO result = documentService.getDocument(1L, 1L, DOCUMENT_TYPE.STUDY_GUIDE);
+
+        // Validating the results
+        assertNotNull(result);
+        assertNotNull(result.getContent());
+        assertArrayEquals(documentEntity.getData(), result.getContent());
+        assertTrue(result.getName().contains("Studienplan"));
+    }
+
+    @Test
+    public void testGetDocument_SPO() {
+        when(spoRepository.findById(1L)).thenReturn(Optional.of(spoEntity));
+
+        // Creating a mock DocumentEntity for an SPO
+        DocumentEntity documentEntity = new DocumentEntity();
+        documentEntity.setData(new byte[]{7, 8, 9});
+        documentEntity.setGeneratedAt(LocalDateTime.now());
+
+        when(documentRepository.findBySpoIdAndSemesterIdAndType(1L, null, DOCUMENT_TYPE.SPO))
+                .thenReturn(Optional.of(documentEntity));
+
+        // Calling the method to test
+        DocumentDTO result = documentService.getDocument(1L, null, DOCUMENT_TYPE.SPO);
+
+        // Validating the results
+        assertNotNull(result);
+        assertNotNull(result.getContent());
+        assertArrayEquals(documentEntity.getData(), result.getContent());
+        assertTrue(result.getName().contains("SPO"));
+    }
+
+    @Test
+    public void testGetDocument_StudyGuide_NotFound() {
+        when(spoRepository.findById(1L)).thenReturn(Optional.of(spoEntity));
+        when(semesterRepository.findById(1L)).thenReturn(Optional.of(semesterEntity));
+
+        when(documentRepository.findBySpoIdAndSemesterIdAndType(1L, 1L, DOCUMENT_TYPE.STUDY_GUIDE))
+                .thenReturn(Optional.empty());
+
+        // Expect an exception to be thrown since the document is not found
+        assertThrows(NoSuchElementException.class, () -> {
+            documentService.getDocument(1L, 1L, DOCUMENT_TYPE.STUDY_GUIDE);
+        });
+    }
+
+    @Test
+    public void testGetDocument_SPO_NotFound() {
+        when(spoRepository.findById(1L)).thenReturn(Optional.of(spoEntity));
+
+        when(documentRepository.findBySpoIdAndSemesterIdAndType(1L, null, DOCUMENT_TYPE.SPO))
+                .thenReturn(Optional.empty());
+
+        // Expect an exception to be thrown since the document is not found
+        assertThrows(NoSuchElementException.class, () -> {
+            documentService.getDocument(1L, null, DOCUMENT_TYPE.SPO);
+        });
+    }
 
 }
