@@ -29,11 +29,23 @@ pipeline {
             }
         }
 
+
         stage('Test') {
             steps {
                 // Run tests and generate coverage report
                 sh 'gradle test jacocoTestReport'
             }
+        }
+
+        node {
+          stage('SCM') {
+            checkout scm
+          }
+          stage('SonarQube Analysis') {
+            withSonarQubeEnv() {
+              sh "./gradlew sonar"
+            }
+          }
         }
 
 
