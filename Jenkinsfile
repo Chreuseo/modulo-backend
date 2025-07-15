@@ -37,16 +37,14 @@ pipeline {
             }
         }
 
-        node {
           stage('SCM') {
             checkout scm
           }
           stage('SonarQube Analysis') {
-            withSonarQubeEnv() {
+                withSonarQubeEnv() {
               sh "./gradlew sonar"
             }
           }
-        }
 
 
         stage('Move Jar') {
