@@ -37,14 +37,19 @@ pipeline {
             }
         }
 
-          stage('SCM') {
-            checkout scm
-          }
-          stage('SonarQube Analysis') {
-                withSonarQubeEnv() {
-              sh "./gradlew sonar"
-            }
-          }
+        stage('SonarQube Analysis') {
+            environment {
+            JAVA_HOME = tool 'jdk-17'
+            GRADLE_HOME = tool 'gradle-8.10'
+            PATH = "${env.GRADLE_HOME}/bin:${env.PATH}"
+        }
+     steps {
+         withSonarQubeEnv() {
+             sh 'gradle sonar'
+         }
+     }
+ }
+
 
 
         stage('Move Jar') {
