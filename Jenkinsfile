@@ -44,9 +44,13 @@ pipeline {
                 PATH = "${env.GRADLE_HOME}/bin:${env.PATH}"
             }
             steps {
-                withSonarQubeEnv('SonarQube') {
-                sh 'gradle sonar -Dsonar.token=squ_70eeacfcdd8b2b9803a829690844dd52d4485437'                }
-            }
+                withCredentials([string(credentialsId='sonar-token', variable: 'SONAR_TOKEN')]) {
+                    // Run SonarQube analysis
+                    withSonarQubeEnv('SonarQube') {
+                        // Use the SonarQube token from Jenkins credentials
+                        sh "gradle sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.login=${SONAR_TOKEN}"
+                    }
+                }
         }
 
 
