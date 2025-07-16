@@ -44,7 +44,7 @@ pipeline {
                 PATH = "${env.GRADLE_HOME}/bin:${env.PATH}"
             }
             steps {
-                withCredentials([string(credentialsId='sonar-token', variable: 'SONAR_TOKEN')]) {
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                     // Run SonarQube analysis
                     withSonarQubeEnv('SonarQube') {
                         // Use the SonarQube token from Jenkins credentials
