@@ -47,6 +47,7 @@ public class ModuleImplementationEntity {
     @JoinColumn(name = "language_id")
     private LanguageEntity language;
 
+    @Column(name = "workload", columnDefinition = "TEXT")
     private String workload;
 
     @Column(name = "required_competences", columnDefinition = "TEXT")
