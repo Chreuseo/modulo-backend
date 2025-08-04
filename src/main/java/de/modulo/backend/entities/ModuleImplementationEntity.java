@@ -20,6 +20,7 @@ public class ModuleImplementationEntity {
 
     private String abbreviation;
 
+    @Column(name = "allowed_resources", columnDefinition = "TEXT")
     private String allowedResources;
 
     @ManyToOne
@@ -48,16 +49,22 @@ public class ModuleImplementationEntity {
 
     private String workload;
 
+    @Column(name = "required_competences", columnDefinition = "TEXT")
     private String requiredCompetences;
 
+    @Column(name = "qualification_targets", columnDefinition = "TEXT")
     private String qualificationTargets;
 
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "additional_exams", columnDefinition = "TEXT")
     private String additionalExams;
 
+    @Column(name = "media_types", columnDefinition = "TEXT")
     private String mediaTypes;
 
+    @Column(name = "literature", columnDefinition = "TEXT")
     private String literature;
 
     @ManyToOne
