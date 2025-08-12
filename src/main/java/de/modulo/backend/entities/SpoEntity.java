@@ -14,7 +14,10 @@ public class SpoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(columnDefinition = "TEXT")
     private String header;
+
+    @Column(columnDefinition = "TEXT")
     private String footer;
     private String name;
 

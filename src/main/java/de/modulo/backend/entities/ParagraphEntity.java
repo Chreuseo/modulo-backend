@@ -19,6 +19,8 @@ public class ParagraphEntity {
 
 
     private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String text;
 
     @Override
