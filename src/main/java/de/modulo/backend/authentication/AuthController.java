@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping({"/auth","/api/auth"})
+@RequestMapping("/auth")
 public class AuthController {
 
     private final SessionService sessionService;
@@ -25,7 +25,7 @@ public class AuthController {
         this.sessionService = sessionService;
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserDTOAuth userDTOAuth, HttpServletRequest request, HttpServletResponse response) {
         try{
             Cookie cookie = new Cookie("Authorization", sessionService.login(userDTOAuth.getMail(),
@@ -41,7 +41,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("logout")
+    @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         sessionService.logout(UUID.fromString(SessionTokenHelper.getSessionToken(request)));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

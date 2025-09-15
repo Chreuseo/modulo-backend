@@ -51,9 +51,8 @@ public class AdminInitializer implements ApplicationRunner {
             return;
         }
 
-        userRepository.findByMail(initMail).ifPresentOrElse(existing -> {
-            log.info("Init-Admin existiert bereits (mail={}). Überspringe Erstellung.", initMail);
-        }, () -> {
+        userRepository.findByMail(initMail).ifPresentOrElse(existing ->
+            log.info("Init-Admin existiert bereits (mail={}). Überspringe Erstellung.", initMail), () -> {
             UserEntity admin = new UserEntity();
             admin.setMail(initMail);
             admin.setFirstName(initFirstName);
