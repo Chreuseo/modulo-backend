@@ -161,7 +161,7 @@ public class StudyGuideService {
                                     cell.add(paragraph);
                                 }
                                 table.addCell(cell);
-                                table.addCell(getCellFromHtmlString(moduleFrameModuleImplementationEntity.getModuleImplementation().getAllowedResources()));
+                                table.addCell(moduleFrameModuleImplementationEntity.getModuleImplementation().getAllowedResources());
                                 table.addCell(moduleFrameModuleImplementationEntity.getModuleImplementation().getFirstExaminant() != null ? moduleFrameModuleImplementationEntity.getModuleImplementation().getFirstExaminant().getCode() : "-");
                                 table.addCell(moduleFrameModuleImplementationEntity.getModuleImplementation().getSecondExaminant() != null ? moduleFrameModuleImplementationEntity.getModuleImplementation().getSecondExaminant().getCode() : "-");
                             }
