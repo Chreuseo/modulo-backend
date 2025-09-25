@@ -12,4 +12,5 @@ public interface ModuleFrameModuleImplementationRepository extends JpaRepository
     List<ModuleFrameModuleImplementationEntity> findModuleFrameModuleImplementationEntitiesByModuleFrameId(Long moduleFrameId);
     List<ModuleFrameModuleImplementationEntity> getModuleFrameModuleImplementationEntitiesByModuleFrameId(Long moduleFrameId);
     void deleteModuleFrameModuleImplementationEntitiesByModuleImplementationId(Long moduleImplementationId);
+    boolean existsModuleFrameModuleImplementationByModuleFrameId(Long moduleFrameId);
 }

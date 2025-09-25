@@ -52,6 +52,9 @@ class ModuleFrameServiceTest {
     @Mock
     private ExamTypeConverter examTypeConverter;
 
+    @Mock
+    private ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -115,6 +118,7 @@ class ModuleFrameServiceTest {
     void testDeleteModuleFrame() {
         Long moduleId = 1L;
         when(moduleFrameRepository.existsById(moduleId)).thenReturn(true);
+        when(moduleFrameModuleImplementationRepository.existsById(moduleId)).thenReturn(false);
 
         service.deleteModuleFrame(moduleId);
 
