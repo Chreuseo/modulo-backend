@@ -42,6 +42,10 @@ public class ModuleFrameService {
 
     @Autowired
     private ExamTypeModuleFrameRepository examTypeModuleFrameRepository;
+    @Autowired
+    private ExamTypeModuleImplementationRepository examTypeModuleImplementationRepository;
+    @Autowired
+    private ModuleFrameModuleImplementationRepository moduleFrameModuleImplementationRepository;
 
 
     public ModuleFrameSetDTO getModuleFrameSetDTOBySpoId(Long spoId) {
@@ -160,6 +164,14 @@ public class ModuleFrameService {
         if (!moduleFrameRepository.existsById(id)) {
             throw new IllegalArgumentException("ModuleFrame not found with id: " + id);
         }
+        moduleFrameModuleImplementationRepository.getModuleFrameModuleImplementationEntitiesByModuleFrameId(id).forEach(mfmi -> {
+            examTypeModuleFrameRepository.getExamTypeModuleFrameEntitiesByModuleFrameId(id).forEach(examTypeModuleFrame -> {
+                if(examTypeModuleImplementationRepository.existsById(new ExamTypeModuleImplementationEntity.ExamTypeModuleImplementationId(examTypeModuleFrame.getExamType().getId(), mfmi.getModuleImplementation().getId()))){
+                    examTypeModuleImplementationRepository.deleteById(new ExamTypeModuleImplementationEntity.ExamTypeModuleImplementationId(examTypeModuleFrame.getExamType().getId(), mfmi.getModuleImplementation().getId()));
+                }
+            });
+            moduleFrameModuleImplementationRepository.deleteById(mfmi.getId());
+        });
         examTypeModuleFrameRepository.deleteExamTypeModuleFrameEntitiesByModuleFrameId(id);
         courseTypeModuleFrameRepository.deleteCourseTypeModuleFrameEntitiesByModuleFrameId(id);
         moduleFrameRepository.deleteById(id);
