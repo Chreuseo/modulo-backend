@@ -36,7 +36,7 @@ public class UserService {
     private final ModuleImplementationRepository moduleImplementationRepository;
     private final SpoResponsibleUserRepository spoResponsibleUserRepository;
 
-    @Value("${custom.userdefaultpassword}")
+    @Value("${custom.userdefaultpassword:#{null}}")
     private String userDefaultPassword;
 
     @Autowired
