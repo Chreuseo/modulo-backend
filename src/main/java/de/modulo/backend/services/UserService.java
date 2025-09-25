@@ -12,11 +12,13 @@ import de.modulo.backend.repositories.*;
 import de.modulo.backend.services.mail.MailSenderService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.text.RandomStringGenerator;
 
@@ -33,6 +35,9 @@ public class UserService {
     private final ModuleImplementationLecturerRepository moduleImplementationLecturerRepository;
     private final ModuleImplementationRepository moduleImplementationRepository;
     private final SpoResponsibleUserRepository spoResponsibleUserRepository;
+
+    @Value("${custom.userdefaultpassword}")
+    private String userDefaultPassword;
 
     @Autowired
     public UserService(UserRepository userRepository,
@@ -71,7 +76,7 @@ public class UserService {
     }
 
     public UserDTO createUser(UserDTO userDTO) {
-        String password = getRandomPassword();
+        String password = Objects.requireNonNullElseGet(userDefaultPassword, this::getRandomPassword);
         UserEntity user = userConverter.toEntity(userDTO);
         user.setPassword(bCryptPasswordEncoder.encode(password));
         UserEntity savedUser = userRepository.save(user);
