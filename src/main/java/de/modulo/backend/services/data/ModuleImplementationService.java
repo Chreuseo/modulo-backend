@@ -88,7 +88,7 @@ public class ModuleImplementationService {
                 throw new InsufficientPermissionsException("You are not allowed to change the responsible of this module implementation");
             }
         }
-        ModuleImplementationEntity savedEntity = moduleImplementationRepository.save(moduleImplementationEntity);
+        ModuleImplementationEntity savedEntity = moduleImplementationRepository.saveAndFlush(moduleImplementationEntity);
         return moduleImplementationConverter.toDto(savedEntity);
     }
 
