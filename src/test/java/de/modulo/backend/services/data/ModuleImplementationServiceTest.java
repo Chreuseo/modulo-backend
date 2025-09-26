@@ -104,8 +104,9 @@ public class ModuleImplementationServiceTest {
 
         when(moduleImplementationConverter.toEntity(dto)).thenReturn(entity);
         when(moduleImplementationRepository.findById(moduleId)).thenReturn(Optional.of(oldEntity));
-        when(moduleImplementationRepository.save(entity)).thenReturn(entity);
+        when(moduleImplementationRepository.saveAndFlush(entity)).thenReturn(entity);
         when(moduleImplementationConverter.toDto(entity)).thenReturn(dto);
+
 
         // When
         ModuleImplementationDTO result = service.updateModuleImplementation(dto, user);
@@ -115,7 +116,7 @@ public class ModuleImplementationServiceTest {
 
         // Verify that the right methods were called
         verify(moduleImplementationRepository, times(1)).findById(moduleId);
-        verify(moduleImplementationRepository, times(1)).save(entity);
+        verify(moduleImplementationRepository, times(1)).saveAndFlush(entity);
     }
 
     @Test
