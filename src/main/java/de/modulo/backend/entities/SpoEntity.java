@@ -43,6 +43,7 @@ public class SpoEntity {
         return id == that.id;
     }
 
+    @Column(columnDefinition = "TEXT")
     private String moduleManualIntroduction;
     @Column(columnDefinition = "TEXT")
     private String studyPlanAppendix;
