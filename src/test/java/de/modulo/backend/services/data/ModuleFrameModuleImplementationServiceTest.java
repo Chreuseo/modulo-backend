@@ -146,6 +146,13 @@ public class ModuleFrameModuleImplementationServiceTest {
     public void delete_ShouldInvokeDeleteOnRepository() {
         // Arrange
         Long id = 1L;
+        ModuleFrameModuleImplementationEntity entity = new  ModuleFrameModuleImplementationEntity();
+        entity.setId(id);
+        ModuleImplementationEntity moduleImplementationEntity = new ModuleImplementationEntity();
+        moduleImplementationEntity.setId(1L);
+        entity.setModuleImplementation(moduleImplementationEntity);
+        when(examTypeModuleImplementationRepository.findExamTypeModuleImplementationEntitiesByModuleImplementationId(entity.getId())).thenReturn(new ArrayList<>());
+        when(moduleFrameModuleImplementationRepository.findById(id)).thenReturn(Optional.of(entity));
 
         // Act
         moduleFrameModuleImplementationService.delete(id);
