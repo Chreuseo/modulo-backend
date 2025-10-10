@@ -44,6 +44,7 @@ public class SpoEntity {
     }
 
     private String moduleManualIntroduction;
+    @Column(columnDefinition = "TEXT")
     private String studyPlanAppendix;
 
     @Override
