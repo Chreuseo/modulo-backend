@@ -103,6 +103,12 @@ public class ModuleFrameModuleImplementationService {
     }
 
     public void delete(Long id) {
+        ModuleFrameModuleImplementationEntity entity = moduleFrameModuleImplementationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("ModuleFrameModuleImplementation not found with id: " + id));
+        examTypeModuleImplementationRepository.findExamTypeModuleImplementationEntitiesByModuleImplementationId(entity.getModuleImplementation().getId()).forEach(examTypeModuleImplementationEntity -> {
+            if(examTypeModuleImplementationRepository.existsById(new ExamTypeModuleImplementationEntity.ExamTypeModuleImplementationId(examTypeModuleImplementationEntity.getExamType().getId(), entity.getModuleImplementation().getId()))){
+                examTypeModuleImplementationRepository.deleteById(new ExamTypeModuleImplementationEntity.ExamTypeModuleImplementationId(examTypeModuleImplementationEntity.getExamType().getId(), entity.getModuleImplementation().getId()));
+            }
+        });
         moduleFrameModuleImplementationRepository.deleteById(id);
     }
 }
